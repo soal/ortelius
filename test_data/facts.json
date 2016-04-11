@@ -1,0 +1,20 @@
+[{
+  "id": 1,
+  "name": "petrograd_rebellion",
+  "label": "Rebellion in Petrograd",
+  "date": {
+    "day": 7,
+    "month": 11,
+    "year": 1917
+  }
+},
+{
+  "id": 2,
+  "name": "moscow_rebellion",
+  "label": "Rebellion in Moscow",
+  "date": {
+    "day": 12,
+    "month": 11,
+    "year": 1917
+  }
+}]
