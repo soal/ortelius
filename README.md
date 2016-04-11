@@ -1,5 +1,5 @@
 # Ortelius
-Data server and API for handymap
+Data API for handymap
 
 ##Setting up project for development
 
