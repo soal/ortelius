@@ -1,9 +1,8 @@
 from flask.ext.via.routers.default import Functional
-from flask import render_template, send_file, request, abort
+from flask import render_template, render_template_string, send_file, request, abort, json
 
 def index():
-    return render_template('index.html')
-
+    return render_template_string('Welcome to Ortelius v1!')
 
 
 def facts(id=None):
@@ -67,12 +66,12 @@ routes = [
     Functional('/', index),
 
     #API routes
-    Functional('/facts', facts), #get all facts or subset of facts
-    Functional('/facts/<id>', facts), #get single fact by id
-    Functional('/processes', processes), #get all processes or subset of processes
-    Functional('/processes/<id>', processes), #get single process
-    Functional('/georegions/<id>', georegions), #get georegion
-    Functional('/historical-regions/<id>', historical_regions), #get historical region
-    Functional('/persons/<id>', persons), #get peson
-    Functional('/shapes/<id>', shapes), #get shapes
+    Functional('/api/facts', facts), #get all facts or subset of facts
+    Functional('/api/facts/<id>', facts), #get single fact by id
+    Functional('/api/processes', processes), #get all processes or subset of processes
+    Functional('/api/processes/<id>', processes), #get single process
+    Functional('/api/georegions/<id>', georegions), #get georegion
+    Functional('/api/historical-regions/<id>', historical_regions), #get historical region
+    Functional('/api/persons/<id>', persons), #get peson
+    Functional('/api/shapes/<id>', shapes), #get shapes
 ]
