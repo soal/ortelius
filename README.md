@@ -3,7 +3,7 @@ Data server and API for handymap
 
 ##Setting up project for development
 
-###Requrements
+###Requirements
 * Python 3.4
 * Flask
 * SQLAlhemy
@@ -17,7 +17,7 @@ Data server and API for handymap
 * PostgreSQL
 
 ###Setting up
-####Installing dependencies on Fedora linux
+####Installing dependencies on Fedora Linux
 #####Python and system dependencies for it:
 ```
 sudo dnf check-update
@@ -47,7 +47,7 @@ sudo postgresql-setup --initdb
 sudo systemctl start postgresql
 ```
 Now we need to create database for development.
-First, we need to create user in database, wich will be used by our app for access to db.
+First, we need to create user in database, which will be used by our app for access to db.
 Switch to postgres user and open postresql console for initial setup:
 ```
 sudo -iu postgres
@@ -93,7 +93,7 @@ Done! =)
 
 ##Development server
 Use ./manage.py script to manage development server
-Create database inital data:
+Create database initial data:
 ```
 ./manage.py create_db
 ```

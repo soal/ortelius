@@ -1,0 +1,57 @@
+{
+  "georegions": [
+    {
+      "id": 1,
+      "name": "russia",
+      "label": "Россия",
+      "subregions": [34,65565,7575,34353],
+      "shape": 4050
+    },
+    {
+      "id": 2,
+      "name": "usa",
+      "label": "США",
+      "subregions": [343,432,434,455],
+      "shape": 45
+    }
+  ],
+  "facts_types": [
+    {
+      "id": 1,
+      "name": "battle",
+      "label": "Сражение"
+    },
+    {
+      "id": 2,
+      "name": "peace_treaty",
+      "label": "Мирный договор"
+    },
+    {
+      "id": 3,
+      "name": "scientific_discovery",
+      "label": "Научное открытие"
+    },
+  ],
+  "historical_pers_types": [
+    {
+      "id": 1,
+      "name": "scientist",
+      "label": "Учёный"
+    },
+    {
+      "id": 2,
+      "name": "state_leader",
+      "label": "Глава государства"
+    },
+    {
+      "id": 3,
+      "name": "artist",
+      "label": "Художник"
+    },
+    {
+      "id": 4,
+      "name": "politician",
+      "label": "Политический деятель"
+    },
+  ]
+}

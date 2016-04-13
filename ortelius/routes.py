@@ -1,5 +1,5 @@
 from flask.ext.via.routers.default import Functional
-from flask import render_template, render_template_string, send_file, request, abort, json
+from flask import render_template_string, send_file, request, abort
 
 def index():
     return render_template_string('Welcome to Ortelius v1!')
@@ -59,6 +59,13 @@ def shapes(id=[]):
     '''Get shapes'''
     pass
 
+def dicts():
+    '''
+    Return dicts:
+    facts_type, historical_pers_types, georegions, quadrants???
+    '''
+    pass
+
 def date(dates=[]):
     pass
 
@@ -66,6 +73,7 @@ routes = [
     Functional('/', index),
 
     #API routes
+    Functional('/api/dicts', dicts), #get all dicts for initializing client app
     Functional('/api/facts', facts), #get all facts or subset of facts
     Functional('/api/facts/<id>', facts), #get single fact by id
     Functional('/api/processes', processes), #get all processes or subset of processes

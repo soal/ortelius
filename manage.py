@@ -30,7 +30,9 @@ def create_app():
 
 manager = Manager(create_app)
 manager.add_command('runserver', Server())
-manager.add_command('migrate', MigrateCommand)
+
+migrate = Migrate(app, db)
+manager.add_command('db', MigrateCommand)
 
 @manager.command
 def test():
@@ -74,7 +76,6 @@ def drop_db():
 @manager.command
 def create_admin():
     """Creates the admin user."""
-    # TODO: Set admin role to admin user
     admin_role = Role(id=1, name='admins', label='Administrators')
     admin_user = User(id=1, username='admin', email='ad@min.com', password='admin', active=True)
     admin_user_role = UsersRoles(user_id=admin_user.id, role_id=admin_role.id)
