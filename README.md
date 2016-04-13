@@ -18,12 +18,10 @@ Data server and API for handymap
 
 ###Setting up
 ####Installing dependencies on Fedora Linux
-#####Python and system dependencies for it:
 ```
-sudo dnf check-update
 sudo dnf install gcc gcc-c++ make glibc-headers python3 python3-virtualenv python3-devel python3-psycopg2 postgresql postgresql-devel postgresql-server postgresql-contrib libffi-devel redhat-rpm-config
 ```
-#####Setting up python environment:
+####Setting up python environment:
 Create virtual python environment:
 ```
 cd path/to/your/project/folder
