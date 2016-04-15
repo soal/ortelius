@@ -21,6 +21,7 @@ db = SQLAlchemy(app)
 
 # Setup Flask-Via routes pulgin
 via = Via()
+
 via.init_app(app, route_module='ortelius.routes')
 
 # from handymap.server.models import User

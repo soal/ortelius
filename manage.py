@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
-import unittest, coverage
+import unittest
+import coverage
 
 from flask.ext.script import Manager, Server
 from flask_failsafe import failsafe
@@ -32,7 +33,8 @@ manager = Manager(create_app)
 manager.add_command('runserver', Server())
 
 migrate = Migrate(app, db)
-manager.add_command('db', MigrateCommand)
+manager.add_command('migrations', MigrateCommand)
+
 
 @manager.command
 def test():
@@ -43,6 +45,7 @@ def test():
         return 0
     else:
         return 1
+
 
 @manager.command
 def cov():
@@ -61,6 +64,7 @@ def cov():
     else:
         return 1
 
+
 @manager.command
 def create_db():
     """Creates the db tables."""
@@ -77,7 +81,8 @@ def drop_db():
 def create_admin():
     """Creates the admin user."""
     admin_role = Role(id=1, name='admins', label='Administrators')
-    admin_user = User(id=1, username='admin', email='ad@min.com', password='admin', active=True)
+    admin_user = User(id=1, username='admin',
+                      email='ad@min.com', password='admin', active=True)
     admin_user_role = UsersRoles(user_id=admin_user.id, role_id=admin_role.id)
     db.session.add(admin_role)
     db.session.add(admin_user)

@@ -1,12 +1,8 @@
-from flask_user import UserMixin
-from flask_user.forms import RegisterForm
-from flask_wtf import Form
-from wtforms import StringField, SubmitField, validators
 from ortelius import db
 
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
-class User(db.Model, UserMixin):
+class User(db.Model):
     __tablename__ = 'users'
 
     # def __init__(self):
@@ -19,7 +15,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(255), nullable=False, server_default='')
     reset_password_token = db.Column(db.String(100), nullable=False, server_default='')
 
-    #User email information
+    # User email information
     email = db.Column(db.Unicode(255), nullable=False, server_default='', unique=True)
     confirmed_at = db.Column(db.DateTime())
     active = db.Column(db.Boolean(), nullable=False, server_default='0')
@@ -36,7 +32,6 @@ class User(db.Model, UserMixin):
         return self.active
 
 
-
 # Define the Role data model
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -51,22 +46,3 @@ class UsersRoles(db.Model):
     id = db.Column(db.Integer(), primary_key=True)
     user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
-
-
-# Define the User registration form
-# It augments the Flask-User RegisterForm with additional fields
-class UserRegisterForm(RegisterForm):
-    username = StringField('username', validators=[
-    validators.DataRequired('username name is required')])
-    first_name = StringField('First name')
-    last_name = StringField('Last name')
-
-
-# Define the User profile form
-class UserProfileForm(Form):
-    username = StringField('username', validators=[
-    validators.DataRequired('username name is required')])
-    first_name = StringField('First name')
-    last_name = StringField('Last name')
-    submit = SubmitField('Save')
-
