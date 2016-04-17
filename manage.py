@@ -2,6 +2,7 @@
 
 import unittest
 import coverage
+import datetime
 
 from flask.ext.script import Manager, Server
 from flask_failsafe import failsafe
@@ -9,6 +10,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 
 from ortelius import app, db
 from ortelius.models.User import User, Role, UsersRoles
+from ortelius.models.Date import Millenium, Century, Year
 
 
 COV = coverage.coverage(
@@ -72,7 +74,7 @@ def create_db():
 
 
 @manager.command
-def drop_db():
+def drop_db_schema():
     """Drops the db tables."""
     db.drop_all()
 
@@ -92,10 +94,29 @@ def create_admin():
 
 
 @manager.command
-def create_data():
-    """Creates sample data."""
-    pass
+def create_initial_data():
+    """Creates initial data."""
+    # years = []
+    # centuries = []
+    # milleniums = []
 
+    for i in (-5, -4, -3, -2, -1, 1, 2, 3):
+        mil = Millenium(number=i)
+        db.session.add(mil)
+        print('mil: ' + str(i))
+        for j in range(0, 10):
+            centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
+            cent = Century(number=centNumber, millenium_number=i)
+            db.session.add(cent)
+            print('cent: ' + str(centNumber))
+            for k in range(0, 100):
+                yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
+                year = Year(yearNumber, century_number=centNumber)
+                print('year: ' + str(yearNumber))
+                db.session.add(year)
+                # years.append(year)
+
+    db.session.commit()
 
 if __name__ == '__main__':
     manager.run()
