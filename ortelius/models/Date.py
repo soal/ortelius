@@ -27,11 +27,11 @@ class Year(db.Model):
 
     number = db.Column(db.Integer, primary_key=True, autoincrement=False)
     dates = db.relationship('Date', backref=db.backref('year', lazy='select'), lazy='dynamic')
-    # century is declared in Century class via backref
     century_number = db.Column(db.Integer, db.ForeignKey('century.number'))
+    # century is declared in Century class via backref
 
-    def calculate_century(self):
-        return math.floor(self.number / 100) if (self.number / 100) < 0 else math.floor(self.number / 100) + 1
+    # def calculate_century(self):
+    #     return math.floor(self.number / 100) if (self.number / 100) < 0 else math.floor(self.number / 100) + 1
 
 
 class Century(db.Model):
@@ -49,8 +49,8 @@ class Century(db.Model):
     millenium_number = db.Column(db.Integer, db.ForeignKey('millenium.number'))
     # millenium is declared in Millenium class via backref
 
-    def calculate_millenium(self):
-        return math.floor(self.number / 10) if (self.number / 10) < 0 else math.floor(self.number / 10) + 1
+    # def calculate_millenium(self):
+    #     return math.floor(self.number / 10) if (self.number / 10) < 0 else math.floor(self.number / 10) + 1
 
 
 class Millenium(db.Model):
