@@ -3,6 +3,7 @@
 import unittest
 import coverage
 import datetime
+import math
 
 from flask.ext.script import Manager, Server
 from flask_failsafe import failsafe
@@ -11,6 +12,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from ortelius import app, db
 from ortelius.models.User import User, Role, UsersRoles
 from ortelius.models.Date import Millenium, Century, Year
+from ortelius.models.Quadrant import Quadrant
 
 
 COV = coverage.coverage(
@@ -33,9 +35,8 @@ def create_app():
 
 manager = Manager(create_app)
 manager.add_command('runserver', Server())
-
 migrate = Migrate(app, db)
-manager.add_command('migrations', MigrateCommand)
+manager.add_command('db', MigrateCommand)
 
 
 @manager.command
@@ -93,30 +94,40 @@ def create_admin():
     db.session.commit()
 
 
-@manager.command
-def create_initial_data():
-    """Creates initial data."""
-    # years = []
-    # centuries = []
-    # milleniums = []
-
+def create_years():
+    # Create millenimus, centuries and years from -5000 to 2999
     for i in (-5, -4, -3, -2, -1, 1, 2, 3):
         mil = Millenium(number=i)
+        # print('Create millenium: ' + str(i))
         db.session.add(mil)
-        print('mil: ' + str(i))
         for j in range(0, 10):
             centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
             cent = Century(number=centNumber, millenium_number=i)
+            # print('Create century: ' + str(centNumber))
             db.session.add(cent)
-            print('cent: ' + str(centNumber))
             for k in range(0, 100):
                 yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
                 year = Year(yearNumber, century_number=centNumber)
-                print('year: ' + str(yearNumber))
+                # print('Create year: ' + str(yearNumber))
                 db.session.add(year)
-                # years.append(year)
 
     db.session.commit()
+
+
+@manager.command
+def create_quadrants():
+    Quadrant.make_quadrants()
+    for q in Quadrant.quadrants:
+        quadrant = Quadrant(hash=Quadrant.hash_quadrant(q[0], q[1]))
+        db.session.add(quadrant)
+    db.session.commit()
+
+
+@manager.command
+def create_initial_data():
+    """Creates initial data."""
+    create_years()
+    create_quadrants()
 
 if __name__ == '__main__':
     manager.run()
