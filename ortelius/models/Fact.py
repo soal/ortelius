@@ -1,5 +1,6 @@
 from ortelius import db
 from ortelius.models.Date import Millenium, Century, Year, Date
+from ortelius.models.Shape import Shape
 
 
 class Fact(db.Model):
@@ -40,21 +41,19 @@ class Fact(db.Model):
     weight = db.Column(db.Integer, nullable=False, server_default='5')  # NOTE: May be enum type?
     fact_type = db.Column(db.Integer, db.ForeignKey('fact_type.id'))
     start_date_millenium = db.Column(db.Integer, db.ForeignKey('millenium.number'), nullable=True)  # FIXME: What should be here???
-    start_date_century = db.Column(db.Integer, db.ForeignKey('century.number'), nullable=True)  # FIXME: What should be here???
-    start_date_year = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)  # FIXME: What should be here???
-    start_date = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)  # FIXME: What should be here???
-    end_date_millenium = db.Column(db.Integer, db.ForeignKey('millenium.number'), nullable=True)  # FIXME: What should be here???
-    end_date_century = db.Column(db.Integer, db.ForeignKey('century.number'), nullable=True)  # FIXME: What should be here???
-    end_date_year = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)  # FIXME: What should be here???
+    start_date_century = db.Column(db.Integer, db.ForeignKey('century.number'), nullable=True)
+    start_date_year = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)
+    start_date = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
+    end_date_millenium = db.Column(db.Integer, db.ForeignKey('millenium.number'), nullable=True)
+    end_date_century = db.Column(db.Integer, db.ForeignKey('century.number'), nullable=True)
+    end_date_year = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)
     end_date = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)  # FIXME: What should be here???
     text = db.Column(db.UnicodeText, server_default='No text')
-
-    # shape = db.Column(db.Integer, db.ForeignKey('shape.id'))
-    # shape = db.Column(db.Integer, db.ForeignKey('shape.id'))
+    shape = db.Column(db.Integer, db.ForeignKey('shape.id'))
+    # hist_regions is declared in Hist_region model via backref
     # processes is declared in Process model via backref
     # personas is declared in Persona model via backref
     # georegions is declared in Georegion model via backref
-    # hist_regions is declared in Hist_region model via backref
 
     def __repr__(self):
         return '<Fact %s, shows as %s>' % (self.name, self.label)
