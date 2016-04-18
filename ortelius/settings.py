@@ -4,7 +4,6 @@ from datetime import timedelta
 
 project_name = "ortelius"
 
-SECRET = ''
 
 class BaseConfig(object):
     '''Base configuration'''
@@ -22,7 +21,7 @@ class BaseConfig(object):
     LOGGER_NAME = "ortelius_log"
     LOG_FILENAME = "/var/tmp/app_ortelius.log"
     LOG_LEVEL = logging.INFO
-    LOG_FORMAT = "%(asctime)s %(levelname)s\t: %(message)s" # used by logging.Formatter
+    LOG_FORMAT = "%(asctime)s %(levelname)s\t: %(message)s"  # used by logging.Formatter
 
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
@@ -53,6 +52,7 @@ class TestingCOnfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
     SQLALCHEMY_ECHO = False
 
+
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
     CANONICAL_NAME = '127.0.0.1'
@@ -66,7 +66,7 @@ class ProductionConfig(BaseConfig):
 
 
 
-# If we're running in SSL mode, check for the files or give users a hint on
+#  If we're running in SSL mode, check for the files or give users a hint on
 # how to generate the keys.
 # if USE_SSL:
 #     import os
@@ -109,4 +109,3 @@ class ProductionConfig(BaseConfig):
 #         self.close_request(request)
 #     from SocketServer import TCPServer
 #     TCPServer.shutdown_request = monkeyp_ssl_shutdown_request
-
