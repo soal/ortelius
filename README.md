@@ -91,7 +91,7 @@ Done! =)
 
 ##Development server
 Use ./manage.py script to manage development server
-Create database initial data:
+Create database schema:
 ```
 ./manage.py create_db
 ```
@@ -102,6 +102,18 @@ Create initial admin user:
 Delete all information in database:
 ```
 ./manage.py drop_db
+```
+Create database initial data:
+```
+./manage.py create_initial_data
+```
+Create migration:
+```
+./manage.py db migrate
+```
+Update database schema to migration:
+```
+./manage.py db upgrade
 ```
 Start development server:
 ```
