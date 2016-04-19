@@ -17,6 +17,7 @@ class Hist_region(db.Model):
                  name=None,
                  label=None,
                  description=None,
+                 text=None,
                  start_date=None,
                  end_date=None,
                  facts=None
@@ -24,6 +25,7 @@ class Hist_region(db.Model):
         self.name = name
         self.label = label
         self.description = description
+        self.text = text
         self.start_date = start_date
         self.end_date = end_date
         self.facts = facts
@@ -33,8 +35,8 @@ class Hist_region(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     label = db.Column(db.Unicode(255))
     description = db.Column(db.UnicodeText, server_default="No description")
-    start_date = db.Column(db.Integer, db.ForeignKey('date.id'))
-    end_date = db.Column(db.Integer, db.ForeignKey('date.id'))
+    text = db.Column(db.UnicodeText, server_default="No text")
+    start_date = db.relationship('Date', backref=db.backref('hist_regions', lazy='dynamic'), uselist=False)
+    end_date = db.relationship('Date', backref=db.backref('hist_regions', lazy='dynamic'), uselist=False)
     shapes = db.relationship('Shape', backref=db.backref('hist_region', lazy='dynamic') lazy='dynamic')
-    facts = db.relationship('Fact', lazy='dynamic')
-    # processes is declared in Process model via backref
+    facts = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions', lazy="dynamic"), lazy='dynamic')

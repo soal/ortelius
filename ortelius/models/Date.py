@@ -13,6 +13,7 @@ class Date(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
     # year is declared in Year class via backref
+    # hist_regions is declared in Hist_region class via backref
 
 
 class Year(db.Model):
