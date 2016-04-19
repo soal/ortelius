@@ -10,9 +10,11 @@ from flask_failsafe import failsafe
 from flask.ext.migrate import Migrate, MigrateCommand
 
 from ortelius import app, db
-from ortelius.models.User import User, Role, UsersRoles
-from ortelius.models.Date import Millenium, Century, Year
-from ortelius.models.Coordinates import Quadrant
+from ortelius.models.Coordinates import *
+from ortelius.models.Date import *
+from ortelius.models.Fact import *
+from ortelius.models.Hist_region import *
+from ortelius.models.User import *
 
 
 COV = coverage.coverage(
@@ -69,7 +71,7 @@ def cov():
 
 
 @manager.command
-def create_db():
+def create_db_schema():
     """Creates the db tables."""
     db.create_all()
 
