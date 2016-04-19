@@ -13,10 +13,9 @@ class Coordinates(db.Model):
     """Coordinates model"""
     __tablename__ = 'coordinates'
 
-    def __init__(self, lat=None, long=None, quadrant_hash=None):
+    def __init__(self, lat=None, long=None):
         self.lat = lat
         self.long = long
-        self.quadrant_hash = quadrant_hash
 
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)

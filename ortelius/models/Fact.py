@@ -52,7 +52,8 @@ class Fact(db.Model):
     text = db.Column(db.UnicodeText, server_default='No text')
     shape = db.relationship('Shape', backref=db.backref('fact', uselist=False), uselist=False, lazy='dynamic')
     # type is declared in FactType model via backref
-    # hist_regions is declared in Hist_region model via backref
+    # hist_regions is declared in HistRegion model via backref
+    # hist_places is declared in HistPlace model via backref
     # processes is declared in Process model via backref
     # personas is declared in Persona model via backref
     # georegions is declared in Georegion model via backref
