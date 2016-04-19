@@ -12,7 +12,7 @@ from flask.ext.migrate import Migrate, MigrateCommand
 from ortelius import app, db
 from ortelius.models.User import User, Role, UsersRoles
 from ortelius.models.Date import Millenium, Century, Year
-from ortelius.models.Quadrant import Quadrant
+from ortelius.models.Coordinates import Quadrant
 
 
 COV = coverage.coverage(
@@ -102,12 +102,12 @@ def create_years():
         db.session.add(mil)
         for j in range(0, 10):
             centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
-            cent = Century(number=centNumber, millenium_number=i)
+            cent = Century(number=centNumber, millenium=mil)
             # print('Create century: ' + str(centNumber))
             db.session.add(cent)
             for k in range(0, 100):
                 yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
-                year = Year(yearNumber, century_number=centNumber)
+                year = Year(yearNumber, century=cent)
                 # print('Create year: ' + str(yearNumber))
                 db.session.add(year)
 
