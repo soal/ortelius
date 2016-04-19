@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-
+#!/usr/bin/env python3.4
 import unittest
 import coverage
 import datetime
@@ -104,12 +103,12 @@ def create_years():
         db.session.add(mil)
         for j in range(0, 10):
             centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
-            cent = Century(number=centNumber, millenium=mil)
+            cent = Century(number=centNumber, millenium=mil, millenium_number=i)
             # print('Create century: ' + str(centNumber))
             db.session.add(cent)
             for k in range(0, 100):
                 yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
-                year = Year(yearNumber, century=cent)
+                year = Year(yearNumber, century=cent, century_number=centNumber)
                 # print('Create year: ' + str(yearNumber))
                 db.session.add(year)
 
@@ -128,6 +127,7 @@ def create_quadrants():
 @manager.command
 def create_initial_data():
     """Creates initial data."""
+    create_admin()
     create_years()
     create_quadrants()
 

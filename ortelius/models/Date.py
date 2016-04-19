@@ -6,12 +6,14 @@ class Date(db.Model):
     """Date model"""
     __tablename__ = 'date'
 
-    def __init__(self, date=None, year=None):
+    def __init__(self, date=None, year=None, year_number=None):
         self.date = date
-        self.year = year
+        # self.year = year
+        self.year_number = year_number
 
     id = db.Column(db.Integer, primary_key=True)
     date = db.Column(db.Date, nullable=False)
+    year_number = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)
     # year is declared in Year class via backref
     # hist_regions is declared in HistRegion class via backref
 
@@ -20,14 +22,16 @@ class Year(db.Model):
     """Year model"""
     __tablename__ = 'year'
 
-    def __init__(self, number=None, dates=None, century=None):
+    def __init__(self, number=None, dates=None, century=None, century_number=None):
         self.number = number
-        self.century = century
+        # self.century = century
+        self.century_number = century_number
         if dates:
             self.dates = dates
 
     number = db.Column(db.Integer, primary_key=True, autoincrement=False)
     dates = db.relationship('Date', backref=db.backref('year', lazy='select'), lazy='dynamic')
+    century_number = db.Column(db.Integer, db.ForeignKey('century.number'), nullable=True)
     # century is declared in Century class via backref
 
     # def calculate_century(self):
@@ -38,14 +42,16 @@ class Century(db.Model):
     """Century model"""
     __tablename__ = 'century'
 
-    def __init__(self, number=None, years=None, millenium=None):
+    def __init__(self, number=None, years=None, millenium=None, millenium_number=None):
         self.number = number
-        self.millenium = millenium
+        # self.millenium = millenium
+        self.millenium_number = millenium_number
         if years:
             self.years = years
 
     number = db.Column(db.Integer, primary_key=True, autoincrement=False)
     years = db.relationship('Year', backref=db.backref('century'), lazy='dynamic')
+    millenium_number = db.Column(db.Integer, db.ForeignKey('millenium.number'), nullable=True)
     # millenium is declared in Millenium class via backref
 
     # def calculate_millenium(self):

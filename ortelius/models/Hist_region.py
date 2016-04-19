@@ -13,6 +13,10 @@ hist_places_facts = db.Table('hist_places_facts',
     db.Column('hist_place_id', db.Integer, db.ForeignKey('hist_place.id'))
 )
 
+Shape.hist_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'))
+Date.hist_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'))
+Date.hist_place_id = db.Column(db.Integer, db.ForeignKey('hist_place.id'))
+
 
 class HistRegion(db.Model):
     """HistRegion model"""
@@ -41,10 +45,10 @@ class HistRegion(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     label = db.Column(db.Unicode(255))
     description = db.Column(db.UnicodeText, server_default="No description")
-    start_date = db.relationship('Date', backref=db.backref('hist_regions', lazy='dynamic'), uselist=False)
-    end_date = db.relationship('Date', backref=db.backref('hist_regions', lazy='dynamic'), uselist=False)
-    shapes = db.relationship('Shape', backref=db.backref('hist_region', lazy='dynamic'), lazy='dynamic')
-    facts = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions', lazy="dynamic"), lazy='dynamic')
+    start_date = db.relationship('Date', backref=db.backref('hist_regions_start', lazy='joined'))
+    end_date = db.relationship('Date', backref=db.backref('hist_regions_end', lazy='joined'))
+    shapes = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
+    facts = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
 
 
 class HistPlace(db.Model):
@@ -71,6 +75,6 @@ class HistPlace(db.Model):
     name = db.Column(db.String(255), nullable=False, unique=True)
     label = db.Column(db.Unicode(255))
     description = db.Column(db.UnicodeText, server_default="No description")
-    start_date = db.relationship('Date', backref=db.backref('HistPlace', lazy='dynamic'), uselist=False)
-    end_date = db.relationship('Date', backref=db.backref('hist_place', lazy='dynamic'), uselist=False)
-    facts = db.relationship('Fact', secondary=hist_places_facts, backref=db.backref('hist_places', lazy="dynamic"), lazy='dynamic')
+    start_date = db.relationship('Date', backref=db.backref('hist_place_start', lazy='joined'))
+    end_date = db.relationship('Date', backref=db.backref('hist_place_end', lazy='joined'))
+    facts = db.relationship('Fact', secondary=hist_places_facts, backref=db.backref('hist_places'), lazy='dynamic')

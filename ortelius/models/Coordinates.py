@@ -13,13 +13,15 @@ class Coordinates(db.Model):
     """Coordinates model"""
     __tablename__ = 'coordinates'
 
-    def __init__(self, lat=None, long=None):
+    def __init__(self, lat=None, long=None, quadrant_hash=None):
         self.lat = lat
         self.long = long
+        self.quadrant_hash = quadrant_hash
 
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)
     long = db.Column(db.Float, nullable=False)
+    quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
     # quadrant is declared in Quadrant class via backref
     # shapes is declared in Shape class via backref
 
@@ -28,9 +30,8 @@ class Quadrant(db.Model):
     """Quadrant model"""
     __tablename__ = 'quadrant'
 
-    def __init__(self, hash=None, coordinates=None):
+    def __init__(self, hash=None):
         self.hash = hash
-        self.coordinates = coordinates
 
     hash = db.Column(db.String(9), primary_key=True, autoincrement=False)
     coordinates = db.relationship('Coordinates', backref=db.backref('quadrant', uselist=False), lazy='joined')

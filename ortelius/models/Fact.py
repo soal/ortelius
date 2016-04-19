@@ -50,7 +50,9 @@ class Fact(db.Model):
     end_date_year = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)
     end_date = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     text = db.Column(db.UnicodeText, server_default='No text')
-    shape = db.relationship('Shape', backref=db.backref('fact', uselist=False), uselist=False, lazy='dynamic')
+    shape_id = db.Column(db.Integer, db.ForeignKey('shape.id'), nullable=True)
+    shape = db.relationship('Shape', backref=db.backref('fact', uselist=False), uselist=False)
+    type_id = db.Column(db.Integer, db.ForeignKey('fact_type.id'), nullable=True)
     # type is declared in FactType model via backref
     # hist_regions is declared in HistRegion model via backref
     # hist_places is declared in HistPlace model via backref
@@ -74,7 +76,7 @@ class FactType(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
     label = db.Column(db.Unicode(120), nullable=False, unique=True)
-    type_facts = db.relationship('Fact', backref=db.backref('type', uselist=False), lazy='dynamic')
+    facts = db.relationship('Fact', backref=db.backref('type', uselist=False), lazy='dynamic')
 
     def __repr__(self):
         return '<Fact type %r, shows as %r>' % (self.name, self.label)
