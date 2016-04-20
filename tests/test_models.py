@@ -16,3 +16,8 @@ class TestDate(unittest.TestCase):
         """Creating date table with invalid args: no date kwarg and date kwarg is string instead of datetime.date"""
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create)
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create, date='1978')
+
+
+# TODO: create tests for User model
+# TODO: create tests for Coordinates model
+# TODO: create tests for Fact model
