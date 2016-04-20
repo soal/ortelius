@@ -13,10 +13,9 @@ class Coordinates(db.Model):
     """Coordinates model"""
     __tablename__ = 'coordinates'
 
-    def __init__(self, lat=None, long=None, quadrant_hash=None):
+    def __init__(self, lat=None, long=None):
         self.lat = lat
         self.long = long
-        self.quadrant_hash = quadrant_hash
 
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)
@@ -37,7 +36,7 @@ class Quadrant(db.Model):
     coordinates = db.relationship('Coordinates', backref=db.backref('quadrant', uselist=False), lazy='joined')
 
     @classmethod
-    def make_quadrants(cls):
+    def make_list(cls):
         qts = []
         for x in range(-180, 180, 4):
             for y in range(-180, 180, 4):
@@ -48,21 +47,21 @@ class Quadrant(db.Model):
     quadrants = []
 
     @classmethod
-    def calc_quadrant(cls, lat, long):
+    def calc(cls, lat, long):
         lats = [q[0] for q in cls.quadrants]
         longs = [q[1] for q in cls.quadrants]
-        lat_value = lats[bisect.bisect_left(lats, lat)]  # TODO: check that bisect_left returns prope position
+        lat_value = lats[bisect.bisect_left(lats, lat)]  # NOTE: check that bisect_left returns proper position
         long_value = longs[bisect.bisect(longs, long) - 1]
         return [lat_value, long_value]
 
     @classmethod
-    def hash_quadrant(cls, lat, long):
-        qs = cls.calc_quadrant(lat, long)
+    def make_hash(cls, lat, long):
+        qs = cls.calc(lat, long)
         return ','.join([str(qs[0]), str(qs[1])])
 
     @classmethod
-    def get_quadrant(cls, lat, long):
-        quadrant_id = cls.hash_quadrant(lat, long)
+    def get(cls, lat, long):
+        quadrant_id = cls.make_hash(lat, long)
         return cls.query.get(quadrant_id)
 
 
