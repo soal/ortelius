@@ -1,4 +1,5 @@
 import sqlalchemy
+import datetime
 from ortelius import db
 
 
@@ -17,9 +18,11 @@ class Date(db.Model):
 
     @classmethod
     def create(cls, date=None):
-        """Create or get date if it already exist. Date should be datetime.date object"""
+        """Create or get date if it already exist. Date should be instance of datetime.date"""
         if not date:
             raise sqlalchemy.exc.ArgumentError('Fields required: date')
+        if not isinstance(date, datetime.date):
+             raise sqlalchemy.exc.ArgumentError('Date must be instance of datetime.date')
 
         year = Year.query.get(date.year)
         new_date = cls(date=date, year=year)
