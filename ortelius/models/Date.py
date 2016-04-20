@@ -19,7 +19,7 @@ class Date(db.Model):
     def create(cls, date=None):
         """Create or get date if it already exist. Date should be datetime.date object"""
         if not date:
-            raise Exception('Fields required: date')
+            raise sqlalchemy.exc.ArgumentError('Fields required: date')
 
         year = Year.query.get(date.year)
         new_date = cls(date=date, year=year)
@@ -30,8 +30,6 @@ class Date(db.Model):
             db.session.rollback()
         finally:
             return cls.query.filter_by(date=date).first()
-
-    # hist_regions is declared in HistRegion class via backref
 
 
 class Year(db.Model):
