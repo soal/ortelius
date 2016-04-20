@@ -109,12 +109,10 @@ def create_years():
         for j in range(0, 10):
             centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
             cent = Century(number=centNumber, millenium=mil)
-            # print('Create century: ' + str(centNumber))
             db.session.add(cent)
             for k in range(0, 100):
                 yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
                 year = Year(number=yearNumber, century=cent)
-                # print('Create year: ' + str(yearNumber))
                 db.session.add(year)
 
     db.session.commit()
