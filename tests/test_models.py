@@ -7,8 +7,6 @@ from ortelius.models.Date import Date
 
 
 class TestDate(unittest.TestCase):
-    # def __init__(self):
-    #     super(DateTest, self).__init__()
 
     def test_valid_data_creation(self):
         self.assertIsInstance(Date.create(datetime.date.today()), Date)

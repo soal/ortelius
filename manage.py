@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.4
 import unittest
 import coverage
+import os
 
 import sqlalchemy
 from flask.ext.script import Manager, Server
@@ -43,8 +44,10 @@ manager.add_command('db', MigrateCommand)
 @manager.command
 def test():
     """Runs the unit tests without coverage."""
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
-    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    result = unittest.TextTestRunner(verbosity=3).run(tests)
     if result.wasSuccessful():
         return 0
     else:
@@ -54,6 +57,8 @@ def test():
 @manager.command
 def cov():
     """Runs the unit tests with coverage."""
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():

@@ -33,6 +33,7 @@ class BaseConfig(object):
     MAIL_DEBUG = DEBUG
     MAIL_USERNAME = None
     MAIL_PASSWORD = None
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
     DEFAULT_MAIL_SENDER = "example@ortelius.com"
 
     DEBUG_TB_INTERCEPT_REDIRECTS = False
@@ -46,9 +47,10 @@ class DevelopmentConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
 
 
-class TestingCOnfig(BaseConfig):
+class TestingConfig(BaseConfig):
     TESTING = True
     CSRF_ENABLED = False
+
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
     SQLALCHEMY_ECHO = False
 
