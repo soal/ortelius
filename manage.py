@@ -1,9 +1,8 @@
 #!/usr/bin/env python3.4
 import unittest
 import coverage
-import datetime
-import math
 
+import sqlalchemy
 from flask.ext.script import Manager, Server
 from flask_failsafe import failsafe
 from flask.ext.migrate import Migrate, MigrateCommand
@@ -15,6 +14,7 @@ from ortelius.models.Fact import *
 from ortelius.models.Hist_region import *
 from ortelius.models.User import *
 
+from test_data.test_facts import test_facts
 
 COV = coverage.coverage(
     branch=True,
@@ -94,32 +94,75 @@ def create_admin():
     db.session.add(admin_user_role)
     db.session.commit()
 
-
+@manager.command
 def create_years():
     # Create millenimus, centuries and years from -5000 to 2999
     for i in (-5, -4, -3, -2, -1, 1, 2, 3):
+        print('Create millenium: ' + str(i))
         mil = Millenium(number=i)
-        # print('Create millenium: ' + str(i))
         db.session.add(mil)
         for j in range(0, 10):
             centNumber = j+(i*10) if i < 0 else j + 1 + ((i-1)*10)
-            cent = Century(number=centNumber, millenium=mil, millenium_number=i)
+            cent = Century(number=centNumber, millenium=mil)
             # print('Create century: ' + str(centNumber))
             db.session.add(cent)
             for k in range(0, 100):
                 yearNumber = k+(centNumber*100) - 1 if i < 0 else k + ((centNumber-1)*100)
-                year = Year(yearNumber, century=cent, century_number=centNumber)
+                year = Year(number=yearNumber, century=cent)
                 # print('Create year: ' + str(yearNumber))
                 db.session.add(year)
 
     db.session.commit()
 
+@manager.command
+def create_fact_types():
+    f_types = [
+                ['battle', 'сражение'],
+                ['peace treaty', 'мирный договор']
+              ]
+
+    for t in f_types:
+        new_type = FactType(name=t[0], label=t[1])
+        db.session.add(new_type)
+        try:
+            db.session.commit()
+        except sqlalchemy.exc.IntegrityError as e:
+            print(e)
+            print("INFO: Cannot create row: key already exist")
+            db.session.rollback()
+
+@manager.command
+def create_facts():
+    create_fact_types()
+    for f in test_facts:
+        Quadrant.make_list()
+        if f['coordinates']:
+            dot = Coordinates(lat=f['coordinates'][0],
+                              long=f['coordinates'][1],
+                              quadrant_hash=Quadrant.make_hash(lat=f['coordinates'][0], long=f['coordinates'][1]))
+            db.session.add(dot)
+            new_shape = Shape(coordinates=[dot])
+            db.session.add(new_shape)
+        new_fact = Fact(name = f['name'],
+                    label=f['label'],
+                    description=f['description'],
+                    info=f['info'],
+                    weight=f['weight'],
+                    type_id=FactType.query.filter_by(name=f['type'][0]).all()[0].id,
+                    start_date=f['start_date'],
+                    end_date=f['end_date'],
+                    text=f['text'],
+                    shape=new_shape
+                   )
+        db.session.add(new_fact)
+    db.session.commit()
+
 
 @manager.command
 def create_quadrants():
-    Quadrant.make_quadrants()
+    Quadrant.make_list()
     for q in Quadrant.quadrants:
-        quadrant = Quadrant(hash=Quadrant.hash_quadrant(q[0], q[1]))
+        quadrant = Quadrant(hash=Quadrant.make_hash(q[0], q[1]))
         db.session.add(quadrant)
     db.session.commit()
 
