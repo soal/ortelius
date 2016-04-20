@@ -2,8 +2,8 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask.ext.cors import CORS
-
 from flask.ext.via import Via
+
 
 app = Flask(__name__)
 try:
@@ -23,5 +23,3 @@ db = SQLAlchemy(app)
 via = Via()
 
 via.init_app(app, route_module='ortelius.routes')
-
-# from handymap.server.models import User
