@@ -142,7 +142,7 @@ def create_facts():
         if f['coordinates']:
             dot = Coordinates(lat=f['coordinates'][0],
                               long=f['coordinates'][1],
-                              quadrant_hash=Quadrant.make_hash(lat=f['coordinates'][0], long=f['coordinates'][1]))
+                              quadrant_hash=Quadrant.make_hash(f['coordinates'][0], f['coordinates'][1]))
             db.session.add(dot)
             new_shape = Shape(coordinates=[dot])
             db.session.add(new_shape)
@@ -160,6 +160,13 @@ def create_facts():
         db.session.add(new_fact)
     db.session.commit()
 
+@manager.command
+def create_shape():
+    Quadrant.make_list()
+    point = Coordinates.create(66.80, -90.5)
+    sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
+    db.session.add(sh)
+    db.session.commit()
 
 @manager.command
 def create_quadrants():

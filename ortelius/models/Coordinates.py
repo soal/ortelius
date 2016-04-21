@@ -28,7 +28,7 @@ class Coordinates(db.Model):
     # shapes is declared in Shape class via backref
 
     @classmethod
-    def create(cls, lat=None, long=None, quadrant=None):
+    def create(cls, lat, long, quadrant=None):
         """
             Create or get coordinates if it's already exist.
             Coordinates.create(lat=[lattitude:float|int], long=[longitude:float|int], [quadrant=[Quadrant]])
@@ -39,6 +39,10 @@ class Coordinates(db.Model):
 
         if not quadrant:
             quadrant = Quadrant.get(lat, long)
+
+            if not quadrant:
+                raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
+
 
         point = cls.query.filter(Coordinates.lat == lat, Coordinates.long == long).first()
 
@@ -82,6 +86,7 @@ class Quadrant(db.Model):
     hash = db.Column(db.String(9), primary_key=True, autoincrement=False)
     # coordinates is declared in Coordinates class via backref
 
+    # FIXME: Quadrant.quadrants must me static field created with list generator
     @classmethod
     def make_list(cls):
         qts = []
