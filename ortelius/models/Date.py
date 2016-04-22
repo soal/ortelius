@@ -18,22 +18,21 @@ class Date(db.Model):
 
     @classmethod
     def create(cls, date=None):
-        """Create or get date if it's already exist. Date should be instance of datetime.date"""
+        """Create or get date if it's already exist. Date should be instance of datetime.datetime"""
 
         if not date:
             raise sqlalchemy.exc.ArgumentError('Fields required: date')
         if not isinstance(date, datetime.date):
              raise sqlalchemy.exc.ArgumentError('Date must be instance of datetime.date')
 
-        year = Year.query.get(date.year)
-        new_date = cls(date=date, year=year)
-        db.session.add(new_date)
-        try:
-            db.session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            db.session.rollback()
-        finally:
-            return cls.query.filter_by(date=date).first()
+
+        new_date = cls.query.filter_by(date=date).first()
+        if not new_date:
+            year = Year.query.get(date.year)
+            new_date = cls(date=date, year=year)
+            db.session.add(new_date)
+
+        return new_date
 
 
 class Year(db.Model):

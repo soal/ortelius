@@ -42,7 +42,7 @@ class Fact(db.Model):
     start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     start_date = db.relationship('Date', backref=db.backref('facts_starts', lazy='dynamic'), foreign_keys=start_date_id)
     end_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    end_date = db.relationship('Date', backref=db.backref('facts_ends', lazy='dynamic'), foreign_keys=start_date_id)
+    end_date = db.relationship('Date', backref=db.backref('facts_ends', lazy='dynamic'), foreign_keys=end_date_id)
     shape_id = db.Column(db.Integer, db.ForeignKey('shape.id'), nullable=True)
     shape = db.relationship('Shape', backref=db.backref('fact', uselist=False), uselist=False)
     type_name = db.Column(db.String, db.ForeignKey('fact_type.name'), nullable=True)
@@ -72,15 +72,13 @@ class FactType(db.Model):
     facts = db.relationship('Fact', backref=db.backref('type', uselist=False), lazy='dynamic')
 
     @classmethod
-    def create(cls, **kwargs):
-        new_type = cls(**kwargs)
-        db.session.add(new_type)
-        try:
-            db.session.commit()
-        except sqlalchemy.exc.IntegrityError:
-            db.session.rollback()
-        finally:
-            return cls.query.get('name')
+    def create(cls, name=None, label=None):
+        new_type = cls.query.get(name)
+        if not new_type:
+            new_type = cls(name=name, label=label)
+            db.session.add(new_type)
+
+        return new_type
 
     def __repr__(self):
         return '<Fact type %r, shows as %r>' % (self.name, self.label)
