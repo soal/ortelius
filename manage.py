@@ -99,7 +99,6 @@ def create_admin():
     db.session.add(admin_user_role)
     db.session.commit()
 
-@manager.command
 def create_years():
     # Create millenimus, centuries and years from -5000 to 2999
     for i in (-5, -4, -3, -2, -1, 1, 2, 3):
@@ -117,7 +116,6 @@ def create_years():
 
     db.session.commit()
 
-@manager.command
 def create_fact_types():
     f_types = [
                 ['battle', 'сражение'],
@@ -129,46 +127,43 @@ def create_fact_types():
         db.session.add(new_type)
         try:
             db.session.commit()
-        except sqlalchemy.exc.IntegrityError as e:
-            print(e)
-            print("INFO: Cannot create row: key already exist")
+        except sqlalchemy.exc.IntegrityError:
             db.session.rollback()
 
 @manager.command
 def create_facts():
-    create_fact_types()
+    Quadrant.make_list()
     for f in test_facts:
-        Quadrant.make_list()
+        new_start_date = Date.create(date=datetime.datetime.strptime(f['start_date'], '%d-%m-%Y'))
+        new_end_date = Date.create(date=datetime.datetime.strptime(f['end_date'], '%d-%m-%Y'))
         if f['coordinates']:
-            dot = Coordinates(lat=f['coordinates'][0],
-                              long=f['coordinates'][1],
-                              quadrant_hash=Quadrant.make_hash(f['coordinates'][0], f['coordinates'][1]))
-            db.session.add(dot)
-            new_shape = Shape(coordinates=[dot])
-            db.session.add(new_shape)
-        new_fact = Fact(name = f['name'],
-                    label=f['label'],
-                    description=f['description'],
-                    info=f['info'],
-                    weight=f['weight'],
-                    type_id=FactType.query.filter_by(name=f['type'][0]).all()[0].id,
-                    start_date=f['start_date'],
-                    end_date=f['end_date'],
-                    text=f['text'],
-                    shape=new_shape
-                   )
-        db.session.add(new_fact)
-    db.session.commit()
+            point = Coordinates.create(f['coordinates'][0], f['coordinates'][1])
+            db.session.add(point)
 
-@manager.command
+            new_shape = Shape(start_date=new_start_date, end_date=new_end_date, coordinates=[point])
+            db.session.add(new_shape)
+
+        new_fact = Fact(name = f['name'],
+                        label=f['label'],
+                        description=f['description'],
+                        info=f['info'],
+                        weight=f['weight'],
+                        type=FactType.create(name=f['type'][0], label=f['type'][1]),
+                        start_date=new_start_date,
+                        end_date=new_end_date,
+                        text=f['text'],
+                        shape=new_shape
+                       )
+        db.session.add(new_fact)
+        db.session.commit()
+
 def create_shape():
     Quadrant.make_list()
-    point = Coordinates.create(66.80, -90.5)
+    point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
     db.session.add(sh)
     db.session.commit()
 
-@manager.command
 def create_quadrants():
     Quadrant.make_list()
     for q in Quadrant.quadrants:
