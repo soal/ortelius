@@ -1,6 +1,7 @@
-from flask.views import View, MethodView
+from flask.views import MethodView
 from ortelius.models.Fact import Fact
 from flask import request, abort, jsonify, render_template_string
+from ortelius.middleware import serialize
 
 '''
     Get facts with optional search params.
@@ -21,24 +22,25 @@ from flask import request, abort, jsonify, render_template_string
 
 
 class FactsView(MethodView):
+    """Facts view"""
+
     def get(self, id=None):
-        query = Fact.query
-        if id is None:
-            get_params = request.args.to_dict()
-            if get_aprams:
-                if 'topleft' and 'bottomright' in query.keys():
-                    pass
-                if 'from' in query.keys():
-                    query = query.filter(Fact.start_date_year <= get_params['from'])
-                if 'to' in query.keys():
-                    query = query.filter(Fact.start_date_year >= get_params['to'])
-                facts = query.all()
-                raise
-            else:
-                facts = query.all()
-            return jsonify(get_params)
-        else:
-            return query.get(id)
+        if id:
+            fact = Fact.query.get(id)
+            if not fact:
+                return jsonify(abort(404))
+            result = serialize(Fact.query.get(id))
+
+            result['start_date'] = fact.start_date.date.strftime('%d-%m-%Y')
+            result['end_date'] = fact.end_date.date.strftime('%d-%m-%Y')
+            result['type'] = { 'name': fact.type.name,   'label': fact.type.label }
+            result['shape'] = result['shape_id']
+            result.pop('start_date_id')
+            result.pop('end_date_id')
+            result.pop('shape_id')
+            result.pop('type_name')
+            return jsonify(result)
+
 
     def post(self):
         raise NotImplementedError()
