@@ -18,7 +18,8 @@ class Date(db.Model):
 
     @classmethod
     def create(cls, date=None):
-        """Create or get date if it already exist. Date should be instance of datetime.date"""
+        """Create or get date if it's already exist. Date should be instance of datetime.date"""
+
         if not date:
             raise sqlalchemy.exc.ArgumentError('Fields required: date')
         if not isinstance(date, datetime.date):

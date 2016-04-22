@@ -64,6 +64,11 @@ class TestQuadrant(unittest.TestCase):
         self.assertIsInstance(Quadrant.get(lat, long), Quadrant)
         self.assertEqual(Quadrant.get(lat, long).hash, '92,-52')
 
+
+class TestFact(unittest.TestCase):
+    # TODO: fact testing
+    pass
+
 # TODO: create tests for Coordinates model
 
 # TODO: create tests for User model

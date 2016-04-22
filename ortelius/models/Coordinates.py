@@ -30,9 +30,9 @@ class Coordinates(db.Model):
     @classmethod
     def create(cls, lat, long, quadrant=None):
         """
-            Create or get coordinates if it's already exist.
-            Coordinates.create(lat=[lattitude:float|int], long=[longitude:float|int], [quadrant=[Quadrant]])
-            lat and long should be floats or ints, optional arg quadrant instance of Quadrant class
+        Create or get coordinates if it's already exist.
+        Coordinates.create(lat=[lattitude:float|int], long=[longitude:float|int], [quadrant=[Quadrant]])
+        lat and long should be floats or ints, optional arg quadrant instance of Quadrant class
         """
         if not lat or not long:
             raise sqlalchemy.exc.ArgumentError('Fields required: lat, long')
@@ -43,9 +43,7 @@ class Coordinates(db.Model):
             if not quadrant:
                 raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
 
-
         point = cls.query.filter(Coordinates.lat == lat, Coordinates.long == long).first()
-
         if point:
             return point
 
