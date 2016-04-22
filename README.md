@@ -14,7 +14,7 @@ Data server and API for handymap
 * Flask-User
 * Flask-Via
 * Coverage python module
-* PostgreSQL
+* PostgreSQL 9.4
 
 ###Setting up
 ####Installing dependencies on Fedora Linux
