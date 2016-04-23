@@ -84,17 +84,7 @@ class Quadrant(db.Model):
     hash = db.Column(db.String(9), primary_key=True, autoincrement=False)
     # coordinates is declared in Coordinates class via backref
 
-    # FIXME: Quadrant.quadrants must me static field created with list generator
-    @classmethod
-    def make_list(cls):
-        qts = []
-        for x in range(-180, 180, 4):
-            for y in range(-180, 180, 4):
-                qts.append([x, y])
-
-        cls.quadrants = qts
-
-    quadrants = []
+    quadrants = [(x, y) for y in range(-180, 180, 4) for x in range(-180, 180, 4)]
 
     @classmethod
     def calc(cls, lat, long):
