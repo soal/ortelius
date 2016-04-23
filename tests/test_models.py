@@ -23,7 +23,6 @@ class TestCoordinates(unittest.TestCase):
 
     def test_valid_coordinates_creation(self):
         """Creating coordinates with valid args"""
-        Quadrant.make_list()
         self.assertIsInstance(Coordinates.create(90, -78.45678), Coordinates)
 
     def test_invalid_coordinates_creation(self):
@@ -35,7 +34,6 @@ class TestQuadrant(unittest.TestCase):
 
     def test_make_list(self):
         """Creating list of quadrant coordinates and store it in Quadrant class"""
-        Quadrant.make_list()
         self.assertIsInstance(Quadrant.quadrants, list)
         self.assertGreater(len(Quadrant.quadrants), 0)
 
@@ -44,7 +42,6 @@ class TestQuadrant(unittest.TestCase):
         lat = -96
         long= 65.2334
         expectedList = [-96, 64]
-        Quadrant.make_list()
         self.assertEqual(Quadrant.calc(lat, long), expectedList)
 
 
@@ -53,7 +50,6 @@ class TestQuadrant(unittest.TestCase):
         lat = 89.90
         long = -50.1
         expectedHash = '92,-52'
-        Quadrant.make_list()
         self.assertEqual(Quadrant.make_hash(lat, long), expectedHash)
 
 

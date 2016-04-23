@@ -132,7 +132,6 @@ def create_fact_types():
 
 @manager.command
 def create_facts():
-    Quadrant.make_list()
     for f in test_facts:
         new_start_date = Date.create(date=datetime.datetime.strptime(f['start_date'], '%d-%m-%Y'))
         new_end_date = Date.create(date=datetime.datetime.strptime(f['end_date'], '%d-%m-%Y'))
@@ -158,14 +157,12 @@ def create_facts():
         db.session.commit()
 
 def create_shape():
-    Quadrant.make_list()
     point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
     db.session.add(sh)
     db.session.commit()
 
 def create_quadrants():
-    Quadrant.make_list()
     for q in Quadrant.quadrants:
         quadrant = Quadrant(hash=Quadrant.make_hash(q[0], q[1]))
         db.session.add(quadrant)
