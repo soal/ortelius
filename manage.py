@@ -15,7 +15,7 @@ from ortelius.models.Fact import *
 from ortelius.models.Hist_region import *
 from ortelius.models.User import *
 
-from test_data.test_facts import test_facts
+from test_data.test_facts import test_facts, test_hist_regions
 
 COV = coverage.coverage(
     branch=True,
@@ -130,7 +130,6 @@ def create_fact_types():
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback()
 
-@manager.command
 def create_facts():
     for f in test_facts:
         new_start_date = Date.create(date=datetime.datetime.strptime(f['start_date'], '%d-%m-%Y'))
@@ -156,6 +155,41 @@ def create_facts():
         db.session.add(new_fact)
         db.session.commit()
 
+@manager.command
+def create_hist_regions():
+    for region in test_hist_regions:
+        region_facts = []
+        region_shapes = []
+        start_date = None
+        end_date = None
+        if region['start_date'] != None:
+            start_date = Date.create(date=datetime.datetime.strptime(region['start_date'], '%d-%m-%Y'))
+
+        if region['end_date'] != None:
+            end_date = Date.create(date=datetime.datetime.strptime(region['end_date'], '%d-%m-%Y'))
+
+        if region['facts']:
+            for fact in region['facts']:
+                region_facts.append(Fact.query.get(fact))
+
+        if region['shapes']:
+            for shape in region['shapes']:
+                region_shapes.append(Shape.query.get(shape))
+
+        hr = HistRegion(name=region['name'],
+                        label=region['label'],
+                        description=region['description'],
+                        text=region['text'],
+                        start_date=start_date,
+                        end_date=end_date,
+                        shapes=region_shapes,
+                        facts=region_facts
+                        )
+        db.session.add(hr)
+    db.session.commit()
+
+
+@manager.command
 def create_shape():
     point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
@@ -175,6 +209,7 @@ def create_initial_data():
     create_admin()
     create_years()
     create_quadrants()
+    create_facts()
 
 if __name__ == '__main__':
     manager.run()

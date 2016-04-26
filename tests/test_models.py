@@ -32,11 +32,6 @@ class TestCoordinates(unittest.TestCase):
 
 class TestQuadrant(unittest.TestCase):
 
-    def test_make_list(self):
-        """Creating list of quadrant coordinates and store it in Quadrant class"""
-        self.assertIsInstance(Quadrant.quadrants, list)
-        self.assertGreater(len(Quadrant.quadrants), 0)
-
     def test_calc(self):
         """Calculate quadrant for given coordinates"""
         lat = -96

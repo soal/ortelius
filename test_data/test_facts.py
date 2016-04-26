@@ -415,3 +415,42 @@ test_facts = [
         'type': ['peace_treaty', 'мирный договор']
     }
 ]
+
+test_hist_regions = [
+    {
+        'name': 'russian_state',
+        'label': 'Российское государство',
+        'description': 'Российское государство в XV-XVII веке, от Ивана III до Петра I',
+        'start_date': '1-1-1480',
+        'end_date': '2-11-1721',
+        'text': '',
+        'shapes': [],
+        'facts': [1,2]
+    },
+    {
+        'name': 'russian_empire',
+        'label': 'Российская империя',
+        'description': 'Российская имерия от Петра I до Февральской революции 1917г.',
+        'start_date': '2-11-1721',
+        'end_date': '27-2-1917',
+        'text': '',
+        'shapes': [],
+        'facts': [2]
+
+    },
+    {
+        'name': 'sweden_kingdom',
+        'label': 'Королевство Швеция',
+        'description': 'Королевство Швеция',
+        'text': '',
+        'start_date': '01-01-0900',
+        'end_date': None,
+        'shapes': [],
+        'facts': [1,2]
+    }
+]
+
+test_hist_places = [
+    {
+    }
+]
