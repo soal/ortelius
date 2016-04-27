@@ -38,7 +38,6 @@ class Fact(db.Model):
     description = db.Column(db.UnicodeText, server_default='No description')
     info = db.Column(db.UnicodeText, server_default='No info')
     weight = db.Column(db.Integer, nullable=False, server_default='5')  # NOTE: May be enum type? May be separate table?
-    # NOTE: We need to reorganize dates handling
     start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     start_date = db.relationship('Date', backref=db.backref('facts_starts', lazy='dynamic'), foreign_keys=start_date_id)
     end_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
@@ -48,12 +47,7 @@ class Fact(db.Model):
     type_name = db.Column(db.String, db.ForeignKey('fact_type.name'), nullable=True)
     text = db.Column(db.UnicodeText, server_default='No text')
     trusted = db.Column(db.Boolean)
-    # hist_regions is declared in HistRegion model via backref
-    # hist_places is declared in HistPlace model via backref
-    # processes is declared in Process model via backref
-    # personas is declared in Persona model via backref
-    # georegions is declared in Georegion model via backref
-
+    
 
     def __repr__(self):
         return '<Fact %s, shows as %s>' % (self.name, self.label)
@@ -82,4 +76,3 @@ class FactType(db.Model):
 
     def __repr__(self):
         return '<Fact type %r, shows as %r>' % (self.name, self.label)
-

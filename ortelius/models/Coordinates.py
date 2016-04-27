@@ -103,6 +103,3 @@ class Quadrant(db.Model):
     def get(cls, lat, long):
         quadrant_id = cls.make_hash(lat, long)
         return cls.query.get(quadrant_id)
-
-
-

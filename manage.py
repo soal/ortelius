@@ -116,7 +116,7 @@ def create_years():
 
     db.session.commit()
 
-# TODO: Move to tests
+# FIXME:0 Move to tests
 def create_fact_types():
     f_types = [
                 ['battle', 'сражение'],
@@ -131,7 +131,7 @@ def create_fact_types():
         except sqlalchemy.exc.IntegrityError:
             db.session.rollback()
 
-# TODO: Move to tests
+# FIXME:10 Move to tests
 def create_facts():
     for f in test_facts:
         new_start_date = Date.create(date=datetime.datetime.strptime(f['start_date'], '%d-%m-%Y'))
@@ -157,7 +157,7 @@ def create_facts():
         db.session.add(new_fact)
         db.session.commit()
 
-# TODO: Move to tests
+# FIXME:30 Move to tests
 def create_hist_regions():
     for region in test_hist_regions:
         region_facts = []
@@ -192,7 +192,7 @@ def create_hist_regions():
 
 
 @manager.command
-# TODO: Move to tests
+# FIXME:20 Move to tests
 def create_shape():
     point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
