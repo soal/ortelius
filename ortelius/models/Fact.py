@@ -30,7 +30,7 @@ class Fact(db.Model):
         self.shape = shape
         self.start_date = start_date
         self.end_date = end_date
-        self.trusted = False
+        self.trusted = trusted
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255), nullable=False, unique=True)
