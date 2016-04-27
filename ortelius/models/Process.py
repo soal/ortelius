@@ -25,8 +25,36 @@ class Process(db.Model):
     """Process model"""
     __tablename__ = 'process'
 
-    def __init__(self):
-        pass
+    def __init__(self,
+                 name = None,
+                 label = None,
+                 description = None,
+                 start_date_id = None,
+                 start_date = None,
+                 end_date_id = None,
+                 end_date = None,
+                 shapes = None,
+                 text = None,
+                 type_name = None,
+                 facts = None,
+                 hist_regions = None,
+                 hist_places = None,
+                 trusted = False
+                ):
+        self.name = name
+        self.label = label
+        self.description = description
+        self.start_date_id = start_date_id
+        self.start_date = start_date
+        self.end_date_id = end_date_id
+        self.end_date = end_date
+        self.shapes = shapes
+        self.text = text
+        self.type_name = type_name
+        self.facts = facts
+        self.hist_regions = hist_regions
+        self.hist_places = hist_places
+        self.trusted = trusted
 
     id            = db.Column(db.Integer, primary_key=True)
     name          = db.Column(db.String(255), nullable=False, unique=True)
@@ -42,6 +70,7 @@ class Process(db.Model):
     facts         = db.relationship('Fact', secondary=processes_facts, backref=db.backref('processes'), lazy='dynamic')
     hist_regions  = db.relationship('HistRegion', secondary=processes_hist_regions, backref=db.backref('processes'), lazy='dynamic')
     hist_places   = db.relationship('HistPlace', secondary=processes_hist_places, backref=db.backref('processes'), lazy='dynamic')
+    trusted       = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Process %r, shows as %r>' % (self.name, self.label)
@@ -51,9 +80,10 @@ class ProcessType(db.Model):
     """ProcessType model"""
     __tablename__ = 'process_type'
 
-    def __init__(self, name=None, label=None):
+    def __init__(self, name=None, label=None, processes=None):
         self.name = name
         self.label = label
+        self.processes = processes
 
     name = db.Column(db.String(120), primary_key=True)
     label = db.Column(db.Unicode(120), nullable=False, unique=True)
