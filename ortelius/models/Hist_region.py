@@ -32,7 +32,8 @@ class HistRegion(db.Model):
                  start_date=None,
                  end_date=None,
                  facts=None,
-                 shapes=None):
+                 shapes=None,
+                 trusted=False):
         self.name        = name
         self.label       = label
         self.description = description
@@ -41,6 +42,7 @@ class HistRegion(db.Model):
         self.end_date    = end_date
         self.facts       = facts
         self.shapes      = shapes
+        self.trusted     = False
 
     id             = db.Column(db.Integer, primary_key=True)
     text           = db.Column(db.UnicodeText, server_default="No text")
@@ -53,6 +55,8 @@ class HistRegion(db.Model):
     end_date       = db.relationship('Date', backref=db.backref('hist_regions_end', lazy='joined'), foreign_keys=end_date_id)
     shapes         = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
     facts          = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
+    next_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
+    next_region    = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id)
 
 
 class HistPlace(db.Model):
