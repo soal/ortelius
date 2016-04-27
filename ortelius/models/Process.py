@@ -1,3 +1,4 @@
+# TODO: TESTS!
 from ortelius import db
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Shape
@@ -29,13 +30,11 @@ class Process(db.Model):
                  name = None,
                  label = None,
                  description = None,
-                 start_date_id = None,
                  start_date = None,
-                 end_date_id = None,
                  end_date = None,
                  shapes = None,
                  text = None,
-                 type_name = None,
+                 type = None,
                  facts = None,
                  hist_regions = None,
                  hist_places = None,
@@ -50,7 +49,7 @@ class Process(db.Model):
         self.end_date = end_date
         self.shapes = shapes
         self.text = text
-        self.type_name = type_name
+        self.type = type
         self.facts = facts
         self.hist_regions = hist_regions
         self.hist_places = hist_places
@@ -100,5 +99,3 @@ class ProcessType(db.Model):
 
     def __repr__(self):
         return '<Process type %r, shows as %r>' % (self.name, self.label)
-
-
