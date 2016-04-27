@@ -1,3 +1,4 @@
+# TODO:10 TESTS!
 from ortelius import db
 from ortelius.models.Coordinates import Shape
 from ortelius.models.Date import Date
@@ -10,6 +11,11 @@ hist_regions_facts = db.Table('hist_regions_facts',
 
 hist_places_facts = db.Table('hist_places_facts',
     db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
+    db.Column('hist_place_id', db.Integer, db.ForeignKey('hist_place.id'))
+)
+
+hist_regions_hist_places = db.Table('hist_regions_hist_places',
+    db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id')),
     db.Column('hist_place_id', db.Integer, db.ForeignKey('hist_place.id'))
 )
 
@@ -44,20 +50,21 @@ class HistRegion(db.Model):
         self.shapes      = shapes
         self.trusted     = False
 
-    id             = db.Column(db.Integer, primary_key=True)
-    text           = db.Column(db.UnicodeText, server_default="No text")
-    name           = db.Column(db.String(255), nullable=False, unique=True)
-    label          = db.Column(db.Unicode(255))
-    description    = db.Column(db.UnicodeText, server_default="No description")
-    start_date_id  = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    start_date     = db.relationship('Date', backref=db.backref('hist_regions_start', lazy='joined'), foreign_keys=start_date_id)
-    end_date_id    = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    end_date       = db.relationship('Date', backref=db.backref('hist_regions_end', lazy='joined'), foreign_keys=end_date_id)
-    shapes         = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
-    facts          = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
-    next_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
-    prev_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
-    next_region    = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
+    id              = db.Column(db.Integer, primary_key=True)
+    text            = db.Column(db.UnicodeText, server_default="No text")
+    name            = db.Column(db.String(255), nullable=False, unique=True)
+    label           = db.Column(db.Unicode(255))
+    description     = db.Column(db.UnicodeText, server_default="No description")
+    start_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
+    start_date      = db.relationship('Date', backref=db.backref('hist_regions_start', lazy='joined'), foreign_keys=start_date_id)
+    end_date_id     = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
+    end_date        = db.relationship('Date', backref=db.backref('hist_regions_end', lazy='joined'), foreign_keys=end_date_id)
+    shapes          = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
+    facts           = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
+    next_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
+    prev_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
+    next_region     = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
+    hist_places     = db.relationship('HistPlace', secondary=hist_regions_hist_places, backref=db.backref('hist_regions'), lazy='dynamic')
 
 
 class HistPlace(db.Model):
