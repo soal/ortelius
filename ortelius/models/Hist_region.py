@@ -56,7 +56,8 @@ class HistRegion(db.Model):
     shapes         = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
     facts          = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
     next_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
-    next_region    = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id)
+    prev_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
+    next_region    = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
 
 
 class HistPlace(db.Model):
