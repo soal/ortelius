@@ -43,9 +43,7 @@ class Process(db.Model):
         self.name = name
         self.label = label
         self.description = description
-        self.start_date_id = start_date_id
         self.start_date = start_date
-        self.end_date_id = end_date_id
         self.end_date = end_date
         self.shapes = shapes
         self.text = text
