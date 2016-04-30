@@ -9,6 +9,7 @@ from flask_failsafe import failsafe
 from flask.ext.migrate import Migrate, MigrateCommand
 
 from ortelius import app, db
+from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Coordinates import *
 from ortelius.models.Date import *
 from ortelius.models.Fact import *
@@ -134,8 +135,8 @@ def create_fact_types():
 # FIXME:10 Move to tests
 def create_facts():
     for f in test_facts:
-        new_start_date = Date.create(date=datetime.datetime.strptime(f['start_date'], '%d-%m-%Y'))
-        new_end_date = Date.create(date=datetime.datetime.strptime(f['end_date'], '%d-%m-%Y'))
+        new_start_date = Date.create(date=hd(f['start_date']))
+        new_end_date = Date.create(date=hd(f['end_date']))
         if f['coordinates']:
             point = Coordinates.create(f['coordinates'][0], f['coordinates'][1])
             db.session.add(point)
@@ -165,10 +166,10 @@ def create_hist_regions():
         start_date = None
         end_date = None
         if region['start_date'] != None:
-            start_date = Date.create(date=datetime.datetime.strptime(region['start_date'], '%d-%m-%Y'))
+            start_date = Date.create(date=hd(region['start_date']))
 
         if region['end_date'] != None:
-            end_date = Date.create(date=datetime.datetime.strptime(region['end_date'], '%d-%m-%Y'))
+            end_date = Date.create(date=hd(region['end_date']))
 
         if region['facts']:
             for fact in region['facts']:
@@ -195,7 +196,7 @@ def create_hist_regions():
 # FIXME:20 Move to tests
 def create_shape():
     point = Coordinates.create(66.82, 10.5)
-    sh = Shape(start_date=Date.create(date=datetime.date.today()), end_date=Date.create(date=datetime.date.today()), coordinates=[point])
+    sh = Shape(start_date=Date.create(date=hd(datetime.date.today())), end_date=Date.create(date=hd(datetime.date.today())), coordinates=[point])
     db.session.add(sh)
     db.session.commit()
 

@@ -1,6 +1,7 @@
 import sqlalchemy
 import datetime
 from ortelius import db
+from ortelius.types.historical_date import HistoricalDate, HDate
 
 
 class Date(db.Model):
@@ -12,7 +13,7 @@ class Date(db.Model):
         self.year = year
 
     id = db.Column(db.Integer, primary_key=True)
-    date = db.Column(db.Date, nullable=False, unique=True)
+    date = db.Column(HDate, nullable=False, unique=True)
     year_number = db.Column(db.Integer, db.ForeignKey('year.number'), nullable=True)
     year = db.relationship('Year', backref=db.backref('dates', uselist=True, lazy='dynamic'))
 
@@ -22,8 +23,8 @@ class Date(db.Model):
 
         if not date:
             raise sqlalchemy.exc.ArgumentError('Fields required: date')
-        if not isinstance(date, datetime.date):
-             raise sqlalchemy.exc.ArgumentError('Date must be instance of datetime.date')
+        if not isinstance(date, HistoricalDate):
+             raise sqlalchemy.exc.ArgumentError('Date must be instance of HistoricalDate')
 
 
         new_date = cls.query.filter_by(date=date).first()
