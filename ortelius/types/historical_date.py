@@ -32,13 +32,11 @@ class HistoricalDate(object):
 
         if isinstance(value, int):
             s_value = str(value)
-            print('IIIIIIIIIIIIIIINNNNNNNNNNNNNNNNNNNT!')
             year = int(s_value[:-4])
             month = int(s_value[-4:-2])
             day = int(s_value[-2:])
 
         elif isinstance(value, str):
-            print('SSSSSSSSSSSSTTTTTTTTTTTTTRRRRRRRRRRRRRR!')
             arr_value = value.split('-')
             if len(arr_value) != 3:
                 raise Exception('Date must be in format: "YYYY-MM-DD"')
@@ -174,6 +172,11 @@ class HistoricalDate(object):
     def to_string(self):
         return '-'.join([str(self.year), str(self.month), str(self.day)])
 
+    def to_julian(self):
+        jd = jdcal.gcal2jd(int(self.year), int(self.month), int(self.day))
+        jcal = jdcal.jd2jcal(jd[0], jd[1])[:-1]
+        return '-'.join([jcal[0], jcal[1], jcal[2]])
+
     def __repr__(self):
         return self.to_string()
 
@@ -188,7 +191,6 @@ class HDate(sqlalchemy.types.TypeDecorator):
         return int(''.join([str(value.year), str(value.month), str(value.day)]))
 
     def process_result_value(self, value, dialect):
-        print(value)
         return HistoricalDate(value)
 
     # def copy(self):
