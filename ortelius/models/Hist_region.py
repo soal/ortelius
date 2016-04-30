@@ -22,9 +22,6 @@ hist_regions_hist_places = db.Table('hist_regions_hist_places',
 Shape.hist_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'))
 Shape.hist_place_id = db.Column(db.Integer, db.ForeignKey('hist_place.id'))
 
-Date.hist_region_id = db.Column(db.Integer, db.ForeignKey('hist_region.id'))
-Date.hist_place_id = db.Column(db.Integer, db.ForeignKey('hist_place.id'))
-
 
 class HistRegion(db.Model):
     """HistRegion model"""
