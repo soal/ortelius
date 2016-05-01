@@ -57,10 +57,10 @@ class TestQuadrant(unittest.TestCase):
 
 
 class TestFact(unittest.TestCase):
-    # TODO: fact testing
+    # TODO:70 fact testing
     pass
 
-# TODO: create tests for Coordinates model
+# TODO:40 create tests for Coordinates model
 
-# TODO: create tests for User model
-# TODO: create tests for Fact model
+# TODO:60 create tests for User model
+# TODO:50 create tests for Fact model

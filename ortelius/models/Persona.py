@@ -43,7 +43,7 @@ class Persona(db.Model):
                  hist_regions = None
                  hist_places = None
                  processes = None
-                 trusted = None
+                 trusted = False
                 ):
         self.name = name
         self.label = label

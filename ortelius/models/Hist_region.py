@@ -45,7 +45,7 @@ class HistRegion(db.Model):
         self.end_date    = end_date
         self.facts       = facts
         self.shapes      = shapes
-        self.trusted     = False
+        self.trusted     = trusted
 
     id              = db.Column(db.Integer, primary_key=True)
     text            = db.Column(db.UnicodeText, server_default="No text")
@@ -62,6 +62,7 @@ class HistRegion(db.Model):
     prev_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
     next_region     = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
     hist_places     = db.relationship('HistPlace', secondary=hist_regions_hist_places, backref=db.backref('hist_regions'), lazy='dynamic')
+    trusted = db.Column(db.Boolean)
 
 
 class HistPlace(db.Model):
@@ -75,7 +76,8 @@ class HistPlace(db.Model):
                  text=None,
                  start_date=None,
                  end_date=None,
-                 facts=None):
+                 facts=None,
+                 trusted=False):
         self.name        = name
         self.label       = label
         self.description = description
@@ -83,6 +85,7 @@ class HistPlace(db.Model):
         self.start_date  = start_date
         self.end_date    = end_date
         self.facts       = facts
+        self.trusted     = trusted
 
     id            = db.Column(db.Integer, primary_key=True)
     name          = db.Column(db.String(255), nullable=False, unique=True)
@@ -94,3 +97,4 @@ class HistPlace(db.Model):
     end_date      = db.relationship('Date', backref=db.backref('hist_place_end', lazy='joined'), foreign_keys=end_date_id)
     shapes        = db.relationship('Shape', backref=db.backref('hist_place'), lazy='dynamic')
     facts         = db.relationship('Fact', secondary=hist_places_facts, backref=db.backref('hist_places'), lazy='dynamic')
+    trusted       = db.Column(db.Boolean)
