@@ -2,28 +2,34 @@
 import unittest
 import datetime
 import sqlalchemy
+from ortelius import db
+from ortelius.types.historical_date import HistoricalDate as hd
 
+from test_data.test_facts import test_facts, test_hist_regions
+from ortelius.types.historical_date import HistoricalDate
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Coordinates, Quadrant, Shape
+from ortelius.models.Fact import Fact, FactType
+from ortelius.models.Hist_region import HistRegion, HistPlace
 
 
 class TestDate(unittest.TestCase):
-
-    def test_valid_data_creation(self):
+    def test_valid_date_creation(self):
         """Creating date with valid args"""
-        self.assertIsInstance(Date.create(datetime.date.today()), Date)
+        self.assertIsInstance(Date.create(hd(datetime.datetime.today())), Date)
+        self.assertEqual(Date.create(hd(datetime.datetime.today())).date.year, hd(datetime.datetime.today()).year)
 
-    def test_invalid_data_creation(self):
+    def test_invalid_date_creation(self):
         """Creating date with invalid args: no date kwarg and date kwarg is string instead of datetime.date"""
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create)
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create, date='1978')
 
 
 class TestCoordinates(unittest.TestCase):
-
     def test_valid_coordinates_creation(self):
         """Creating coordinates with valid args"""
         self.assertIsInstance(Coordinates.create(90, -78.45678), Coordinates)
+
 
     def test_invalid_coordinates_creation(self):
         """Creating coordinates with invalid args, check for exceptions raising"""
@@ -54,13 +60,3 @@ class TestQuadrant(unittest.TestCase):
         long = -50.1
         self.assertIsInstance(Quadrant.get(lat, long), Quadrant)
         self.assertEqual(Quadrant.get(lat, long).hash, '92,-52')
-
-
-class TestFact(unittest.TestCase):
-    # TODO:70 fact testing
-    pass
-
-# TODO:40 create tests for Coordinates model
-
-# TODO:60 create tests for User model
-# TODO:50 create tests for Fact model
