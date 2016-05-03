@@ -108,6 +108,13 @@ def create_shape():
     create_initial_data.create_shape()
 
 
+
+@manager.command
+def create_processes():
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
+    create_initial_data.create_processes()
+
 @manager.command
 def create_data():
     """Creates initial data."""
@@ -118,6 +125,7 @@ def create_data():
     create_initial_data.create_quadrants()
     create_initial_data.create_facts()
     create_initial_data.create_hist_regions()
+    create_initial_data.create_processes()
 
 if __name__ == '__main__':
     manager.run()

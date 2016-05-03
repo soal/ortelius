@@ -5,10 +5,11 @@ from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Coordinates import Coordinates, Shape, Quadrant
 from ortelius.models.Date import Date, Millenium, Century, Year
 from ortelius.models.Fact import Fact, FactType
+from ortelius.models.Process import Process, ProcessType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.User import User, UsersRoles, Role
 
-from test_data.test_facts import test_facts, test_hist_regions
+from test_data.test_facts import test_facts, test_hist_regions, test_processes
 
 def create_admin():
     """Creates the admin user."""
@@ -121,4 +122,25 @@ def create_quadrants():
     for q in Quadrant.quadrants:
         quadrant = Quadrant(hash=Quadrant.make_hash(q[0], q[1]))
         db.session.add(quadrant)
+    db.session.commit()
+
+def create_processes():
+    for process in test_processes:
+        process_type = ProcessType.create(name=process['type'][0], label=process['type'][1])
+        new_start_date = Date.create(date=hd(process['start_date']))
+        new_end_date = Date.create(date=hd(process['end_date']))
+        p_hist_regions = [ HistRegion.query.get(x) for x in process['hist_regions'] ]
+        p_facts = [ Fact.query.get(x) for x in process['facts'] ]
+        new_process = Process(name=process['name'],
+                              label=process['label'],
+                              description=process['description'],
+                              start_date=new_start_date,
+                              end_date=new_end_date,
+                              text=process['text'],
+                              hist_regions=p_hist_regions,
+                              type=process_type,
+                              facts=p_facts
+                              )
+
+        db.session.add(new_process)
     db.session.commit()
