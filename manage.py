@@ -116,6 +116,12 @@ def create_processes():
     create_initial_data.create_processes()
 
 @manager.command
+def create_personas():
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
+    create_initial_data.create_personas()
+
+@manager.command
 def create_data():
     """Creates initial data."""
     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
@@ -126,6 +132,7 @@ def create_data():
     create_initial_data.create_facts()
     create_initial_data.create_hist_regions()
     create_initial_data.create_processes()
+    create_initial_data.create_personas()
 
 if __name__ == '__main__':
     manager.run()

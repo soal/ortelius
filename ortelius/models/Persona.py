@@ -78,7 +78,7 @@ class PersType(db.Model):
     """PersType model"""
     __tablename__ = 'pers_type'
 
-    def __init__(self, name=None, label = None, personas = None):
+    def __init__(self, name=None, label=None, personas=[]):
         self.name = name
         self.label = label
         self.personas = personas
@@ -86,3 +86,12 @@ class PersType(db.Model):
     name = db.Column(db.String(120), primary_key=True)
     label = db.Column(db.Unicode(120), nullable=False, unique=True)
     personas = db.relationship('Persona', backref=db.backref('type', uselist=False), lazy='dynamic')
+
+    @classmethod
+    def create(cls, name=None, label=None):
+        new_type = cls.query.get(name)
+        if not new_type:
+            new_type = cls(name=name, label=label)
+            db.session.add(new_type)
+
+        return new_type

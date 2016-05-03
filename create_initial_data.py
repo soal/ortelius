@@ -6,6 +6,7 @@ from ortelius.models.Coordinates import Coordinates, Shape, Quadrant
 from ortelius.models.Date import Date, Millenium, Century, Year
 from ortelius.models.Fact import Fact, FactType
 from ortelius.models.Process import Process, ProcessType
+from ortelius.models.Persona import Persona, PersType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.User import User, UsersRoles, Role
 
@@ -129,8 +130,8 @@ def create_quadrants():
 
 def create_processes():
     for process in test_processes:
-        process_type = ProcessType.create(name=process['type'][0], label=process['type'][1])
         new_start_date = Date.create(date=hd(process['start_date']))
+        process_type = ProcessType.create(name=process['type'][0], label=process['type'][1])
         new_end_date = Date.create(date=hd(process['end_date']))
         p_hist_regions = [ HistRegion.query.get(x) for x in process['hist_regions'] ]
         p_facts = [ Fact.query.get(x) for x in process['facts'] ]
@@ -146,4 +147,28 @@ def create_processes():
                               )
 
         db.session.add(new_process)
+    db.session.commit()
+
+def create_personas():
+    for persona in test_personas:
+        new_start_date = Date.create(date=hd(persona['start_date']))
+        new_end_date = Date.create(date=hd(persona['end_date']))
+        p_hist_regions = [ HistRegion.query.get(x) for x in persona['hist_regions'] ]
+        p_facts = [ Fact.query.get(x) for x in persona['facts'] ]
+        p_processes = [ Process.query.get(x) for x in persona['processes'] ]
+        persona_type = PersType.create(name=persona['type'][0], label=persona['type'][1])
+
+        new_persona = Persona(
+            name = persona['name'],
+            label = persona['label'],
+            description = persona['description'],
+            start_date = new_start_date,
+            end_date = new_end_date,
+            text = persona['text'],
+            type = persona_type,
+            facts = p_facts,
+            hist_regions = p_hist_regions,
+            processes = p_processes
+        )
+        db.session.add(new_persona)
     db.session.commit()

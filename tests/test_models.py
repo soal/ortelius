@@ -5,12 +5,12 @@ import sqlalchemy
 from ortelius import db
 from ortelius.types.historical_date import HistoricalDate as hd
 
-from test_data.test_facts import test_facts, test_hist_regions
 from ortelius.types.historical_date import HistoricalDate
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Coordinates, Quadrant, Shape
 from ortelius.models.Fact import Fact, FactType
 from ortelius.models.Process import ProcessType
+from ortelius.models.Persona import PersType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 
 
@@ -70,3 +70,7 @@ class TestFacts(unittest.TestCase):
 class TestProcess(unittest.TestCase):
     def test_process_type_creation(self):
         self.assertEqual(ProcessType.create(name='war', label='война').name, 'war')
+
+class TestPersona(unittest.TestCase):
+    def test_persona_type_creation(self):
+        self.assertEqual(PersType.create(name='ruler', label='правитель').name, 'ruler')
