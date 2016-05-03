@@ -10,6 +10,7 @@ from ortelius.types.historical_date import HistoricalDate
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Coordinates, Quadrant, Shape
 from ortelius.models.Fact import Fact, FactType
+from ortelius.models.Process import ProcessType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 
 
@@ -60,3 +61,12 @@ class TestQuadrant(unittest.TestCase):
         long = -50.1
         self.assertIsInstance(Quadrant.get(lat, long), Quadrant)
         self.assertEqual(Quadrant.get(lat, long).hash, '92,-52')
+
+class TestFacts(unittest.TestCase):
+    def test_fact_type_creation(self):
+        self.assertEqual(FactType.create(name='battle', label='сражение').name, 'battle')
+
+
+class TestProcess(unittest.TestCase):
+    def test_process_type_creation(self):
+        self.assertEqual(ProcessType.create(name='war', label='война').name, 'war')
