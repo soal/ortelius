@@ -8,6 +8,7 @@ class HistoricalDate(object):
 
     __month = 0
     __day = 0
+    __year = 0
 
     @property
     def month(self):
@@ -24,6 +25,14 @@ class HistoricalDate(object):
     @day.setter
     def day(self, value):
         self.__day = value
+
+    @property
+    def year(self):
+        return str(self.__year)
+
+    @year.setter
+    def year(self, value):
+        self.__year = value
 
     def __init__(self, value):
         year = 0
@@ -180,7 +189,7 @@ class HistoricalDate(object):
     def to_julian(self):
         jd = jdcal.gcal2jd(int(self.year), int(self.month), int(self.day))
         jcal = jdcal.jd2jcal(jd[0], jd[1])[:-1]
-        return '-'.join([jcal[0], jcal[1], jcal[2]])
+        return '-'.join([str(jcal[0]), str(jcal[1]), str(jcal[2])])
 
     def __repr__(self):
         return self.to_string()
