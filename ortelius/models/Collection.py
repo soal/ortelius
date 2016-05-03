@@ -33,3 +33,4 @@ class Collection(db.Model):
     facts       = db.relationship('Fact', secondary=collections_facts, lazy='dynamic')
     processes   = db.relationship('Process', secondary=collections_processes, lazy='dynamic')
     personas    = db.relationship('Persona', secondary=collections_personas, lazy='dynamic')
+    
