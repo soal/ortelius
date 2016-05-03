@@ -1,5 +1,5 @@
-from datetime import datetime as dt
 from flask.views import MethodView
+from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
 from flask import request, abort, jsonify, render_template_string
 from ortelius.middleware import serialize
@@ -26,16 +26,11 @@ acceptable_params = {'from': 'start_date',
                      'topleft': None,
                      'bottomright': None,
                      'search': None,
-                     'name': 'none'}
+                     'name': 'name'}
 
-# FIRST_MIL = -5
-# LAST_MIL = 3
-# FIRST_CENT = FIRST_MIL * 10
-# LAST_CENT = LAST_MIL * 10
-# FIRST_YEAR = FIRST_CENT * 100 + 1
-# LAST_YEAR = LAST_CENT * 100 - 1
-# FIRST_DATE = dt.strptime('1-1-0001', '%d-%m-%Y')
-# LAST_DATE = dt.strptime('31-1-2999', '%d-%m-%Y')
+
+# FIRST_DATE = Date.query.first()
+# LAST_DATE = Date.query.last()
 
 
 class FactsView(MethodView):
@@ -60,16 +55,18 @@ class FactsView(MethodView):
 
         else:
             query = Fact.query
-            # args_dict = request.args.to_dict
-            # if args_dict:
-            #     if args_dict['from'] or args_dict['to']:
-            #         if args_dict['from']:
-            #             start_date = args_dict['from']
-            #         else:
-            #             start_date = FIRST
-            #         if args_dict['to']:
-            #             pass
-
+            args_dict = request.args.to_dict
+            if args_dict:
+                pass
+                # if args_dict['from'] or args_dict['to']:
+                #     if args_dict['from']:
+                #         start_date = args_dict['from']
+                #     else:
+                #         start_date = FIRST_DATE
+                #     if args_dict['to']:
+                #         pass
+            else:
+                pass
 
 
 

@@ -1,6 +1,6 @@
 from flask.ext.via.routers.default import Functional, Pluggable
 from flask import send_file, request, abort
-from ortelius.views.FactsView import FactsView
+from ortelius.views.Facts_view import FactsView
 
 
 def processes(id=[]):
