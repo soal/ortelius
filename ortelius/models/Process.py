@@ -73,7 +73,6 @@ class Process(db.Model):
     facts             = db.relationship('Fact', secondary=processes_facts, backref=db.backref('processes'), lazy='dynamic')
     hist_regions      = db.relationship('HistRegion', secondary=processes_hist_regions, backref=db.backref('processes'), lazy='dynamic')
     hist_places       = db.relationship('HistPlace', secondary=processes_hist_places, backref=db.backref('processes'), lazy='dynamic')
-    # parent_id         = db.Column(db.Integer, db.ForeignKey('process.id'), nullable=True)
     subprocesses      = db.relationship('Process',
                                         secondary=processes_subprocesses,
                                         primaryjoin=id==processes_subprocesses.c.parent_id,
