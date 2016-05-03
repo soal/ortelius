@@ -10,7 +10,15 @@ from flask.ext.migrate import Migrate, MigrateCommand
 import create_initial_data
 from ortelius import app, db
 
-from ortelius.models.Coordinates import Quadrant
+from ortelius.models.Collection import *
+from ortelius.models.Coordinates import *
+from ortelius.models.Date import *
+from ortelius.models.Fact import *
+from ortelius.models.Geo_region import *
+from ortelius.models.Hist_region import *
+from ortelius.models.Persona import *
+from ortelius.models.Process import *
+from ortelius.models.User import *
 
 COV = coverage.coverage(
     branch=True,
@@ -77,12 +85,16 @@ def cov():
 @manager.command
 def create_db_schema():
     """Creates the db tables."""
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     db.create_all()
 
 
 @manager.command
 def drop_db_schema():
     """Drops the db tables."""
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     db.drop_all()
 
 
@@ -99,6 +111,8 @@ def create_shape():
 @manager.command
 def create_data():
     """Creates initial data."""
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     create_initial_data.create_admin()
     create_initial_data.create_years()
     create_initial_data.create_quadrants()
