@@ -38,10 +38,10 @@ class Persona(db.Model):
                  end_date = None,
                  text = None,
                  type = None,
-                 facts = None,
-                 hist_regions = None,
-                 hist_places = None,
-                 processes = None,
+                 facts = [],
+                 hist_regions = [],
+                 hist_places = [],
+                 processes = [],
                  trusted = False
                 ):
         self.name = name

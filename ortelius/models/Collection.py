@@ -20,7 +20,7 @@ collections_personas = db.Table('collections_personas',
 class Collection(db.Model):
     """Collection model"""
 
-    def __init__(self, name=None, label=None, facts=None, processes=None, personas=None):
+    def __init__(self, name=None, label=None, facts=[], processes=[], personas=[]):
         self.name = name
         self.label = label
         self.processes = processes

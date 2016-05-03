@@ -36,13 +36,13 @@ class Process(db.Model):
                  description = None,
                  start_date = None,
                  end_date = None,
-                 shapes = None,
+                 shapes = [],
                  text = None,
                  type = None,
-                 facts = None,
-                 hist_regions = None,
-                 hist_places = None,
-                 subprocesses = None,
+                 facts = [],
+                 hist_regions = [],
+                 hist_places = [],
+                 subprocesses = [],
                  trusted = False
                 ):
         self.name = name
@@ -89,7 +89,7 @@ class ProcessType(db.Model):
     """ProcessType model"""
     __tablename__ = 'process_type'
 
-    def __init__(self, name=None, label=None, processes=None):
+    def __init__(self, name=None, label=None, processes=[]):
         self.name = name
         self.label = label
         self.processes = processes

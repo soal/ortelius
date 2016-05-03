@@ -54,7 +54,7 @@ class Shape(db.Model):
     """Shape model"""
     __tablename__ = 'shape'
 
-    def __init__(self, start_date=None, end_date=None, coordinates=None):
+    def __init__(self, start_date=None, end_date=None, coordinates=[]):
         self.start_date = start_date
         self.end_date = end_date
         self.coordinates = coordinates

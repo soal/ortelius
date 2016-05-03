@@ -33,8 +33,8 @@ class HistRegion(db.Model):
                  text=None,
                  start_date=None,
                  end_date=None,
-                 facts=None,
-                 shapes=None,
+                 facts=[],
+                 shapes=[],
                  trusted=False):
         self.name        = name
         self.label       = label

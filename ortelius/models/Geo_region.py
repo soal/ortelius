@@ -39,9 +39,9 @@ class GeoRegion(db.Model):
                  name = None,
                  label = None,
                  shape = None,
-                 facts = None,
-                 parent_regions = None,
-                 child_regions = None
+                 facts = [],
+                 parent_regions = [],
+                 child_regions = []
                 ):
         self.name = name,
         self.label = label,
