@@ -78,7 +78,7 @@ class PersType(db.Model):
     """PersType model"""
     __tablename__ = 'pers_type'
 
-    def __init__(name=None, label = None, personas = None):
+    def __init__(self, name=None, label = None, personas = None):
         self.name = name
         self.label = label
         self.personas = personas
