@@ -37,15 +37,20 @@ class HistoricalDate(object):
             day = int(s_value[-2:])
 
         elif isinstance(value, str):
+            bc = False
+            if value.startswith('-'):
+                value = value[1:]
+                bc = True
+
             arr_value = value.split('-')
             if len(arr_value) != 3:
                 raise Exception('Date must be in format: "YYYY-MM-DD"')
-            year = int(arr_value[0])
+            year = int(arr_value[0]) if not bc else -int(arr_value[0])
             month = int(arr_value[1])
             day = int(arr_value[2])
 
         elif isinstance(value, datetime):
-            year = value.yars
+            year = value.year
             month = value.month
             day = value.day
 
