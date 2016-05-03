@@ -1,4 +1,4 @@
-# TODO: TESTS!
+# TODO:10 TESTS!
 from ortelius import db
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Shape
@@ -61,7 +61,7 @@ class Process(db.Model):
     start_date    = db.relationship('Date', backref=db.backref('processes_starts', lazy='dynamic'), foreign_keys=start_date_id)
     end_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     end_date      = db.relationship('Date', backref=db.backref('processes_ends', lazy='dynamic'), foreign_keys=end_date_id)
-    shapes        = db.relationship('Shape', backref=db.backref('process', lazy='dynamic'))
+    shapes        = db.relationship('Shape', backref=db.backref('process', uselist=False))
     text          = db.Column(db.UnicodeText, server_default='No text')
     type_name     = db.Column(db.String, db.ForeignKey('process_type.name'), nullable=True)
     facts         = db.relationship('Fact', secondary=processes_facts, backref=db.backref('processes'), lazy='dynamic')

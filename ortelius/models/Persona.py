@@ -1,4 +1,4 @@
-# TODO:20 TESTS!
+# TODO:50 TESTS!
 from ortelius import db
 from ortelius.models.Date import Date
 from ortelius.models.Hist_region import HistRegion, HistPlace

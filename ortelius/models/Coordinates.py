@@ -25,7 +25,6 @@ class Coordinates(db.Model):
     long = db.Column(db.Float, nullable=False)
     quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
     quadrant = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
-    # shapes is declared in Shape class via backref
 
     @classmethod
     def create(cls, lat, long, quadrant=None):
