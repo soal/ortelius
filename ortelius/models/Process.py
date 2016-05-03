@@ -19,6 +19,11 @@ processes_hist_places = db.Table('processes_hist_places',
     db.Column('process_id', db.Integer, db.ForeignKey('process.id'))
 )
 
+processes_subprocesses = db.Table('processes_subprocesses',
+    db.Column('parent_id', db.Integer, db.ForeignKey('process.id')),
+    db.Column('child_id', db.Integer, db.ForeignKey('process.id'))
+)
+
 Shape.processes_id = db.Column(db.Integer, db.ForeignKey('process.id'))
 
 class Process(db.Model):
@@ -37,6 +42,7 @@ class Process(db.Model):
                  facts = None,
                  hist_regions = None,
                  hist_places = None,
+                 subprocesses = None,
                  trusted = False
                 ):
         self.name = name
@@ -50,23 +56,31 @@ class Process(db.Model):
         self.facts = facts
         self.hist_regions = hist_regions
         self.hist_places = hist_places
+        self.subprocesses = subprocesses
         self.trusted = trusted
 
-    id            = db.Column(db.Integer, primary_key=True)
-    name          = db.Column(db.String(255), nullable=False, unique=True)
-    label         = db.Column(db.Unicode(255))
-    description   = db.Column(db.UnicodeText, server_default='No description')
-    start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    start_date    = db.relationship('Date', backref=db.backref('processes_starts', lazy='dynamic'), foreign_keys=start_date_id)
-    end_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    end_date      = db.relationship('Date', backref=db.backref('processes_ends', lazy='dynamic'), foreign_keys=end_date_id)
-    shapes        = db.relationship('Shape', backref=db.backref('process', uselist=False))
-    text          = db.Column(db.UnicodeText, server_default='No text')
-    type_name     = db.Column(db.String, db.ForeignKey('process_type.name'), nullable=True)
-    facts         = db.relationship('Fact', secondary=processes_facts, backref=db.backref('processes'), lazy='dynamic')
-    hist_regions  = db.relationship('HistRegion', secondary=processes_hist_regions, backref=db.backref('processes'), lazy='dynamic')
-    hist_places   = db.relationship('HistPlace', secondary=processes_hist_places, backref=db.backref('processes'), lazy='dynamic')
-    trusted       = db.Column(db.Boolean)
+    id                = db.Column(db.Integer, primary_key=True)
+    name              = db.Column(db.String(255), nullable=False, unique=True)
+    label             = db.Column(db.Unicode(255))
+    description       = db.Column(db.UnicodeText, server_default='No description')
+    start_date_id     = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
+    start_date        = db.relationship('Date', backref=db.backref('processes_starts', lazy='dynamic'), foreign_keys=start_date_id)
+    end_date_id       = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
+    end_date          = db.relationship('Date', backref=db.backref('processes_ends', lazy='dynamic'), foreign_keys=end_date_id)
+    shapes            = db.relationship('Shape', backref=db.backref('process', uselist=False))
+    text              = db.Column(db.UnicodeText, server_default='No text')
+    type_name         = db.Column(db.String, db.ForeignKey('process_type.name'), nullable=True)
+    facts             = db.relationship('Fact', secondary=processes_facts, backref=db.backref('processes'), lazy='dynamic')
+    hist_regions      = db.relationship('HistRegion', secondary=processes_hist_regions, backref=db.backref('processes'), lazy='dynamic')
+    hist_places       = db.relationship('HistPlace', secondary=processes_hist_places, backref=db.backref('processes'), lazy='dynamic')
+    # parent_id         = db.Column(db.Integer, db.ForeignKey('process.id'), nullable=True)
+    subprocesses      = db.relationship('Process',
+                                        secondary=processes_subprocesses,
+                                        primaryjoin=id==processes_subprocesses.c.parent_id,
+                                        secondaryjoin=id==processes_subprocesses.c.child_id,
+                                        backref="parent_processes")
+
+    trusted           = db.Column(db.Boolean)
 
     def __repr__(self):
         return '<Process %r, shows as %r>' % (self.name, self.label)

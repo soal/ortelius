@@ -25,6 +25,11 @@ geo_regions_facts = db.Table('geo_regions_facts',
     db.Column('geo_region_id', db.Integer, db.ForeignKey('geo_region.id'))
 )
 
+geo_regions_sub_geo_regions = db.Table('georegions_subgeoregions',
+    db.Column('parent_id', db.Integer, db.ForeignKey('geo_region.id')),
+    db.Column('child_id', db.Integer, db.ForeignKey('geo_region.id'))
+)
+
 
 class GeoRegion(db.Model):
     """GeoRegion model"""
@@ -35,14 +40,14 @@ class GeoRegion(db.Model):
                  label = None,
                  shape = None,
                  facts = None,
-                 parent_region = None,
+                 parent_regions = None,
                  child_regions = None
                 ):
         self.name = name,
         self.label = label,
         self.shape = shape,
         self.facts = facts,
-        self.parent_region = parent_region,
+        self.parent_regions = parent_regions,
         self.child_regions = child_regions
 
     id                  = db.Column(db.Integer, primary_key=True)
@@ -54,8 +59,11 @@ class GeoRegion(db.Model):
     hist_places         = db.relationship('HistPlace', secondary=geo_regions_hist_places, backref=db.backref('geo_regions'), lazy='dynamic')
     processes           = db.relationship('Process', secondary=geo_regions_processes, backref=db.backref('geo_regions'), lazy='dynamic')
     facts               = db.relationship('Fact', secondary=geo_regions_facts, backref=db.backref('geo_regions'), lazy='dynamic')
-    parent_region_id    = db.Column(db.Integer, db.ForeignKey('geo_region.id'), nullable=True)
-    parent_region       = db.relationship('GeoRegion', backref=db.backref('child_regions'))
+    subregions          = db.relationship('GeoRegion',
+                                        secondary=geo_regions_sub_geo_regions,
+                                        primaryjoin=id==geo_regions_sub_geo_regions.c.parent_id,
+                                        secondaryjoin=id==geo_regions_sub_geo_regions.c.child_id,
+                                        backref="parent_regions")
 
     def __repr__(self):
         return '<Geographical region %r, shows as %r>' % (self.name, self.label)

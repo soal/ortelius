@@ -6,23 +6,23 @@ from ortelius.models.Fact import Fact
 
 
 personas_hist_regions = db.Table('personas_hist_regions',
-    db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id'))
-    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id')),
+    db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id')),
+    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id'))
 )
 
-personas_hist_places = = db.Table('personas_hist_places',
-    db.Column('hist_place_id', db.Integer, db.ForeignKey('hist_place.id'))
-    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id')),
+personas_hist_places = db.Table('personas_hist_places',
+    db.Column('hist_place_id', db.Integer, db.ForeignKey('hist_place.id')),
+    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id'))
 )
 
-personas_processes = = db.Table('personas_processes',
-    db.Column('process_id', db.Integer, db.ForeignKey('process.id'))
-    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id')),
+personas_processes = db.Table('personas_processes',
+    db.Column('process_id', db.Integer, db.ForeignKey('process.id')),
+    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id'))
 )
 
-personas_facts = = db.Table('personas_facts',
-    db.Column('fact_id', db.Integer, db.ForeignKey('fact.id'))
-    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id')),
+personas_facts = db.Table('personas_facts',
+    db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
+    db.Column('persona_id', db.Integer, db.ForeignKey('persona.id'))
 )
 
 
@@ -31,17 +31,17 @@ class Persona(db.Model):
     __tablename__ = 'persona'
 
     def __init__(self,
-                 name = None
-                 label = None
-                 description = None
-                 start_date = None
-                 end_date = None
-                 text = None
-                 type = None
-                 facts = None
-                 hist_regions = None
-                 hist_places = None
-                 processes = None
+                 name = None,
+                 label = None,
+                 description = None,
+                 start_date = None,
+                 end_date = None,
+                 text = None,
+                 type = None,
+                 facts = None,
+                 hist_regions = None,
+                 hist_places = None,
+                 processes = None,
                  trusted = False
                 ):
         self.name = name
@@ -67,10 +67,10 @@ class Persona(db.Model):
     end_date      = db.relationship('Date', backref=db.backref('persona_ends', lazy='dynamic'), foreign_keys=end_date_id)
     text          = db.Column(db.UnicodeText, server_default='No text')
     type_name     = db.Column(db.String, db.ForeignKey('pers_type.name'), nullable=True)
-    facts         = db.relationship('Fact', secondary=personas_facts, backref=db.backref('processes'), lazy='dynamic')
-    hist_regions  = db.relationship('HistRegion', secondary=personas_hist_regions, backref=db.backref('processes'), lazy='dynamic')
-    hist_places   = db.relationship('HistPlace', secondary=personas_hist_places, backref=db.backref('processes'), lazy='dynamic')
-    processes     = db.relationship('Process', secondary=personas_processes, backref=db.backref('processes'), lazy='dynamic')
+    facts         = db.relationship('Fact', secondary=personas_facts, backref=db.backref('personas'), lazy='dynamic')
+    hist_regions  = db.relationship('HistRegion', secondary=personas_hist_regions, backref=db.backref('personas'), lazy='dynamic')
+    hist_places   = db.relationship('HistPlace', secondary=personas_hist_places, backref=db.backref('personas'), lazy='dynamic')
+    processes     = db.relationship('Process', secondary=personas_processes, backref=db.backref('personas'), lazy='dynamic')
     trusted       = db.Column(db.Boolean)
 
 
