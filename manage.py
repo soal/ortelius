@@ -57,8 +57,12 @@ def test():
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
     result = unittest.TextTestRunner(verbosity=3).run(tests)
     if result.wasSuccessful():
+        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+        app.config.from_object(os.environ['APP_SETTINGS'])
         return 0
     else:
+        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+        app.config.from_object(os.environ['APP_SETTINGS'])
         return 1
 
 

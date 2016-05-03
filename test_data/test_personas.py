@@ -482,4 +482,3 @@ test_personas = [
         'type': ['ruler', 'правитель']
     }
 ]
-test_personas_types = []

@@ -2,10 +2,9 @@
 import unittest
 import datetime
 import sqlalchemy
-from ortelius import db
+
 from ortelius.types.historical_date import HistoricalDate as hd
 
-from ortelius.types.historical_date import HistoricalDate
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Coordinates, Quadrant, Shape
 from ortelius.models.Fact import Fact, FactType
@@ -21,7 +20,7 @@ class TestDate(unittest.TestCase):
         self.assertEqual(Date.create(hd(datetime.datetime.today())).date.year, hd(datetime.datetime.today()).year)
 
     def test_invalid_date_creation(self):
-        """Creating date with invalid args: no date kwarg and date kwarg is string instead of datetime.date"""
+        """Creating date with invalid args: no date kwarg and date kwarg is string contains only year"""
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create)
         self.assertRaises(sqlalchemy.exc.ArgumentError, callableObj=Date.create, date='1978')
 
@@ -62,6 +61,7 @@ class TestQuadrant(unittest.TestCase):
         self.assertIsInstance(Quadrant.get(lat, long), Quadrant)
         self.assertEqual(Quadrant.get(lat, long).hash, '92,-52')
 
+
 class TestFacts(unittest.TestCase):
     def test_fact_type_creation(self):
         self.assertEqual(FactType.create(name='battle', label='сражение').name, 'battle')
@@ -70,6 +70,7 @@ class TestFacts(unittest.TestCase):
 class TestProcess(unittest.TestCase):
     def test_process_type_creation(self):
         self.assertEqual(ProcessType.create(name='war', label='война').name, 'war')
+
 
 class TestPersona(unittest.TestCase):
     def test_persona_type_creation(self):
