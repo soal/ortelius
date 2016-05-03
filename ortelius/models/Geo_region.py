@@ -1,4 +1,3 @@
-# TODO:0 TESTS!
 from ortelius import db
 from ortelius.models.Fact import Fact
 from ortelius.models.Hist_region import HistRegion, HistPlace

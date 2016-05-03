@@ -1,4 +1,3 @@
-# TODO:10 TESTS!
 from ortelius import db
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Shape
