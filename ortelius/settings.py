@@ -7,6 +7,7 @@ project_name = "ortelius"
 
 class BaseConfig(object):
     '''Base configuration'''
+    API_VERSION = 'v0.1'
     DEBUG = False
     TESTING = False
     USE_X_SENDFILE = False
@@ -43,7 +44,8 @@ class BaseConfig(object):
 
 class DevelopmentConfig(BaseConfig):
     DEBUG = True
-    SQLALCHEMY_ECHO = True
+    # SQLALCHEMY_ECHO = True
+    SQLALCHEMY_ECHO = False
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
 
 
@@ -51,7 +53,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     CSRF_ENABLED = False
 
-    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm_test"
     SQLALCHEMY_ECHO = False
 
 

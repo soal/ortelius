@@ -1,1 +1,1 @@
-# handymap/server/madels
+# ortelius/madels
