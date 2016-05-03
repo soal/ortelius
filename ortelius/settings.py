@@ -53,7 +53,7 @@ class TestingConfig(BaseConfig):
     TESTING = True
     CSRF_ENABLED = False
 
-    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
+    SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm_test"
     SQLALCHEMY_ECHO = False
 
 
