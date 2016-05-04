@@ -38,9 +38,9 @@ class Fact(db.Model):
     info            = db.Column(db.UnicodeText, server_default='No info')
     weight          = db.Column(db.Integer, nullable=False, server_default='5')  # NOTE: May be enum type? May be separate table?
     start_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    start_date      = db.relationship('Date', backref=db.backref('facts_starts', lazy='dynamic'), foreign_keys=start_date_id)
+    start_date      = db.relationship('Date', backref=db.backref('facts_starts', lazy='dynamic'), foreign_keys=start_date_id, lazy='joined')
     end_date_id     = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
-    end_date        = db.relationship('Date', backref=db.backref('facts_ends', lazy='dynamic'), foreign_keys=end_date_id)
+    end_date        = db.relationship('Date', backref=db.backref('facts_ends', lazy='dynamic'), foreign_keys=end_date_id, lazy='joined')
     shape_id        = db.Column(db.Integer, db.ForeignKey('shape.id'), nullable=True)
     shape           = db.relationship('Shape', backref=db.backref('fact', uselist=False), uselist=False)
     type_name       = db.Column(db.String, db.ForeignKey('fact_type.name'), nullable=True)
