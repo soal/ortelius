@@ -1,6 +1,6 @@
 from flask.ext.via.routers.default import Functional, Pluggable
 from flask import send_file, request, abort
-from ortelius.views.Facts_view import FactsView
+from ortelius.views.Facts_view import FactsView, TextView
 
 
 def processes(id=[]):
@@ -54,6 +54,7 @@ def date(dates=[]):
 
 routes = [
     Functional('/dicts', dicts),  # get all dicts for initializing client app
+    Pluggable('/facts/<id>/text', TextView, 'text_view'),
     Pluggable('/facts/<id>', FactsView, 'facts_view'),  # get single fact by id
     Pluggable('/facts', FactsView, 'facts_view'),  # get single fact by id
     Functional('/processes', processes),  # get all processes or subset of processes

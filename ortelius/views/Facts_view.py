@@ -1,5 +1,5 @@
 from json import dumps
-from flask import request, abort, jsonify
+from flask import request, abort, jsonify, render_template_string
 from ortelius.middleware import serialize, convert_wikitext
 from flask.views import MethodView
 
@@ -34,6 +34,7 @@ acceptable_params = {'from': 'start_date',
 
 class FactsView(MethodView):
     """Facts view"""
+    
     def one(self, id):
         fact = Fact.query.get_or_404(id)
         result = serialize(Fact.query.get(id))
@@ -42,8 +43,9 @@ class FactsView(MethodView):
         result['end_date'] = fact.end_date.date.to_string()
         result['type'] = { 'name': fact.type.name, 'label': fact.type.label }
         result['shape'] = result['shape_id']
-        result['description'] = convert_wikitext(result['description'])
-        result['text'] = convert_wikitext(result['text'])
+        # result['description'] = convert_wikitext(result['description'])
+        # result['text'] = convert_wikitext(result['text'])
+        # result.pop('text')
         result.pop('start_date_id')
         result.pop('end_date_id')
         result.pop('shape_id')
@@ -92,7 +94,7 @@ class FactsView(MethodView):
                     serialized.pop('end_date_id')
                     serialized.pop('shape_id')
                     serialized.pop('type_name')
-                    serialized.pop('text')
+                    # serialized.pop('text')
                     serialized_result.append(serialized)
 
                 return dumps(serialized_result)
@@ -109,3 +111,11 @@ class FactsView(MethodView):
 
     def delete(self, id):
         raise NotImplementedError()
+
+class TextView(MethodView):
+    def get(self, id=None):
+        if id:
+            fact = Fact.query.get_or_404(id)
+            return convert_wikitext(fact.text)
+        else:
+            abort(404)
