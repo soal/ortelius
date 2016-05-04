@@ -6,12 +6,11 @@ def serialize(sqlalchemy_obj):
 
 def convert_wikitext(wikitext):
     from smc import mw
-    from lxml import etree
+    from lxml import etree, html
+    from lxml.html import clean
 
-    ast = mw.MediaWiki(wikitext).ast
-    div = etree.Element('div')
-    elements = ast.getchildren()[0].getchildren()[0]
-    for elem in elements:
-        div.append(elem)
+    ast = mw.MediaWiki(wikitext).as_string()
+    cleaner = clean.Cleaner(remove_tags=['html', 'body', 'pre'], remove_unknown_tags=False)
+    cleaned = cleaner.clean_html(html.fromstring(ast))
 
-    return etree.tounicode(div)
+    return etree.tounicode(cleaned)
