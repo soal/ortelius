@@ -1,8 +1,11 @@
+from json import dumps
+from flask import request, abort, jsonify
+from ortelius.middleware import serialize, convert_wikitext
 from flask.views import MethodView
+
+from ortelius.types.historical_date import HistoricalDate as hd, DateError
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
-from flask import request, abort, jsonify, render_template_string
-from ortelius.middleware import serialize
 
 '''
     Get facts with optional search params.
@@ -29,44 +32,72 @@ acceptable_params = {'from': 'start_date',
                      'name': 'name'}
 
 
-# FIRST_DATE = Date.query.first()
-# LAST_DATE = Date.query.last()
-
-
 class FactsView(MethodView):
     """Facts view"""
+    def one(self, id):
+        fact = Fact.query.get_or_404(id)
+        result = serialize(Fact.query.get(id))
+
+        result['start_date'] = fact.start_date.date.to_string()
+        result['end_date'] = fact.end_date.date.to_string()
+        result['type'] = { 'name': fact.type.name, 'label': fact.type.label }
+        result['shape'] = result['shape_id']
+        result['description'] = convert_wikitext(result['description'])
+        result['text'] = convert_wikitext(result['text'])
+        result.pop('start_date_id')
+        result.pop('end_date_id')
+        result.pop('shape_id')
+        result.pop('type_name')
+        return result
+
+    def filtered_by_time(self, query, request):
+        try:
+            start = hd(request.args.to_dict()['from'])
+        except KeyError:
+            start = None
+        try:
+            end = hd(request.args.to_dict()['to'])
+        except KeyError:
+            end = None
+
+        query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
+                             Fact.end_date.has(Date.date <= end.to_int())
+                            )
+        return query
 
     def get(self, id=None):
         if id:
-            fact = Fact.query.get(id)
-            if not fact:
-                return jsonify(abort(404))
-            result = serialize(Fact.query.get(id))
-
-            result['start_date'] = fact.start_date.date.to_string()
-            result['end_date'] = fact.end_date.date.to_string()
-            result['type'] = { 'name': fact.type.name,   'label': fact.type.label }
-            result['shape'] = result['shape_id']
-            result.pop('start_date_id')
-            result.pop('end_date_id')
-            result.pop('shape_id')
-            result.pop('type_name')
-            return jsonify(result)
-
+            res = jsonify(self.one(id))
+            return res
         else:
-            query = Fact.query
-            args_dict = request.args.to_dict
-            if args_dict:
-                pass
-                # if args_dict['from'] or args_dict['to']:
-                #     if args_dict['from']:
-                #         start_date = args_dict['from']
-                #     else:
-                #         start_date = FIRST_DATE
-                #     if args_dict['to']:
-                #         pass
+            if request.args.to_dict():
+                query = Fact.query
+                try:
+                    query = self.filtered_by_time(query, request)
+                except DateError as e:
+                    response = jsonify(e.api_error(400))
+                    response.status_code = 400
+                    return response
+                result = query.all()
+                serialized_result = []
+
+                for fact in result:
+                    serialized = serialize(fact)
+                    serialized['start_date'] = fact.start_date.date.to_string()
+                    serialized['end_date'] = fact.end_date.date.to_string()
+                    serialized['type'] = { 'name': fact.type.name, 'label': fact.type.label }
+                    serialized['shape'] = serialized['shape_id']
+                    serialized['description'] = convert_wikitext(serialized['description'])
+                    serialized.pop('start_date_id')
+                    serialized.pop('end_date_id')
+                    serialized.pop('shape_id')
+                    serialized.pop('type_name')
+                    serialized.pop('text')
+                    serialized_result.append(serialized)
+
+                return dumps(serialized_result)
             else:
-                pass
+                abort(501)
 
 
 
