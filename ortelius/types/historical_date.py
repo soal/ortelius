@@ -232,7 +232,7 @@ class HDate(sqlalchemy.types.TypeDecorator):
         if isinstance(value, int):
             return sqlalchemy.types.Integer()
         elif isinstance(value, HistoricalDate):
-            return HistoricalDate(self.date)
+            return HDate()
         else:
             return self.impl.coerce_compared_value(op, value)
 
