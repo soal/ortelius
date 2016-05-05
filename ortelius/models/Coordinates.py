@@ -89,7 +89,7 @@ class Quadrant(db.Model):
     def calc(cls, lat, long):
         lats = [q[0] for q in cls.quadrants]
         longs = [q[1] for q in cls.quadrants]
-        lat_value = lats[bisect.bisect_left(lats, lat)]  # NOTE: check that bisect_left returns proper position
+        lat_value = lats[bisect.bisect_left(lats, lat) - 1]  # NOTE: check that bisect_left returns proper position
         long_value = longs[bisect.bisect(longs, long) - 1]
         return [lat_value, long_value]
 
