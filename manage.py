@@ -117,7 +117,9 @@ def create_admin():
 def create_shape():
     create_initial_data.create_shape()
 
-
+@manager.command
+def create_facts():
+    create_initial_data.create_facts()
 
 @manager.command
 def create_processes():

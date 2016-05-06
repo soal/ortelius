@@ -202,6 +202,7 @@ class HistoricalDate(object):
         raise NotImplemented()
 
     def to_string(self):
+        # NOTE: It's not really fast
         return '-'.join([str(self.year), str(self.month), str(self.day)])
 
     def to_julian(self):
