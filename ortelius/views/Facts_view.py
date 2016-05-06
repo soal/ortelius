@@ -81,7 +81,7 @@ def filter_by_weight(query, args):
     except KeyError:
         return query
 
-    query = query.filter(Fact.weight >= weight)
+    query = query.filter(Fact.weight <= weight)
     return query
 
 
