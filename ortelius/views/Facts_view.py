@@ -35,7 +35,7 @@ acceptable_params = {'from': 'start_date',
                      'search': None,
                      'name': 'name'}
 
-def filtered_by_time(query, args):
+def filter_by_time(query, args):
     try:
         start = hd(args['from'])
     except KeyError:
@@ -50,7 +50,7 @@ def filtered_by_time(query, args):
                         )
     return query
 
-def filtered_by_geo(query, args):
+def filter_by_geo(query, args):
     try:
         top_left = [float(x) for x in args['topleft'].split(',')]
         bottom_right = [float(x) for x in args['bottomright'].split(',')]
@@ -74,6 +74,16 @@ def filtered_by_geo(query, args):
     query = query.filter(Fact.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
 
     return query
+
+def filter_by_weight(query, args):
+    try:
+        weight = args['weight']
+    except KeyError:
+        return query
+
+    query = query.filter(Fact.weight >= weight)
+    return query
+
 
 class FactsView(MethodView):
     """Facts view"""
@@ -105,7 +115,7 @@ class FactsView(MethodView):
                 query = Fact.query
                 # TIME_START = time.clock()
                 try:
-                    query = filtered_by_time(query, args)
+                    query = filter_by_time(query, args)
                 except DateError as e:
                     response = jsonify(e.api_error(400))
                     response.status_code = 400
@@ -113,7 +123,8 @@ class FactsView(MethodView):
                 # TIME_END = time.clock()
                 # print("TIME: ", TIME_END - TIME_START)
                 # GEO_START = time.clock()
-                query = filtered_by_geo(query, args)
+                query = filter_by_geo(query, args)
+                query = filter_by_weight(query, args)
                 # GEO_END = time.clock()
                 # print("GEO: ", GEO_END - GEO_START)
 
