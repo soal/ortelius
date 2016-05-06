@@ -1,11 +1,15 @@
+# import time
+
+import datetime
 from json import dumps
-from flask import request, abort, jsonify, render_template_string
+from flask import request, abort, jsonify
 from ortelius.middleware import serialize, convert_wikitext
 from flask.views import MethodView
 
 from ortelius.types.historical_date import HistoricalDate as hd, DateError
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
+from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
 
 '''
     Get facts with optional search params.
@@ -31,10 +35,49 @@ acceptable_params = {'from': 'start_date',
                      'search': None,
                      'name': 'name'}
 
+def filtered_by_time(query, args):
+    try:
+        start = hd(args['from'])
+    except KeyError:
+        start = hd(-50000101)
+    try:
+        end = hd(args['to'])
+    except KeyError:
+        end = hd(datetime.datetime.now())
+
+    query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
+                         Fact.end_date.has(Date.date <= end.to_int())
+                        )
+    return query
+
+def filtered_by_geo(query, args):
+    try:
+        top_left = [float(x) for x in args['topleft'].split(',')]
+        bottom_right = [float(x) for x in args['bottomright'].split(',')]
+    except KeyError:
+        return query
+    # CYCLE_START = time.clock()
+    quadrants_coordinates = []
+    for c in Quadrant.quadrants:
+        if c[0] >= top_left[0] - 4 and c[0] <= bottom_right[0] and c[1] >= top_left[1]-4 and c[1] <= bottom_right[1]:
+            quadrants_coordinates.append(','.join([str(c[0]), str(c[1])]))
+
+    # CYCLE_END = time.clock()
+    # print('CYCLE: ', CYCLE_END - CYCLE_START)
+    # GENERATOR_START = time.clock()
+    # quadrants_coordinates = [y for y in filter(lambda x: x[0] >= top_left[0]-4 and x[0] <= bottom_right[0], Quadrant.quadrants)]
+    # quadrants_coordinates = [ ','.join([str(z) for z in y]) for y in filter(lambda x: x[1] >= top_left[1]-4 and x[1] <= bottom_right[1], quadrants_coordinates)]
+    # GENERATOR_END = time.clock()
+    # print('GENERATOR: ', GENERATOR_END - GENERATOR_START)
+
+
+    query = query.filter(Fact.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+
+    return query
 
 class FactsView(MethodView):
     """Facts view"""
-    
+
     def one(self, id):
         fact = Fact.query.get_or_404(id)
         result = serialize(Fact.query.get(id))
@@ -52,35 +95,32 @@ class FactsView(MethodView):
         result.pop('type_name')
         return result
 
-    def filtered_by_time(self, query, request):
-        try:
-            start = hd(request.args.to_dict()['from'])
-        except KeyError:
-            start = None
-        try:
-            end = hd(request.args.to_dict()['to'])
-        except KeyError:
-            end = None
-
-        query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
-                             Fact.end_date.has(Date.date <= end.to_int())
-                            )
-        return query
-
     def get(self, id=None):
         if id:
             res = jsonify(self.one(id))
             return res
         else:
-            if request.args.to_dict():
+            args = request.args.to_dict()
+            if args:
                 query = Fact.query
+                # TIME_START = time.clock()
                 try:
-                    query = self.filtered_by_time(query, request)
+                    query = filtered_by_time(query, args)
                 except DateError as e:
                     response = jsonify(e.api_error(400))
                     response.status_code = 400
                     return response
+                # TIME_END = time.clock()
+                # print("TIME: ", TIME_END - TIME_START)
+                # GEO_START = time.clock()
+                query = filtered_by_geo(query, args)
+                # GEO_END = time.clock()
+                # print("GEO: ", GEO_END - GEO_START)
+
+                # DB_START = time.clock()
                 result = query.all()
+                # DB_END = time.clock()
+                # print("DB: ", DB_END - DB_START)
                 serialized_result = []
 
                 for fact in result:
@@ -89,12 +129,12 @@ class FactsView(MethodView):
                     serialized['end_date'] = fact.end_date.date.to_string()
                     serialized['type'] = { 'name': fact.type.name, 'label': fact.type.label }
                     serialized['shape'] = serialized['shape_id']
-                    serialized['description'] = convert_wikitext(serialized['description'])
+                    serialized['description'] = serialized['description']
                     serialized.pop('start_date_id')
                     serialized.pop('end_date_id')
                     serialized.pop('shape_id')
                     serialized.pop('type_name')
-                    # serialized.pop('text')
+                    serialized.pop('text')
                     serialized_result.append(serialized)
 
                 return dumps(serialized_result)
