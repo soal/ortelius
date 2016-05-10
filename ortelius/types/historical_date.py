@@ -2,14 +2,13 @@ from datetime import datetime
 import sqlalchemy
 import jdcal
 
-class DateError(Exception):
+from ortelius.types.errors import APIError
+
+class DateError(APIError):
     """DateError exception"""
     def __init__(self, message):
-        Exception.__init__(self)
+        APIError.__init__(self)
         self.message = message
-
-    def api_error(self, code):
-        return {'code': code, 'message': self.message }
 
     def __repr__(self):
         return 'DateError: %s' % (self.message)

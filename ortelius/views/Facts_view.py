@@ -1,9 +1,7 @@
 # import time
-
 import datetime
-from json import dumps
 from flask import request, abort, jsonify
-from ortelius.middleware import serialize, convert_wikitext
+from ortelius.middleware import serialize, make_api_response
 from flask.views import MethodView
 
 from ortelius.types.historical_date import HistoricalDate as hd, DateError
@@ -16,8 +14,11 @@ from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
     ?from=12-22-1560 - search facts from this date
     ?to=03-30-1570 - search facts to this date
 
-    ?topleft - coordinates of top left corner of the screen
-    ?bottomright - coordinates bottom right corner of the screen
+    ?topleft=56,78 - coordinates of top left corner of the screen
+    ?bottomright=-22,10 - coordinates bottom right corner of the screen
+
+    ?facts=[1,2,3,4] - list of facts ids to get
+    ?page=1 - facts by page. If page not given and no other params, page = 1
 
     ?search - determinate search
     ?search&name  - search by name
@@ -27,13 +28,14 @@ from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
     http://handymap.com/api/facts/36 - one fact by id
     http://handymap.com/api/facts?from=12-22-1560&to=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
 '''
+#
+# acceptable_params = {'from': 'start_date',
+#                      'to': 'end_date',
+#                      'topleft': None,
+#                      'bottomright': None,
+#                      'search': None,
+#                      'name': 'name'}
 
-acceptable_params = {'from': 'start_date',
-                     'to': 'end_date',
-                     'topleft': None,
-                     'bottomright': None,
-                     'search': None,
-                     'name': 'name'}
 
 def filter_by_time(query, args):
     try:
@@ -47,8 +49,9 @@ def filter_by_time(query, args):
 
     query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
                          Fact.end_date.has(Date.date <= end.to_int())
-                        )
+                         )
     return query
+
 
 def filter_by_geo(query, args):
     try:
@@ -69,11 +72,9 @@ def filter_by_geo(query, args):
     # quadrants_coordinates = [ ','.join([str(z) for z in y]) for y in filter(lambda x: x[1] >= top_left[1]-4 and x[1] <= bottom_right[1], quadrants_coordinates)]
     # GENERATOR_END = time.clock()
     # print('GENERATOR: ', GENERATOR_END - GENERATOR_START)
-
-
     query = query.filter(Fact.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
-
     return query
+
 
 def filter_by_weight(query, args):
     try:
@@ -82,6 +83,16 @@ def filter_by_weight(query, args):
         return query
 
     query = query.filter(Fact.weight <= weight)
+    return query
+
+
+def filter_by_ids(query, args):
+    try:
+        facts_ids = args['facts']
+    except KeyError:
+        return query
+
+    query = query.filter(Fact.id.in_(facts_ids))
     return query
 
 
@@ -107,8 +118,7 @@ class FactsView(MethodView):
 
     def get(self, id=None):
         if id:
-            res = jsonify(self.one(id))
-            return res
+            return make_api_response(self.one(id))
         else:
             args = request.args.to_dict()
             if args:
@@ -148,11 +158,9 @@ class FactsView(MethodView):
                     serialized.pop('text')
                     serialized_result.append(serialized)
 
-                return dumps(serialized_result)
+                return make_api_response(serialized_result)
             else:
                 abort(501)
-
-
 
     def post(self):
         raise NotImplementedError()
@@ -163,10 +171,12 @@ class FactsView(MethodView):
     def delete(self, id):
         raise NotImplementedError()
 
+
 class TextView(MethodView):
-    def get(self, id=None):
-        if id:
-            fact = Fact.query.get_or_404(id)
-            return convert_wikitext(fact.text)
-        else:
-            abort(404)
+    pass
+#     def get(self, id=None):
+#         if id:
+#             fact = Fact.query.get_or_404(id)
+#             return convert_wikitext(fact.text)
+#         else:
+#             abort(404)
