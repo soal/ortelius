@@ -38,6 +38,8 @@ manager = Manager(app)
 
 @failsafe
 def create_app():
+    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+    app.config.from_object(os.environ['APP_SETTINGS'])
     return app
 
 manager = Manager(create_app)
@@ -81,8 +83,12 @@ def cov():
             COV.report()
         except coverage.misc.CoverageException as ce:
             print(ce)
+        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+        app.config.from_object(os.environ['APP_SETTINGS'])
         return 0
     else:
+        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+        app.config.from_object(os.environ['APP_SETTINGS'])
         return 1
 
 
@@ -111,7 +117,9 @@ def create_admin():
 def create_shape():
     create_initial_data.create_shape()
 
-
+@manager.command
+def create_facts():
+    create_initial_data.create_facts()
 
 @manager.command
 def create_processes():

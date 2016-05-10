@@ -2,7 +2,6 @@ import bisect
 import sqlalchemy
 
 from ortelius import db
-from ortelius.models.Date import Date
 
 
 shapes_coordinates = db.Table('shapes_coordinates',
@@ -23,7 +22,7 @@ class Coordinates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)
     long = db.Column(db.Float, nullable=False)
-    quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
+    quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True, index=True)
     quadrant = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
 
     @classmethod
@@ -89,7 +88,7 @@ class Quadrant(db.Model):
     def calc(cls, lat, long):
         lats = [q[0] for q in cls.quadrants]
         longs = [q[1] for q in cls.quadrants]
-        lat_value = lats[bisect.bisect_left(lats, lat)]  # NOTE: check that bisect_left returns proper position
+        lat_value = lats[bisect.bisect_left(lats, lat) - 1]  # NOTE: check that bisect_left returns proper position
         long_value = longs[bisect.bisect(longs, long) - 1]
         return [lat_value, long_value]
 
