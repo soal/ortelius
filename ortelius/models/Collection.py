@@ -21,6 +21,7 @@ collections_personas = db.Table('collections_personas',
 
 class Collection(db.Model):
     """Collection model"""
+    __tablename__ = 'collection'
 
     def __init__(self, name=None, label=None, facts=[], processes=[], personas=[]):
         self.name = name

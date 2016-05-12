@@ -1,9 +1,10 @@
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import IntegrityError
 import datetime
-
-from ortelius.types.historical_date import HistoricalDate as hd
-from ortelius.models.Coordinates import Coordinates, Shape, Quadrant
+from ortelius.database import db
+import ortelius
+# from ortelius.types.historical_date import HistoricalDate as hd
+# from ortelius.models.Coordinates import Coordinates, Shape, Quadrant
 # from ortelius.models.Date import Date, Millenium, Century, Year
 # from ortelius.models.Fact import Fact, FactType
 # from ortelius.models.Process import Process, ProcessType

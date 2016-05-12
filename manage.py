@@ -16,18 +16,18 @@ from ortelius.models.Persona import *
 from ortelius.models.Process import *
 from ortelius.models.User import *
 
-# COV = coverage.coverage(
-#     branch=True,
-#     include='ortelius/*',
-#     omit=[
-#         'tests/*',
-#         'test_data/*',
-#         'create_initial_data',
-#         'ortelius/settings.py',
-#         'ortelius/*/__init__.py'
-#     ]
-# )
-# COV.start()
+COV = coverage.coverage(
+    branch=True,
+    include='ortelius/*',
+    omit=[
+        'tests/*',
+        'test_data/*',
+        'scripts/*',
+        'ortelius/settings.py',
+        'ortelius/*/__init__.py'
+    ]
+)
+COV.start()
 
 # manager = Manager(create_app)
 # manager.add_command('runserver', Server())
@@ -35,44 +35,37 @@ from ortelius.models.User import *
 # manager.add_command('db', MigrateCommand)
 
 
-# @manager.command
-# def test():
-#     """Runs the unit tests without coverage."""
-#     os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
-#     app.config.from_object(os.environ['APP_SETTINGS'])
-#     create_db_schema()
-#     if not Quadrant.query.get('176,-176'):
-#         create_initial_data.create_quadrants()
-#     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
-#     result = unittest.TextTestRunner(verbosity=3).run(tests)
-#     if result.wasSuccessful():
-#         os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-#         app.config.from_object(os.environ['APP_SETTINGS'])
-#         return 0
-#     else:
-#         os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-#         app.config.from_object(os.environ['APP_SETTINGS'])
-#         return 1
-#
-#
-# @manager.command
-# def cov():
-#     """Runs the unit tests with coverage."""
-#     os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
-#     app.config.from_object(os.environ['APP_SETTINGS'])
-#     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
-#     result = unittest.TextTestRunner(verbosity=2).run(tests)
-#     if result.wasSuccessful():
-#         COV.stop()
-#         COV.save()
-#         print('Coverage Summary:')
-#         try:
-#             COV.report()
-#         except coverage.misc.CoverageException as ce:
-#             print(ce)
-#         return 0
-#     else:
-#         return 1
+def test():
+    """Runs the unit tests without coverage."""
+    os.environ['APP_SETTINGS'] = 'testing'
+    create_db()
+    if not database.db.query(Quadrant).get('176,-176'):
+        create_initial_data.create_quadrants()
+    tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
+    result = unittest.TextTestRunner(verbosity=3).run(tests)
+    if result.wasSuccessful():
+        os.environ['APP_SETTINGS'] = 'development'
+        return 0
+    else:
+        os.environ['APP_SETTINGS'] = 'development'
+        return 1
+
+def cov():
+    """Runs the unit tests with coverage."""
+    os.environ['APP_SETTINGS'] = 'testing'
+    tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
+    result = unittest.TextTestRunner(verbosity=2).run(tests)
+    if result.wasSuccessful():
+        COV.stop()
+        COV.save()
+        print('Coverage Summary:')
+        try:
+            COV.report()
+        except coverage.misc.CoverageException as ce:
+            print(ce)
+        return 0
+    else:
+        return 1
 
 def create_db():
     """Creates the db tables."""
@@ -118,8 +111,20 @@ def drop_db():
 #     create_initial_data.create_personas()
 
 def main():
-    app.main()
-    # print(sys.modules.keys())
+    funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
+    funcs.pop(funcs.index('main'))
+    first_arg = sys.argv[1]
+    if first_arg in funcs:
+        try:
+            globals()[first_arg]()
+        except Exception as e:
+            print(e)
+            return 1
+    else:
+        print('Wrong argument: "{0}". Available arguments: {1}'.format(first_arg, funcs))
+        return 1
+    return 0
+
 
 if __name__ == '__main__':
     main()
