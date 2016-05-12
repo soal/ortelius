@@ -1,7 +1,8 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Shape
 
+db = database.db
 
 class Fact(db.Model):
     """Fact model"""

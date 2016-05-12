@@ -1,9 +1,10 @@
 import bisect
 import sqlalchemy
 
-from ortelius import db
+from ortelius import database
 from ortelius.models.Date import Date
 
+db = database.db
 
 shapes_coordinates = db.Table('shapes_coordinates',
     db.Column('shape_id', db.Integer, db.ForeignKey('shape.id')),

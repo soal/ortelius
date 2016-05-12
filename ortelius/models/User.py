@@ -1,4 +1,6 @@
-from ortelius import db
+from ortelius import database
+
+db = database.db
 
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!

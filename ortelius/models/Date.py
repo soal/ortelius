@@ -1,7 +1,9 @@
 import sqlalchemy
-import datetime
-from ortelius import db
+from ortelius import database
+# import ortelius
 from ortelius.types.historical_date import HistoricalDate, HDate
+
+db = database.db
 
 
 class Date(db.Model):

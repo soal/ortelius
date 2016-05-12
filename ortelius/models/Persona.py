@@ -1,9 +1,10 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Date import Date
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.Process import Process
 from ortelius.models.Fact import Fact
 
+db = database.db
 
 personas_hist_regions = db.Table('personas_hist_regions',
     db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id')),

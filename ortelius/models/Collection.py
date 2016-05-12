@@ -1,7 +1,9 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Fact import Fact
 from ortelius.models.Process import Process
 from ortelius.models.Persona import Persona
+
+db = database.db
 
 collections_facts = db.Table('collections_facts',
     db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
