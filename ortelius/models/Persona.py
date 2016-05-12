@@ -90,7 +90,7 @@ class PersType(db.Model):
 
     @classmethod
     def create(cls, name=None, label=None):
-        new_type = cls.query.get(name)
+        new_type = db.query(cls).get(name)
         if not new_type:
             new_type = cls(name=name, label=label)
             db.session.add(new_type)

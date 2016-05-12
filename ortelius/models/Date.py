@@ -29,9 +29,9 @@ class Date(db.Model):
              raise sqlalchemy.exc.ArgumentError('Date must be instance of HistoricalDate')
 
 
-        new_date = cls.query.filter_by(date=date).first()
+        new_date = db.query(cls).filter_by(date=date).first()
         if not new_date:
-            year = Year.query.get(date.year)
+            year = db.query(Year).get(date.year)
             new_date = cls(date=date, year=year)
             db.session.add(new_date)
 

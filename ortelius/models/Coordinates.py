@@ -43,7 +43,7 @@ class Coordinates(db.Model):
             if not quadrant:
                 raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
 
-        point = cls.query.filter(Coordinates.lat == lat, Coordinates.long == long).first()
+        point = db.query(cls).filter(Coordinates.lat == lat, Coordinates.long == long).first()
         if point:
             return point
 
@@ -102,4 +102,4 @@ class Quadrant(db.Model):
     @classmethod
     def get(cls, lat, long):
         quadrant_id = cls.make_hash(lat, long)
-        return cls.query.get(quadrant_id)
+        return db.query(cls).get(quadrant_id)

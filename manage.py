@@ -1,6 +1,7 @@
 #!/usr/bin/env python3.4
 import unittest
 import coverage
+import traceback
 import os, sys, inspect
 
 from scripts import create_initial_data
@@ -98,30 +99,34 @@ def drop_db():
 #     # app.config.from_object(os.environ['APP_SETTINGS'])
 #     create_initial_data.create_personas()
 #
-# def create_data():
-#     """Creates initial data."""
-#     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-#     # app.config.from_object(os.environ['APP_SETTINGS'])
-#     create_initial_data.create_admin()
-#     create_initial_data.create_years()
-#     create_initial_data.create_quadrants()
-#     create_initial_data.create_facts()
-#     create_initial_data.create_hist_regions()
-#     create_initial_data.create_processes()
-#     create_initial_data.create_personas()
+def create_data():
+    """Creates initial data."""
+    print('Creating test data...')
+    os.environ['APP_SETTINGS'] = 'development'
+    create_initial_data.create_admin(database.db)
+    create_initial_data.create_years(database.db)
+    create_initial_data.create_quadrants(database.db)
+    create_initial_data.create_facts(database.db)
+    create_initial_data.create_hist_regions(database.db)
+    create_initial_data.create_processes(database.db)
+    create_initial_data.create_personas(database.db)
 
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
     funcs.pop(funcs.index('main'))
+    if len(sys.argv) < 2:
+        print('Not enough arguments. Please, tell me what to do. Available arguments: {0}'.format(', '.join(funcs)))
+        return 1
     first_arg = sys.argv[1]
     if first_arg in funcs:
         try:
             globals()[first_arg]()
         except Exception as e:
+            print(traceback.print_tb(sys.exc_info()[2]))
             print(e)
             return 1
     else:
-        print('Wrong argument: "{0}". Available arguments: {1}'.format(first_arg, funcs))
+        print('Wrong argument: "{0}". Available arguments: {1}'.format(first_arg, ', '.join(funcs)))
         return 1
     return 0
 
