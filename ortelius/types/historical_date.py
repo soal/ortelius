@@ -143,10 +143,7 @@ class HistoricalDate(object):
             if self.month > value.month:
                 return True
             elif self.month == value.month:
-                if self.day >= value.day:
-                    return True
-                else:
-                    return False
+                return self.day >= value.day
             else:
                 return False
         else:
@@ -182,23 +179,20 @@ class HistoricalDate(object):
             if self.month < value.month:
                 return True
             elif self.month == value.month:
-                if self.day <= value.day:
-                    return True
-                else:
-                    return False
+                return self.day <= value.day
             else:
                 return False
         else:
             return False
 
     def add(self, value):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def subtract(self, value):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def delta(self, value):
-        raise NotImplemented()
+        raise NotImplementedError()
 
     def to_string(self):
         # NOTE: It's not really fast
