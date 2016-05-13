@@ -80,7 +80,7 @@ def filter_by_ids(query, ids):
          examples=['start_date=12-22-1560&end_date=03-30-1570&topleft=56,78&bottomright=-22,10&weight=1',
                    'ids=[1,2,3,4]']
         )
-def facts(start_date: hug.types.text=None,
+def get_facts(start_date: hug.types.text=None,
           end_date: hug.types.text=None,
           topleft: list=None,
           bottomright: list=None,
@@ -118,7 +118,7 @@ def facts(start_date: hug.types.text=None,
 
     return make_api_response(serialized_result)
 
-@hug.get('/facts/{id}')
+@hug.get('/facts/{fact_id}')
 def get_fact(fact_id):
     '''API function for getting single fact by id'''
     fact = db.query(Fact).get(fact_id)
