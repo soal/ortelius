@@ -26,7 +26,7 @@ class Date(db.Model):
         if not date:
             raise sqlalchemy.exc.ArgumentError('Fields required: date')
         if not isinstance(date, HistoricalDate):
-             raise sqlalchemy.exc.ArgumentError('Date must be instance of HistoricalDate')
+            raise sqlalchemy.exc.ArgumentError('Date must be instance of HistoricalDate')
 
 
         new_date = db.query(cls).filter_by(date=date).first()

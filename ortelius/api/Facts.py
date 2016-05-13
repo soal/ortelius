@@ -26,6 +26,7 @@ from ortelius.middleware import serialize, make_api_response
 '''
 
 def filter_by_time(query, start_date, end_date):
+    '''Filter facts by date'''
     if start_date:
         start = hd(start_date)
     else:
@@ -36,11 +37,12 @@ def filter_by_time(query, start_date, end_date):
         end = hd(datetime.datetime.now())
     query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
                          Fact.end_date.has(Date.date <= end.to_int())
-                         )
+                        )
     return query
 
 
 def filter_by_geo(query, topleft, bottomright):
+    '''Filter facts by given quadrants in geocoordinates'''
     if topleft and bottomright:
         top_left = [float(x) for x in topleft]
         bottom_right = [float(x) for x in bottomright]
@@ -56,18 +58,17 @@ def filter_by_geo(query, topleft, bottomright):
 
 
 def filter_by_weight(query, weight):
+    '''Filter facts by weight'''
     if weight:
-        weight = args['weight']
+        query = query.filter(Fact.weight <= weight)
     else:
         return query
 
-    query = query.filter(Fact.weight <= weight)
-    return query
-
 
 def filter_by_ids(query, ids):
+    '''Filter facts and return objects only with given ids'''
     if ids:
-        facts_ids = args['facts']
+        facts_ids = ids
     else:
         return query
 
@@ -79,13 +80,14 @@ def filter_by_ids(query, ids):
          examples=['start_date=12-22-1560&end_date=03-30-1570&topleft=56,78&bottomright=-22,10&weight=1',
                    'ids=[1,2,3,4]']
         )
-def facts(start_date:hug.types.text=None,
-          end_date:hug.types.text=None,
-          topleft:list=None,
-          bottomright:list=None,
-          weight:int=None,
-          ids:list=None
-          ):
+def facts(start_date: hug.types.text=None,
+          end_date: hug.types.text=None,
+          topleft: list=None,
+          bottomright: list=None,
+          weight: int=None,
+          ids: list=None
+         ):
+    '''API function for getting list of facts'''
     query = db.query(Fact)
     try:
         query = filter_by_time(query, start_date, end_date)
@@ -104,7 +106,7 @@ def facts(start_date:hug.types.text=None,
         serialized = serialize(fact)
         serialized['start_date'] = fact.start_date.date.to_string()
         serialized['end_date'] = fact.end_date.date.to_string()
-        serialized['type'] = { 'name': fact.type.name, 'label': fact.type.label }
+        serialized['type'] = {'name': fact.type.name, 'label': fact.type.label}
         serialized['shape'] = serialized['shape_id']
         serialized['description'] = serialized['description']
         serialized.pop('start_date_id')
@@ -117,13 +119,14 @@ def facts(start_date:hug.types.text=None,
     return make_api_response(serialized_result)
 
 @hug.get('/facts/{id}')
-def get_fact(id):
-    fact = db.query(Fact).get(id)
+def get_fact(fact_id):
+    '''API function for getting single fact by id'''
+    fact = db.query(Fact).get(fact_id)
     result = serialize(fact)
 
     result['start_date'] = fact.start_date.date.to_string()
     result['end_date'] = fact.end_date.date.to_string()
-    result['type'] = { 'name': fact.type.name, 'label': fact.type.label }
+    result['type'] = {'name': fact.type.name, 'label': fact.type.label}
     result['shape'] = result['shape_id']
     # result['description'] = convert_wikitext(result['description'])
     # result['text'] = convert_wikitext(result['text'])
