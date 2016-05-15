@@ -18,7 +18,7 @@ import hug
 import datetime
 
 from ortelius.database import db
-from ortelius.api_errors import BadRequest, NotFound
+from ortelius.types.errors import BadRequest, NotFound
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
