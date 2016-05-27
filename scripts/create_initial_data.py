@@ -157,7 +157,8 @@ def create_processes(db):
                               text=process['text'],
                               hist_regions=p_hist_regions,
                               type=process_type,
-                              facts=p_facts
+                              facts=p_facts,
+                              weight=process['weight']
                               )
 
         db.session.add(new_process)
