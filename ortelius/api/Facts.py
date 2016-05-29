@@ -82,6 +82,10 @@ def get_fact(fact_id):
         result['end_date'] = fact.end_date.date.to_string()
         result['type'] = {'name': fact.type.name, 'label': fact.type.label}
         result['shape'] = result['shape_id']
+        result['processes'] = [process.id for process in fact.process] if fact.processes else []
+        result['personas'] = [persona.id for persona in fact.persona] if fact.personas else []
+        result['hist_regions'] = [hist_region.id for hist_region in fact.hist_region] if fact.hist_regions else []
+        result['hist_places'] = [hist_place.id for hist_place in fact.hist_place] if fact.hist_places else []
         # result['description'] = convert_wikitext(result['description'])
         # result['text'] = convert_wikitext(result['text'])
         # result.pop('text')
