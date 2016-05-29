@@ -7,35 +7,37 @@ from ortelius.types.historical_date import DateError
 from ortelius.database import db
 from ortelius.models.Date import Date
 from ortelius.models.Process import Process
-from ortelius.middleware import serialize, make_api_response
+from ortelius.models.Hist_region import HistPlace, HistRegion
+from ortelius.models.Persona import Persona
+from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_ids, filter_by_time, filter_by_weight
 
 
-def filter_by_time(query, start_date, end_date):
-    '''Filter processes by date'''
-    if start_date:
-        start = hd(start_date)
-    else:
-        start = hd(-50000101)
-    if end_date:
-        end = hd(end_date)
-    else:
-        end = hd(datetime.datetime.now())
-    query = query.filter(Process.start_date.has(Date.date >= start.to_int()),
-                         Process.end_date.has(Date.date <= end.to_int())
-                        )
-    return query
-
-
-def filter_by_ids(query, ids):
-    pass
-
-
-def filter_by_weight(query, weight):
-    '''Filter processes by weight'''
-    if weight:
-        query = query.filter(Process.weight <= weight)
-    else:
-        return query
+# def filter_by_time(query, start_date, end_date):
+#     '''Filter processes by date'''
+#     if start_date:
+#         start = hd(start_date)
+#     else:
+#         start = hd(-50000101)
+#     if end_date:
+#         end = hd(end_date)
+#     else:
+#         end = hd(datetime.datetime.now())
+#     query = query.filter(Process.start_date.has(Date.date >= start.to_int()),
+#                          Process.end_date.has(Date.date <= end.to_int())
+#                         )
+#     return query
+#
+#
+# def filter_by_ids(query, ids):
+#     pass
+#
+#
+# def filter_by_weight(query, weight):
+#     '''Filter processes by weight'''
+#     if weight:
+#         query = query.filter(Process.weight <= weight)
+#     else:
+#         return query
 
 
 @hug.get('/processes',
@@ -49,26 +51,27 @@ def get_processes(start_date: hug.types.text=None,
     '''API function for getting list of processes'''
     query = db.query(Process)
     try:
-        query = filter_by_time(query, start_date, end_date)
+        query = filter_by_time(query, Process, start_date, end_date)
     except DateError:
-        # response = make_api_response(e.api_error(400))
-        # response.status_code = 400
-        # return response
         raise BadRequest()
-    query = filter_by_weight(query, weight)
+
+    query = filter_by_weight(query, Process, weight)
     result = query.all()
     serialized_result = []
 
     for process in result:
         serialized = serialize(process)
-        serialized['start_date'] = process.start_date.date.to_string()
-        serialized['end_date'] = process.end_date.date.to_string()
-        serialized['type'] = {'name': process.type.name, 'label': process.type.label}
-        # serialized['shape'] = serialized['shape_id']
-        # serialized['description'] = serialized['description']
+        serialized['facts']        = [fact.id for fact in process.facts] if process.facts else []
+        serialized['subprocesses'] = [subprocess.id for subprocess in process.subprocesses] if process.subprocesses else []
+        serialized['personas']     = [persona.id for persona in process.personas] if process.personas else []
+        serialized['shapes']       = [shape.id for shape in process.shapes] if process.shapes else []
+        serialized['hist_regions'] = [hist_region.id for hist_region in process.hist_regions] if process.hist_regions else []
+        serialized['hist_places']  = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
+        serialized['start_date']   = process.start_date.date.to_string()
+        serialized['end_date']     = process.end_date.date.to_string()
+        serialized['type']         = {'name': process.type.name, 'label': process.type.label}
         serialized.pop('start_date_id')
         serialized.pop('end_date_id')
-        # serialized.pop('shape_id')
         serialized.pop('type_name')
         serialized.pop('text')
         serialized_result.append(serialized)
@@ -82,10 +85,15 @@ def get_process(process_id):
     process = db.query(Process).get(process_id)
     if process:
         result = serialize(process)
-
-        result['start_date'] = process.start_date.date.to_string()
-        result['end_date'] = process.end_date.date.to_string()
-        result['type'] = {'name': process.type.name, 'label': process.type.label}
+        result['facts']        = [fact.id for fact in process.facts] if process.facts else []
+        result['subprocesses'] = [subprocess.id for subprocess in process.subprocesses] if process.subprocesses else []
+        result['personas']     = [persona.id for persona in process.personas] if process.personas else []
+        result['shapes']       = [shape.id for shape in process.shapes] if process.shapes else []
+        result['hist_regions'] = [hist_region.id for hist_region in process.hist_regions] if process.hist_regions else []
+        result['hist_places']  = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
+        result['start_date']   = process.start_date.date.to_string()
+        result['end_date']     = process.end_date.date.to_string()
+        result['type']         = {'name': process.type.name, 'label': process.type.label}
         # result['description'] = convert_wikitext(result['description'])
         # result['text'] = convert_wikitext(result['text'])
         # result.pop('text')

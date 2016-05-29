@@ -23,58 +23,7 @@ from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
 from ortelius.types.historical_date import DateError, HistoricalDate as hd
-from ortelius.middleware import serialize, make_api_response
-
-
-def filter_by_time(query, start_date, end_date):
-    '''Filter facts by date'''
-    if start_date:
-        start = hd(start_date)
-    else:
-        start = hd(-50000101)
-    if end_date:
-        end = hd(end_date)
-    else:
-        end = hd(datetime.datetime.now())
-    query = query.filter(Fact.start_date.has(Date.date >= start.to_int()),
-                         Fact.end_date.has(Date.date <= end.to_int())
-                        )
-    return query
-
-
-def filter_by_geo(query, topleft, bottomright):
-    '''Filter facts by given quadrants in geocoordinates'''
-    if topleft and bottomright:
-        top_left = [float(x) for x in topleft]
-        bottom_right = [float(x) for x in bottomright]
-    else:
-        return query
-    quadrants_coordinates = []
-    for c in Quadrant.quadrants:
-        if c[0] >= top_left[0] - 4 and c[0] <= bottom_right[0] and c[1] >= top_left[1]-4 and c[1] <= bottom_right[1]:
-            quadrants_coordinates.append(','.join([str(c[0]), str(c[1])]))
-
-    query = query.filter(Fact.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
-    return query
-
-
-def filter_by_weight(query, weight):
-    '''Filter facts by weight'''
-    if weight:
-        query = query.filter(Fact.weight <= weight)
-    else:
-        return query
-
-
-def filter_by_ids(query, ids):
-    '''Filter facts and return objects only with given ids'''
-    if ids:
-        facts_ids = ids
-    else:
-        return query
-
-    query = query.filter(Fact.id.in_(facts_ids))
-    return query
+from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_time, filter_by_ids, filter_by_weight
 
 
 @hug.get('/facts',
@@ -92,16 +41,16 @@ def get_facts(start_date: hug.types.text=None,
     '''API function for getting list of facts'''
     query = db.query(Fact)
     try:
-        query = filter_by_time(query, start_date, end_date)
+        query = filter_by_time(query, Fact, start_date, end_date)
     except DateError:
         # response = make_api_response(e.api_error(400))
         # response.status_code = 400
         # return response
         raise BadRequest()
 
-    query = filter_by_geo(query, topleft, bottomright)
-    query = filter_by_weight(query, weight)
-    query = filter_by_ids(query, ids)
+    query = filter_by_geo(query, Fact, topleft, bottomright)
+    query = filter_by_weight(query, Fact, weight)
+    query = filter_by_ids(query, Fact, ids)
     result = query.all()
 
     serialized_result = []
