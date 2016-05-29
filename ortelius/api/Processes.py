@@ -1,7 +1,7 @@
 import hug
 import datetime
 
-from ortelius.types.errors import NotFound, BadRequest
+from ortelius.types.errors import NotFound, BadRequest, MethodNotImplemented
 from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.types.historical_date import DateError
 from ortelius.database import db
@@ -95,3 +95,21 @@ def get_process(process_id):
         return make_api_response(result)
     else:
         raise NotFound(resource_type='Process', identifiers={'id': process_id})
+
+
+@hug.post('/processes')
+def create_process(data):
+    '''API function for creating new fact'''
+    raise MethodNotImplemented(resource_type='Process')
+
+
+@hug.put('/processes/{process_id}')
+def update_process(process_id, data):
+    '''API function for updating existing process'''
+    raise MethodNotImplemented(resource_type='Process')
+
+
+@hug.delete('/processes/{process_id}')
+def delete_process(process_id):
+    '''API function for deleting process'''
+    raise MethodNotImplemented(resource_type='Process')

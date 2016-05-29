@@ -34,7 +34,7 @@ class NotFound(falcon.HTTPError):
         self.status = '404 Not found'
         self.title = 'Not Found'
         if resource_type and identifiers:
-            self.description = '{0} identified by {1}, not found.'.format(resource_type, identifiers)
+            self.description = '{0} identified by {1} not found.'.format(resource_type, identifiers)
 
 
 class Forbidden(falcon.HTTPError):
@@ -45,7 +45,7 @@ class Forbidden(falcon.HTTPError):
         self.status = '403 Forbidden'
         self.title = 'Forbidden'
         if resource_type and identifiers:
-            self.description = 'Requesting {0} identified b3 {1}, not allowed.'.format(resource_type, identifiers)
+            self.description = 'Requesting {0} identified by {1} not allowed.'.format(resource_type, identifiers)
 
 
 class ServerError(falcon.HTTPError):
@@ -55,7 +55,7 @@ class ServerError(falcon.HTTPError):
         self.status = '500 Internal Server Error'
         self.title = 'Internal Server Error'
         if resource_type and identifiers:
-            self.description = 'Requesting {0} identified b3 {1}, casued server error.'.format(resource_type, identifiers)
+            self.description = 'Requesting {0} identified by {1} casued server error.'.format(resource_type, identifiers)
 
 
 class NotAuthorized(falcon.HTTPError):
@@ -66,4 +66,14 @@ class NotAuthorized(falcon.HTTPError):
         self.status = '401 Not Authorized'
         self.title = 'Not Authorized'
         if resource_type and identifiers:
-            self.description = 'You not authoried requesting {0} identified b3 {1}.'.format(resource_type, identifiers)
+            self.description = 'You are not authorized requesting {0} identified by {1}.'.format(resource_type, identifiers)
+
+
+class MethodNotImplemented(falcon.HTTPError):
+    """docstring for NotImplemented"""
+    def __init__(self, resource_type=None):
+        super(MethodNotImplemented, self).__init__('405 Method Not Allowed')
+        self.status = '405 Method Not Allowed'
+        self.title = 'Method not implemented'
+        if resource_type:
+            self.description = 'This method is not implemented for {0}.'.format(resource_type)

@@ -18,7 +18,7 @@ import hug
 import datetime
 
 from ortelius.database import db
-from ortelius.types.errors import BadRequest, NotFound
+from ortelius.types.errors import BadRequest, NotFound, MethodNotImplemented
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
@@ -93,12 +93,11 @@ def get_facts(start_date: hug.types.text=None,
     query = db.query(Fact)
     try:
         query = filter_by_time(query, start_date, end_date)
-    except DateError as e:
+    except DateError:
         # response = make_api_response(e.api_error(400))
         # response.status_code = 400
         # return response
         raise BadRequest()
-        # NOTE: How to valid handle errors?
 
     query = filter_by_geo(query, topleft, bottomright)
     query = filter_by_weight(query, weight)
@@ -144,3 +143,21 @@ def get_fact(fact_id):
         return make_api_response(result)
     else:
         raise NotFound(resource_type='Fact', identifiers={'id': fact_id})
+
+
+@hug.post('/facts')
+def create_fact(data):
+    '''API function for creating new fact'''
+    raise MethodNotImplemented(resource_type='Fact')
+
+
+@hug.put('/facts/{fact_id}')
+def update_fact(fact_id, data=None):
+    '''API function for updating existing fact'''
+    raise MethodNotImplemented(resource_type='Fact')
+
+
+@hug.delete('/facts/{fact_id}')
+def delete_fact(fact_id):
+    '''API function for deleting fact'''
+    raise MethodNotImplemented(resource_type='Fact')
