@@ -152,7 +152,7 @@ def create_fact(data):
 
 
 @hug.put('/facts/{fact_id}')
-def update_fact(fact_id, data=None):
+def update_fact(fact_id, data):
     '''API function for updating existing fact'''
     raise MethodNotImplemented(resource_type='Fact')
 

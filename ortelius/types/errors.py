@@ -2,7 +2,7 @@ import hug
 import falcon
 
 
-# FIXME: reactor.
+# FIXME: refactor.
 class APIError(Exception):
     """Describe methods for api error"""
 
@@ -76,4 +76,4 @@ class MethodNotImplemented(falcon.HTTPError):
         self.status = '405 Method Not Allowed'
         self.title = 'Method not implemented'
         if resource_type:
-            self.description = 'This method is not implemented for {0}.'.format(resource_type)
+            self.description = 'This method for {0} is not yet implemented.'.format(resource_type)
