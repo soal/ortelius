@@ -74,6 +74,9 @@ class Persona(db.Model):
     processes     = db.relationship('Process', secondary=personas_processes, backref=db.backref('personas'), lazy='dynamic')
     trusted       = db.Column(db.Boolean)
 
+    def __repr__(self):
+        return '<Persona %r, shows as %r>' % (self.name, self.label)
+
 
 class PersType(db.Model):
     """PersType model"""

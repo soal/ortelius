@@ -1,7 +1,7 @@
 import os, sys, inspect
 import hug
 # import gevent
-from ortelius.api import Facts, Processes
+from ortelius.api import Facts, Processes, Dicts
 from ortelius import settings
 
 try:
@@ -21,9 +21,14 @@ else:
 def welcome():
     return 'Welcome to ortelius version {0}'.format(config.API_VERSION)
 
-@hug.extend_api('/api')
-def get_api():
+@hug.extend_api('/objects')
+def get_data():
     return [Facts, Processes]
+
+@hug.extend_api('/dicts')
+def get_dicts():
+    return [Dicts]
+
 
 if __name__ == '__main__':
     welcome.interface.cli()

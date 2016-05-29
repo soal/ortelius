@@ -1,6 +1,4 @@
-import hug
 import falcon
-
 
 # FIXME: refactor.
 class APIError(Exception):
@@ -77,3 +75,5 @@ class MethodNotImplemented(falcon.HTTPError):
         self.title = 'Method not implemented'
         if resource_type:
             self.description = 'This method for {0} is not yet implemented.'.format(resource_type)
+        else:
+            self.description = 'This method is not yet implemented.'
