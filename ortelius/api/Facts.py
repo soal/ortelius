@@ -45,9 +45,6 @@ def get_facts(start_date: hug.types.text=None,
     try:
         query = filter_by_time(query, Fact, start_date, end_date)
     except DateError:
-        # response = make_api_response(e.api_error(400))
-        # response.status_code = 400
-        # return response
         raise BadRequest()
 
     query = filter_by_geo(query, Fact, topleft, bottomright)

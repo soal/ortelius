@@ -52,7 +52,12 @@ def filter_by_geo(query, model, topleft, bottomright):
         if c[0] >= top_left[0] - 4 and c[0] <= bottom_right[0] and c[1] >= top_left[1]-4 and c[1] <= bottom_right[1]:
             quadrants_coordinates.append(','.join([str(c[0]), str(c[1])]))
 
-    query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+    if hasattr(model, 'shape'):
+        query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+
+    if hasattr(model, 'shapes'):
+        query = query.filter(model.shapes.in_(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+
     return query
 
 
