@@ -5,13 +5,11 @@ Get facts with optional search params.
 
 ?topleft - coordinates of top left corner of the screen
 ?bottomright - coordinates bottom right corner of the screen
-
-?search - determinate search
-?search&name  - search by name
-?search&date - search by date (use end date)
+?ids — list of facts ids
 
 Ex.:
 http://handymap.com/api/facts/36 - one fact by id
+http://handymap.com/api/facts?ids=1,5,23,67 - list of facts by given ids
 http://handymap.com/api/facts?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
 '''
 import hug

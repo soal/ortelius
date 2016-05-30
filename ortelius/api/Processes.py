@@ -1,3 +1,18 @@
+'''
+Get processes with optional search params.
+?start_date=12-22-1560 — search facts from this date
+?end_date=03-30-1570 — search facts to this date
+
+?topleft — coordinates of top left corner of the screen
+?bottomright — coordinates bottom right corner of the screen
+?ids — list of processes ids
+
+Ex.:
+http://handymap.com/api/processes/36 - one fact by id
+http://handymap.com/api/processes?ids=1,5,23,67 - list of processes by given ids
+http://handymap.com/api/processes?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
+'''
+
 import hug
 import datetime
 
@@ -10,34 +25,6 @@ from ortelius.models.Process import Process
 from ortelius.models.Hist_region import HistPlace, HistRegion
 from ortelius.models.Persona import Persona
 from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_ids, filter_by_time, filter_by_weight
-
-
-# def filter_by_time(query, start_date, end_date):
-#     '''Filter processes by date'''
-#     if start_date:
-#         start = hd(start_date)
-#     else:
-#         start = hd(-50000101)
-#     if end_date:
-#         end = hd(end_date)
-#     else:
-#         end = hd(datetime.datetime.now())
-#     query = query.filter(Process.start_date.has(Date.date >= start.to_int()),
-#                          Process.end_date.has(Date.date <= end.to_int())
-#                         )
-#     return query
-#
-#
-# def filter_by_ids(query, ids):
-#     pass
-#
-#
-# def filter_by_weight(query, weight):
-#     '''Filter processes by weight'''
-#     if weight:
-#         query = query.filter(Process.weight <= weight)
-#     else:
-#         return query
 
 
 @hug.get('/processes',
