@@ -21,6 +21,8 @@ from ortelius.database import db
 from ortelius.types.errors import BadRequest, NotFound, MethodNotImplemented
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
+from ortelius.models.Process import Process
+from ortelius.models.Persona import Persona
 from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
 from ortelius.types.historical_date import DateError, HistoricalDate as hd
 from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_time, filter_by_ids, filter_by_weight
@@ -49,8 +51,8 @@ def get_facts(start_date: hug.types.text=None,
         raise BadRequest()
 
     query = filter_by_geo(query, Fact, topleft, bottomright)
-    query = filter_by_weight(query, Fact, weight)
     query = filter_by_ids(query, Fact, ids)
+    query = filter_by_weight(query, Fact, weight)
     result = query.all()
 
     serialized_result = []
@@ -82,10 +84,10 @@ def get_fact(fact_id):
         result['end_date'] = fact.end_date.date.to_string()
         result['type'] = {'name': fact.type.name, 'label': fact.type.label}
         result['shape'] = result['shape_id']
-        result['processes'] = [process.id for process in fact.process] if fact.processes else []
-        result['personas'] = [persona.id for persona in fact.persona] if fact.personas else []
-        result['hist_regions'] = [hist_region.id for hist_region in fact.hist_region] if fact.hist_regions else []
-        result['hist_places'] = [hist_place.id for hist_place in fact.hist_place] if fact.hist_places else []
+        result['processes'] = [process.id for process in fact.processes] if fact.processes else []
+        result['personas'] = [persona.id for persona in fact.personas] if fact.personas else []
+        result['hist_regions'] = [hist_region.id for hist_region in fact.hist_regions] if fact.hist_regions else []
+        result['hist_places'] = [hist_place.id for hist_place in fact.hist_places] if fact.hist_places else []
         # result['description'] = convert_wikitext(result['description'])
         # result['text'] = convert_wikitext(result['text'])
         # result.pop('text')

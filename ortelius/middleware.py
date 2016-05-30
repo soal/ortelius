@@ -60,8 +60,7 @@ def filter_by_weight(query, model, weight):
     '''Filter facts by weight'''
     if weight:
         query = query.filter(model.weight <= weight)
-    else:
-        return query
+    return query
 
 
 def filter_by_ids(query, model, ids):
