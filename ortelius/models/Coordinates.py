@@ -1,8 +1,10 @@
 import bisect
 import sqlalchemy
 
-from ortelius import db
+from ortelius import database
+from ortelius.models.Date import Date
 
+db = database.db
 
 shapes_coordinates = db.Table('shapes_coordinates',
     db.Column('shape_id', db.Integer, db.ForeignKey('shape.id')),
@@ -22,7 +24,7 @@ class Coordinates(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     lat = db.Column(db.Float, nullable=False)
     long = db.Column(db.Float, nullable=False)
-    quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True, index=True)
+    quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
     quadrant = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
 
     @classmethod
@@ -41,7 +43,7 @@ class Coordinates(db.Model):
             if not quadrant:
                 raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
 
-        point = cls.query.filter(Coordinates.lat == lat, Coordinates.long == long).first()
+        point = db.query(cls).filter(Coordinates.lat == lat, Coordinates.long == long).first()
         if point:
             return point
 
@@ -88,7 +90,7 @@ class Quadrant(db.Model):
     def calc(cls, lat, long):
         lats = [q[0] for q in cls.quadrants]
         longs = [q[1] for q in cls.quadrants]
-        lat_value = lats[bisect.bisect_left(lats, lat) - 1]  # NOTE: check that bisect_left returns proper position
+        lat_value = lats[bisect.bisect_left(lats, lat)]  # NOTE: check that bisect_left returns proper position
         long_value = longs[bisect.bisect(longs, long) - 1]
         return [lat_value, long_value]
 
@@ -100,4 +102,4 @@ class Quadrant(db.Model):
     @classmethod
     def get(cls, lat, long):
         quadrant_id = cls.make_hash(lat, long)
-        return cls.query.get(quadrant_id)
+        return db.query(cls).get(quadrant_id)

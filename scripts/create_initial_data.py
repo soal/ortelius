@@ -1,6 +1,6 @@
-import sqlalchemy
+from sqlalchemy.exc import IntegrityError
 import datetime
-from ortelius import db
+import ortelius
 from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Coordinates import Coordinates, Shape, Quadrant
 from ortelius.models.Date import Date, Millenium, Century, Year
@@ -9,13 +9,14 @@ from ortelius.models.Process import Process, ProcessType
 from ortelius.models.Persona import Persona, PersType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.User import User, UsersRoles, Role
-
+#
 from test_data.test_facts import test_facts
 from test_data.test_hist_regions import test_hist_regions
 from test_data.test_processes import test_processes
 from test_data.test_personas import test_personas
 
-def create_admin():
+
+def create_admin(db):
     """Creates the admin user."""
     admin_role = Role(id=1, name='admins', label='Administrators')
     admin_user = User(id=1, username='admin',
@@ -27,7 +28,8 @@ def create_admin():
     db.session.add(admin_user_role)
     db.session.commit()
 
-def create_years():
+def create_years(db):
+    print('Creating years...')
     # Create millenimus, centuries and years from -5000 to 2999
     for i in (-5, -4, -3, -2, -1, 1, 2, 3):
         print('Create millenium: ' + str(i))
@@ -43,8 +45,18 @@ def create_years():
                 db.session.add(year)
 
     db.session.commit()
+    print('Done')
 
-def create_fact_types():
+def create_quadrants(db):
+    print('Creating quadrants...')
+    for q in Quadrant.quadrants:
+        quadrant = Quadrant(hash=Quadrant.make_hash(q[0], q[1]))
+        db.session.add(quadrant)
+        db.session.commit()
+    print('Done')
+
+def create_fact_types(db):
+    print('Creating fact types...')
     f_types = [
                 ['battle', 'сражение'],
                 ['peace_treaty', 'мирный договор']
@@ -55,10 +67,12 @@ def create_fact_types():
         db.session.add(new_type)
         try:
             db.session.commit()
-        except sqlalchemy.exc.IntegrityError:
+        except IntegrityError:
             db.session.rollback()
+    print('Done')
 
-def create_facts():
+def create_facts(db):
+    print('Creating facts...')
     for f in test_facts:
         new_start_date = Date.create(date=hd(f['start_date']))
         new_end_date = Date.create(date=hd(f['end_date']))
@@ -82,8 +96,10 @@ def create_facts():
                        )
         db.session.add(new_fact)
         db.session.commit()
+        print('Done')
 
-def create_hist_regions():
+def create_hist_regions(db):
+    print('Creating historical regions...')
     for region in test_hist_regions:
         region_facts = []
         region_shapes = []
@@ -97,11 +113,11 @@ def create_hist_regions():
 
         if region['facts']:
             for fact in region['facts']:
-                region_facts.append(Fact.query.get(fact))
+                region_facts.append(db.query(Fact).get(fact))
 
         if region['shapes']:
             for shape in region['shapes']:
-                region_shapes.append(Shape.query.get(shape))
+                region_shapes.append(db.query(Shape).get(shape))
 
         hr = HistRegion(name=region['name'],
                         label=region['label'],
@@ -114,27 +130,25 @@ def create_hist_regions():
                         )
         db.session.add(hr)
     db.session.commit()
+    print('Done')
 
-
-def create_shape():
+def create_shape(db):
+    print('Creating shapes...')
     point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=hd(datetime.date.today())), end_date=Date.create(date=hd(datetime.date.today())), coordinates=[point])
     db.session.add(sh)
     db.session.commit()
+    print('Done')
 
-def create_quadrants():
-    for q in Quadrant.quadrants:
-        quadrant = Quadrant(hash=Quadrant.make_hash(q[0], q[1]))
-        db.session.add(quadrant)
-    db.session.commit()
 
-def create_processes():
+def create_processes(db):
+    print('Creating processes...')
     for process in test_processes:
         new_start_date = Date.create(date=hd(process['start_date']))
         process_type = ProcessType.create(name=process['type'][0], label=process['type'][1])
         new_end_date = Date.create(date=hd(process['end_date']))
-        p_hist_regions = [ HistRegion.query.get(x) for x in process['hist_regions'] ]
-        p_facts = [ Fact.query.get(x) for x in process['facts'] ]
+        p_hist_regions = [ db.query(HistRegion).get(x) for x in process['hist_regions'] ]
+        p_facts = [ db.query(Fact).get(x) for x in process['facts'] ]
         new_process = Process(name=process['name'],
                               label=process['label'],
                               description=process['description'],
@@ -143,19 +157,22 @@ def create_processes():
                               text=process['text'],
                               hist_regions=p_hist_regions,
                               type=process_type,
-                              facts=p_facts
+                              facts=p_facts,
+                              weight=process['weight']
                               )
 
         db.session.add(new_process)
     db.session.commit()
+    print('Done')
 
-def create_personas():
+def create_personas(db):
+    print('Creating personas...')
     for persona in test_personas:
         new_start_date = Date.create(date=hd(persona['start_date']))
         new_end_date = Date.create(date=hd(persona['end_date']))
-        p_hist_regions = [ HistRegion.query.get(x) for x in persona['hist_regions'] ]
-        p_facts = [ Fact.query.get(x) for x in persona['facts'] ]
-        p_processes = [ Process.query.get(x) for x in persona['processes'] ]
+        p_hist_regions = [ db.query(HistRegion).get(x) for x in persona['hist_regions'] ]
+        p_facts = [ db.query(Fact).get(x) for x in persona['facts'] ]
+        p_processes = [ db.query(Process).get(x) for x in persona['processes'] ]
         persona_type = PersType.create(name=persona['type'][0], label=persona['type'][1])
 
         new_persona = Persona(
@@ -172,3 +189,4 @@ def create_personas():
         )
         db.session.add(new_persona)
     db.session.commit()
+    print('Done')

@@ -1,7 +1,8 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Date import Date
 from ortelius.models.Coordinates import Shape
 
+db = database.db
 
 class Fact(db.Model):
     """Fact model"""
@@ -66,7 +67,7 @@ class FactType(db.Model):
 
     @classmethod
     def create(cls, name=None, label=None):
-        new_type = cls.query.get(name)
+        new_type = db.query(cls).get(name)
         if not new_type:
             new_type = cls(name=name, label=label)
             db.session.add(new_type)

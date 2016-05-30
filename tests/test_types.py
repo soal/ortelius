@@ -1,7 +1,7 @@
 import unittest
 from datetime import datetime
 
-from ortelius.types.historical_date import HistoricalDate
+from ortelius.ortelius.types.historical_date import HistoricalDate
 
 class TestHistoricalDate(unittest.TestCase):
     def test_creation_from_string(self):

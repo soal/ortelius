@@ -1,9 +1,10 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Date import Date
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.Process import Process
 from ortelius.models.Fact import Fact
 
+db = database.db
 
 personas_hist_regions = db.Table('personas_hist_regions',
     db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id')),
@@ -73,6 +74,9 @@ class Persona(db.Model):
     processes     = db.relationship('Process', secondary=personas_processes, backref=db.backref('personas'), lazy='dynamic')
     trusted       = db.Column(db.Boolean)
 
+    def __repr__(self):
+        return '<Persona %r, shows as %r>' % (self.name, self.label)
+
 
 class PersType(db.Model):
     """PersType model"""
@@ -89,7 +93,7 @@ class PersType(db.Model):
 
     @classmethod
     def create(cls, name=None, label=None):
-        new_type = cls.query.get(name)
+        new_type = db.query(cls).get(name)
         if not new_type:
             new_type = cls(name=name, label=label)
             db.session.add(new_type)

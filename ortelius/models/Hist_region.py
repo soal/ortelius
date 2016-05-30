@@ -1,7 +1,9 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Coordinates import Shape
 from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
+
+db = database.db
 
 hist_regions_facts = db.Table('hist_regions_facts',
     db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
@@ -61,7 +63,7 @@ class HistRegion(db.Model):
     prev_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
     next_region     = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
     hist_places     = db.relationship('HistPlace', secondary=hist_regions_hist_places, backref=db.backref('hist_regions'), lazy='dynamic')
-    trusted = db.Column(db.Boolean)
+    trusted         = db.Column(db.Boolean)
 
 
 class HistPlace(db.Model):
@@ -90,6 +92,7 @@ class HistPlace(db.Model):
     name          = db.Column(db.String(255), nullable=False, unique=True)
     label         = db.Column(db.Unicode(255))
     description   = db.Column(db.UnicodeText, server_default="No description")
+    text          = db.Column(db.UnicodeText, server_default="No text")
     start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     start_date    = db.relationship('Date', backref=db.backref('hist_place_start', lazy='joined'), foreign_keys=start_date_id)
     end_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)

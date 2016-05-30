@@ -1,9 +1,10 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Fact import Fact
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.Process import Process
 from ortelius.models.Coordinates import Shape
 
+db = database.db
 
 geo_regions_hist_regions = db.Table('geo_regions_hist_regions',
     db.Column('hist_region_id', db.Integer, db.ForeignKey('hist_region.id')),

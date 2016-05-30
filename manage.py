@@ -1,14 +1,11 @@
-#!/usr/bin/env python3.4
+#!/usr/bin/env python3
 import unittest
 import coverage
-import os
+import traceback
+import os, sys, inspect
 
-from flask.ext.script import Manager, Server
-from flask_failsafe import failsafe
-from flask.ext.migrate import Migrate, MigrateCommand
-
-import create_initial_data
-from ortelius import app, db
+from scripts import create_initial_data
+from ortelius import database, app
 
 from ortelius.models.Collection import *
 from ortelius.models.Coordinates import *
@@ -26,53 +23,37 @@ COV = coverage.coverage(
     omit=[
         'tests/*',
         'test_data/*',
-        'create_initial_data',
+        'scripts/*',
         'ortelius/settings.py',
         'ortelius/*/__init__.py'
     ]
 )
 COV.start()
 
-manager = Manager(app)
+# manager = Manager(create_app)
+# manager.add_command('runserver', Server())
+# migrate = Migrate(app, db)
+# manager.add_command('db', MigrateCommand)
 
 
-@failsafe
-def create_app():
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    return app
-
-manager = Manager(create_app)
-manager.add_command('runserver', Server())
-migrate = Migrate(app, db)
-manager.add_command('db', MigrateCommand)
-
-
-@manager.command
 def test():
     """Runs the unit tests without coverage."""
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    create_db_schema()
-    if not Quadrant.query.get('176,-176'):
+    os.environ['APP_SETTINGS'] = 'testing'
+    create_db()
+    if not database.db.query(Quadrant).get('176,-176'):
         create_initial_data.create_quadrants()
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
     result = unittest.TextTestRunner(verbosity=3).run(tests)
     if result.wasSuccessful():
-        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-        app.config.from_object(os.environ['APP_SETTINGS'])
+        os.environ['APP_SETTINGS'] = 'development'
         return 0
     else:
-        os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-        app.config.from_object(os.environ['APP_SETTINGS'])
+        os.environ['APP_SETTINGS'] = 'development'
         return 1
 
-
-@manager.command
 def cov():
     """Runs the unit tests with coverage."""
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.TestingConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
+    os.environ['APP_SETTINGS'] = 'testing'
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
     result = unittest.TextTestRunner(verbosity=2).run(tests)
     if result.wasSuccessful():
@@ -91,60 +72,68 @@ def cov():
         app.config.from_object(os.environ['APP_SETTINGS'])
         return 1
 
-
-@manager.command
-def create_db_schema():
+def create_db():
     """Creates the db tables."""
     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    db.create_all()
+    # app.config.from_object(os.environ['APP_SETTINGS'])
+    database.db.create_all()
 
-
-@manager.command
-def drop_db_schema():
+def drop_db():
     """Drops the db tables."""
     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    db.drop_all()
+    # app.config.from_object(os.environ['APP_SETTINGS'])
+    database.db.drop_all()
 
 
-@manager.command
-def create_admin():
-    create_initial_data.create_admin()
+# def create_admin():
+#     create_initial_data.create_admin()
+#
+# def create_shape():
+#     create_initial_data.create_shape()
 
 
-@manager.command
-def create_shape():
-    create_initial_data.create_shape()
 
-@manager.command
-def create_facts():
-    create_initial_data.create_facts()
-
-@manager.command
-def create_processes():
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    create_initial_data.create_processes()
-
-@manager.command
-def create_personas():
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    create_initial_data.create_personas()
-
-@manager.command
+# def create_processes():
+#     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+#     # app.config.from_object(os.environ['APP_SETTINGS'])
+#     create_initial_data.create_processes()
+#
+# def create_personas():
+#     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
+#     # app.config.from_object(os.environ['APP_SETTINGS'])
+#     create_initial_data.create_personas()
+#
 def create_data():
     """Creates initial data."""
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    app.config.from_object(os.environ['APP_SETTINGS'])
-    create_initial_data.create_admin()
-    create_initial_data.create_years()
-    create_initial_data.create_quadrants()
-    create_initial_data.create_facts()
-    create_initial_data.create_hist_regions()
-    create_initial_data.create_processes()
-    create_initial_data.create_personas()
+    print('Creating test data...')
+    os.environ['APP_SETTINGS'] = 'development'
+    create_initial_data.create_admin(database.db)
+    create_initial_data.create_years(database.db)
+    create_initial_data.create_quadrants(database.db)
+    create_initial_data.create_facts(database.db)
+    create_initial_data.create_hist_regions(database.db)
+    create_initial_data.create_processes(database.db)
+    create_initial_data.create_personas(database.db)
+
+def main():
+    funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
+    funcs.pop(funcs.index('main'))
+    if len(sys.argv) < 2:
+        print('Not enough arguments. Please, tell me what to do. Available arguments: {0}'.format(', '.join(funcs)))
+        return 1
+    first_arg = sys.argv[1]
+    if first_arg in funcs:
+        try:
+            globals()[first_arg]()
+        except Exception as e:
+            print(traceback.print_tb(sys.exc_info()[2]))
+            print(e)
+            return 1
+    else:
+        print('Wrong argument: "{0}". Available arguments: {1}'.format(first_arg, ', '.join(funcs)))
+        return 1
+    return 0
+
 
 if __name__ == '__main__':
-    manager.run()
+    main()

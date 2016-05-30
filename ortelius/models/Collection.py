@@ -1,7 +1,9 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Fact import Fact
 from ortelius.models.Process import Process
 from ortelius.models.Persona import Persona
+
+db = database.db
 
 collections_facts = db.Table('collections_facts',
     db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
@@ -19,6 +21,7 @@ collections_personas = db.Table('collections_personas',
 
 class Collection(db.Model):
     """Collection model"""
+    __tablename__ = 'collection'
 
     def __init__(self, name=None, label=None, facts=[], processes=[], personas=[]):
         self.name = name

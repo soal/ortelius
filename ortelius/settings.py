@@ -7,7 +7,7 @@ project_name = "ortelius"
 
 class BaseConfig(object):
     '''Base configuration'''
-    API_VERSION = 'v0.1'
+    API_VERSION = 'v1'
     DEBUG = False
     TESTING = False
     USE_X_SENDFILE = False

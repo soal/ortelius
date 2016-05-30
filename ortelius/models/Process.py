@@ -1,8 +1,10 @@
-from ortelius import db
+from ortelius import database
 from ortelius.models.Fact import Fact
 from ortelius.models.Coordinates import Shape
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.Date import Date
+
+db = database.db
 
 processes_facts = db.Table('processes_facts',
     db.Column('fact_id', db.Integer, db.ForeignKey('fact.id')),
@@ -31,19 +33,20 @@ class Process(db.Model):
     __tablename__ = 'process'
 
     def __init__(self,
-                 name = None,
-                 label = None,
-                 description = None,
-                 start_date = None,
-                 end_date = None,
-                 shapes = [],
-                 text = None,
-                 type = None,
-                 facts = [],
-                 hist_regions = [],
-                 hist_places = [],
-                 subprocesses = [],
-                 trusted = False
+                 name=None,
+                 label=None,
+                 description=None,
+                 start_date=None,
+                 end_date=None,
+                 shapes=[],
+                 text=None,
+                 type=None,
+                 facts=[],
+                 hist_regions=[],
+                 hist_places=[],
+                 subprocesses=[],
+                 weight=None,
+                 trusted=False
                 ):
         self.name = name
         self.label = label
@@ -53,6 +56,7 @@ class Process(db.Model):
         self.shapes = shapes
         self.text = text
         self.type = type
+        self.weight = weight
         self.facts = facts
         self.hist_regions = hist_regions
         self.hist_places = hist_places
@@ -75,11 +79,13 @@ class Process(db.Model):
     hist_places       = db.relationship('HistPlace', secondary=processes_hist_places, backref=db.backref('processes'), lazy='dynamic')
     subprocesses      = db.relationship('Process',
                                         secondary=processes_subprocesses,
-                                        primaryjoin=id==processes_subprocesses.c.parent_id,
-                                        secondaryjoin=id==processes_subprocesses.c.child_id,
+                                        primaryjoin=id == processes_subprocesses.c.parent_id,
+                                        secondaryjoin=id == processes_subprocesses.c.child_id,
                                         backref="parent_processes")
 
     trusted           = db.Column(db.Boolean)
+    weight            = db.Column(db.Integer, nullable=False, server_default='5')  # NOTE: Is really needed?
+
 
     def __repr__(self):
         return '<Process %r, shows as %r>' % (self.name, self.label)
@@ -100,7 +106,7 @@ class ProcessType(db.Model):
 
     @classmethod
     def create(cls, name=None, label=None):
-        new_type = cls.query.get(name)
+        new_type = db.query(cls).get(name)
         if not new_type:
             new_type = cls(name=name, label=label)
             db.session.add(new_type)
