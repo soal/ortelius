@@ -63,7 +63,7 @@ class HistRegion(db.Model):
     prev_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
     next_region     = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
     hist_places     = db.relationship('HistPlace', secondary=hist_regions_hist_places, backref=db.backref('hist_regions'), lazy='dynamic')
-    trusted = db.Column(db.Boolean)
+    trusted         = db.Column(db.Boolean)
 
 
 class HistPlace(db.Model):

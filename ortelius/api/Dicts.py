@@ -2,7 +2,6 @@ import hug
 
 from ortelius.database import db
 from ortelius.middleware import serialize, make_api_response
-from ortelius.types.errors import MethodNotImplemented
 from ortelius.models.Fact import FactType
 from ortelius.models.Process import ProcessType
 from ortelius.models.Persona import PersType
