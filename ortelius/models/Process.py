@@ -84,7 +84,7 @@ class Process(db.Model):
                                         backref="parent_processes")
 
     trusted           = db.Column(db.Boolean)
-    weight            = db.Column(db.Integer, nullable=False, server_default='5')  # NOTE: Is really needed?
+    weight            = db.Column(db.Integer, nullable=False, server_default='5')
 
 
     def __repr__(self):

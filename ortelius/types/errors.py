@@ -68,7 +68,7 @@ class NotAuthorized(falcon.HTTPError):
 
 
 class MethodNotImplemented(falcon.HTTPError):
-    """docstring for NotImplemented"""
+    """NotImplemented exception"""
     def __init__(self, resource_type=None):
         super(MethodNotImplemented, self).__init__('405 Method Not Allowed')
         self.status = '405 Method Not Allowed'
