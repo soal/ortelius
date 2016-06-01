@@ -12,7 +12,6 @@ http://handymap.com/api/facts/36 - one fact by id
 http://handymap.com/api/facts?ids=1,5,23,67 - list of facts by given ids
 http://handymap.com/api/facts?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
 '''
-
 import hug
 import datetime
 
@@ -51,6 +50,9 @@ def get_facts(start_date: hug.types.text=None,
     query = filter_by_weight(query, Fact, weight)
     result = query.all()
 
+    if not result:
+        raise NotFound()
+    
     serialized_result = []
     for fact in result:
         serialized = serialize(fact)

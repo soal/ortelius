@@ -44,6 +44,10 @@ def get_processes(start_date: hug.types.text=None,
 
     query = filter_by_weight(query, Process, weight)
     result = query.all()
+
+    if not result:
+        raise NotFound()
+
     serialized_result = []
 
     for process in result:
