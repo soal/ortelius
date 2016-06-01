@@ -83,7 +83,7 @@ def filter_by_ids(query, model, ids):
 def make_api_response(data, pages=None, total=None):
     return {
         'meta': {
-            'total': len(data) if isinstance(data, list) else None,
+            'total': len(data) if isinstance(data, list) or isinstance(data, tuple) or isinstance(data, dict) else None,
             'pages': pages,
         },
         'data': data
