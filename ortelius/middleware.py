@@ -55,10 +55,6 @@ def filter_by_geo(query, model, topleft, bottomright):
     if hasattr(model, 'shape'):
         query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
 
-    #TODO: Filter processes by geo
-    # if hasattr(model, 'shapes'):
-    #     query = query.filter(model.shapes.in_(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
-
     return query
 
 

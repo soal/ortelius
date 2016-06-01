@@ -40,19 +40,19 @@ def get_facts(start_date: hug.types.text=None,
              ):
     '''API function for getting list of facts'''
     query = db.query(Fact)
+    query = filter_by_ids(query, Fact, ids)
     try:
         query = filter_by_time(query, Fact, start_date, end_date)
     except DateError:
         raise BadRequest()
 
     query = filter_by_geo(query, Fact, topleft, bottomright)
-    query = filter_by_ids(query, Fact, ids)
     query = filter_by_weight(query, Fact, weight)
     result = query.all()
 
     if not result:
         raise NotFound()
-    
+
     serialized_result = []
     for fact in result:
         serialized = serialize(fact)
