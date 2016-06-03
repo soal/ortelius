@@ -72,6 +72,7 @@ def get_hist_region(hist_region_id):
         result['end_date']     = hist_region.end_date.date.to_string()
         result['next_region']  = result['next_region_id']
         result['prev_region']  = result['prev_region_id']
+        result['mark']         = hist_region.mark.id if hist_region.mark else None
         # result['description'] = convert_wikitext(result['description'])
         # result['text'] = convert_wikitext(result['text'])
         # result.pop('text')
