@@ -60,14 +60,23 @@ class Shape(db.Model):
         self.end_date = end_date
         self.coordinates = coordinates
 
-    id = db.Column(db.Integer, primary_key=True)
+    id            = db.Column(db.Integer, primary_key=True)
+    name          = db.Column(db.String(255), nullable=True)
+    label         = db.Column(db.Unicode(255), nullable=True)
     start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'))
-    end_date_id = db.Column(db.Integer, db.ForeignKey('date.id'))
-    start_date = db.relationship('Date', backref=db.backref('shapes_started', uselist=True, lazy='dynamic'), uselist=False, foreign_keys=start_date_id)
-    end_date = db.relationship('Date', backref=db.backref('shapes_ended', uselist=True, lazy='dynamic'), uselist=False, foreign_keys=end_date_id)
-    coordinates = db.relationship('Coordinates',
-                                  secondary=shapes_coordinates,
-                                  backref=db.backref('shapes', lazy='dynamic'))
+    end_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'))
+    start_date    = db.relationship('Date',
+                              backref=db.backref('shapes_started', uselist=True, lazy='dynamic'),
+                              uselist=False,
+                              foreign_keys=start_date_id)
+    end_date      = db.relationship('Date',
+                              backref=db.backref('shapes_ended', uselist=True, lazy='dynamic'),
+                              uselist=False,
+                              foreign_keys=end_date_id)
+    coordinates   = db.relationship('Coordinates',
+                                      secondary=shapes_coordinates,
+                                      backref=db.backref('shapes', lazy='dynamic'))
+    type          = db.Column(db.Enum('Polygon', 'Dot', 'Route'), name='shape_types')
 
     def __repr__(self):
         return '<Shape, id: %i>' % (self.id)
