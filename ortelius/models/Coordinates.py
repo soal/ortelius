@@ -1,10 +1,9 @@
 import bisect
 import sqlalchemy
 
-from ortelius import database
+from ortelius.database import db
 from ortelius.models.Date import Date
 
-db = database.db
 
 shapes_coordinates = db.Table('shapes_coordinates',
     db.Column('shape_id', db.Integer, db.ForeignKey('shape.id')),
@@ -55,28 +54,47 @@ class Shape(db.Model):
     """Shape model"""
     __tablename__ = 'shape'
 
-    def __init__(self, start_date=None, end_date=None, coordinates=[]):
+    def __init__(self,
+                 start_date=None,
+                 end_date=None,
+                 name=None,
+                 coordinates=[],
+                 stroke_color=None,
+                 stroke_opacity=None,
+                 fill_color=None,
+                 fill_opacity=None,
+                 type='Polygon'):
         self.start_date = start_date
         self.end_date = end_date
         self.coordinates = coordinates
+        self.name = name
+        self.stroke_color = stroke_color
+        self.fill_color = fill_color
+        self.stroke_opacity = stroke_opacity
+        self.fill_opacity = fill_opacity
+        self.type = type
 
-    id            = db.Column(db.Integer, primary_key=True)
-    name          = db.Column(db.String(255), nullable=True)
-    label         = db.Column(db.Unicode(255), nullable=True)
-    start_date_id = db.Column(db.Integer, db.ForeignKey('date.id'))
-    end_date_id   = db.Column(db.Integer, db.ForeignKey('date.id'))
-    start_date    = db.relationship('Date',
-                              backref=db.backref('shapes_started', uselist=True, lazy='dynamic'),
-                              uselist=False,
-                              foreign_keys=start_date_id)
-    end_date      = db.relationship('Date',
-                              backref=db.backref('shapes_ended', uselist=True, lazy='dynamic'),
-                              uselist=False,
-                              foreign_keys=end_date_id)
-    coordinates   = db.relationship('Coordinates',
-                                      secondary=shapes_coordinates,
-                                      backref=db.backref('shapes', lazy='dynamic'))
-    type          = db.Column(db.Enum('Polygon', 'Dot', 'Route'), name='shape_types')
+    id             = db.Column(db.Integer, primary_key=True)
+    name           = db.Column(db.String(255), nullable=True)
+    label          = db.Column(db.Unicode(255), nullable=True)
+    start_date_id  = db.Column(db.Integer, db.ForeignKey('date.id'))
+    end_date_id    = db.Column(db.Integer, db.ForeignKey('date.id'))
+    start_date     = db.relationship('Date',
+                                     backref=db.backref('shapes_started', uselist=True, lazy='dynamic'),
+                                     uselist=False,
+                                     foreign_keys=start_date_id)
+    end_date       = db.relationship('Date',
+                                     backref=db.backref('shapes_ended', uselist=True, lazy='dynamic'),
+                                     uselist=False,
+                                     foreign_keys=end_date_id)
+    coordinates    = db.relationship('Coordinates',
+                                     secondary=shapes_coordinates,
+                                     backref=db.backref('shapes', lazy='dynamic'))
+    type           = db.Column(db.Enum('Polygon', 'Dot', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
+    stroke_color   = db.Column(db.String(255))
+    fill_color     = db.Column(db.String(255))
+    stroke_opacity = db.Column(db.Float, default=1)
+    fill_opacity   = db.Column(db.Float, default=1)
 
     def __repr__(self):
         return '<Shape, id: %i>' % (self.id)
