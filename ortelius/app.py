@@ -1,7 +1,7 @@
 import os
 import hug
 
-from ortelius.api import Facts, Processes, Dicts, HistRegions
+from ortelius.api import Facts, Processes, Dicts, HistRegions, Shapes
 from ortelius import settings
 
 try:
@@ -23,7 +23,7 @@ def welcome():
 
 @hug.extend_api('/objects')
 def get_data():
-    return [Facts, Processes, HistRegions]
+    return [Facts, Processes, HistRegions, Shapes]
 
 @hug.extend_api('/dicts')
 def get_dicts():

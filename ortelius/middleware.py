@@ -1,4 +1,5 @@
 import datetime
+import geojson
 # from json import dumps
 
 from ortelius.types.historical_date import HistoricalDate as hd
@@ -90,3 +91,6 @@ def make_api_response(data, pages=None, total=None):
         },
         'data': data
     }
+
+def make_geojson_response(data):
+    return geojson.dumps(geojson.GeoJSON(serialize(data)))

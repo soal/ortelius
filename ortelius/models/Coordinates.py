@@ -57,7 +57,6 @@ class Shape(db.Model):
     def __init__(self,
                  start_date=None,
                  end_date=None,
-                 name=None,
                  coordinates=[],
                  stroke_color=None,
                  stroke_opacity=None,
@@ -67,7 +66,6 @@ class Shape(db.Model):
         self.start_date = start_date
         self.end_date = end_date
         self.coordinates = coordinates
-        self.name = name
         self.stroke_color = stroke_color
         self.fill_color = fill_color
         self.stroke_opacity = stroke_opacity
@@ -75,8 +73,6 @@ class Shape(db.Model):
         self.type = type
 
     id             = db.Column(db.Integer, primary_key=True)
-    name           = db.Column(db.String(255), nullable=True)
-    label          = db.Column(db.Unicode(255), nullable=True)
     start_date_id  = db.Column(db.Integer, db.ForeignKey('date.id'))
     end_date_id    = db.Column(db.Integer, db.ForeignKey('date.id'))
     start_date     = db.relationship('Date',
