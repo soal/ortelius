@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
+#
+import os, sys, inspect, traceback
 import unittest
 import coverage
-import traceback
-import os, sys, inspect
 
 from scripts import create_initial_data
 from ortelius import database, app
@@ -118,7 +118,7 @@ def create_data():
 
 def run():
     """Start development server"""
-    pass
+    os.system('hug -f ortelius/app.py')
 
 
 def main():
