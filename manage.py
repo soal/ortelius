@@ -115,6 +115,12 @@ def create_data():
     create_initial_data.create_processes(database.db)
     create_initial_data.create_personas(database.db)
 
+
+def run():
+    """Start development server"""
+    pass
+
+
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
     funcs.pop(funcs.index('main'))
