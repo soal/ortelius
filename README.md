@@ -108,6 +108,5 @@ Update database schema to migration:
 ```
 Start development server:
 ```
-hug ortelius/app.py
+./manage.py run
 ```
-
