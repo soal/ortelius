@@ -58,12 +58,18 @@ class HistRegion(db.Model):
     end_date_id     = db.Column(db.Integer, db.ForeignKey('date.id'), nullable=True)
     end_date        = db.relationship('Date', backref=db.backref('hist_regions_end', lazy='joined'), foreign_keys=end_date_id)
     shapes          = db.relationship('Shape', backref=db.backref('hist_region'), lazy='dynamic')
+    mark            = db.relationship('Shape')
     facts           = db.relationship('Fact', secondary=hist_regions_facts, backref=db.backref('hist_regions'), lazy='dynamic')
     next_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
     prev_region_id  = db.Column(db.Integer, db.ForeignKey('hist_region.id'), nullable=True)
     next_region     = db.relationship('HistRegion', backref=db.backref('prev_region', uselist=False), uselist=False, foreign_keys=next_region_id, remote_side='HistRegion.id')
     hist_places     = db.relationship('HistPlace', secondary=hist_regions_hist_places, backref=db.backref('hist_regions'), lazy='dynamic')
     trusted         = db.Column(db.Boolean)
+
+    def create_mark(self, dots):
+        # TODO: Mark creation
+        mark = None
+        self.mark = mark
 
 
 class HistPlace(db.Model):

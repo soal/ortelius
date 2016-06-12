@@ -24,7 +24,7 @@ from ortelius.models.Date import Date
 from ortelius.models.Process import Process
 from ortelius.models.Hist_region import HistPlace, HistRegion
 from ortelius.models.Persona import Persona
-from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_ids, filter_by_time, filter_by_weight
+from ortelius.middleware import serialize, make_api_response, filter_by_ids, filter_by_time, filter_by_weight
 
 
 @hug.get('/processes',
@@ -37,6 +37,7 @@ def get_processes(start_date: hug.types.text=None,
                   ids: list=None):
     '''API function for getting list of processes'''
     query = db.query(Process)
+    query = filter_by_ids(query, Process, ids)
     try:
         query = filter_by_time(query, Process, start_date, end_date)
     except DateError:
