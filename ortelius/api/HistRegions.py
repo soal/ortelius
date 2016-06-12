@@ -47,13 +47,16 @@ def get_hist_regions(start_date: hug.types.text=None,
         else:
             end = hd(datetime.datetime.now())
 
+        # TODO: Test!
         query = query.filter(HistRegion.shapes.any(Shape.start_date.has(Date.date >= start.to_int()),
                                                    Shape.end_date.has(Date.date <= end.to_int())))
         query = query.filter(HistRegion.shapes.any(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
 
-    # query = filter_by_geo(query, HistRegion, topleft, bottomright)
     query = filter_by_weight(query, HistRegion, weight)
     result = query.all()
+
+    if not result:
+        raise NotFound()
 
     return make_api_response(result)
 
@@ -88,16 +91,16 @@ def get_hist_region(hist_region_id):
 @hug.post('/hist_regions')
 def create_fact(data):
     '''API function for creating new historical region'''
-    raise MethodNotImplemented(resource_type='Fact')
+    raise MethodNotImplemented(resource_type='Hist_region')
 
 
 @hug.put('/hist_regions/{hist_region_id}')
 def update_fact(hist_region_id, data):
     '''API function for updating existing historical region'''
-    raise MethodNotImplemented(resource_type='Fact')
+    raise MethodNotImplemented(resource_type='Hist_region')
 
 
 @hug.delete('/hist_regions/{hist_region_id}')
 def delete_fact(hist_region_id):
     '''API function for deleting historical region'''
-    raise MethodNotImplemented(resource_type='Fact')
+    raise MethodNotImplemented(resource_type='Hist_region')
