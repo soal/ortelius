@@ -1,15 +1,9 @@
 import bisect
 import sqlalchemy
+from sqlalchemy.ext.orderinglist import ordering_list
 
 from ortelius.database import db
 from ortelius.models.Date import Date
-
-
-shapes_coordinates = db.Table('shapes_coordinates',
-    db.Column('shape_id', db.Integer, db.ForeignKey('shape.id')),
-    db.Column('coordinates_id', db.Integer, db.ForeignKey('coordinates.id')),
-    db.Column('point_position', db.Float)
-)
 
 
 class Coordinates(db.Model):
@@ -21,11 +15,13 @@ class Coordinates(db.Model):
         self.long = long
         self.quadrant = quadrant
 
-    id = db.Column(db.Integer, primary_key=True)
-    lat = db.Column(db.Float, nullable=False)
-    long = db.Column(db.Float, nullable=False)
+    id            = db.Column(db.Integer, primary_key=True)
+    lat           = db.Column(db.Float, nullable=False)
+    long          = db.Column(db.Float, nullable=False)
     quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
-    quadrant = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
+    quadrant      = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
+    shape_id      = db.Column(db.Integer, db.ForeignKey('shape.id'))
+    position      = db.Column(db.Integer)
 
     @classmethod
     def create(cls, lat, long, quadrant=None):
@@ -43,11 +39,10 @@ class Coordinates(db.Model):
             if not quadrant:
                 raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
 
-        # point = db.query(cls).filter(Coordinates.lat == lat, Coordinates.long == long).first()
-        # if point:
-        #     return point
-
         return cls(lat=lat, long=long, quadrant=quadrant)
+
+    def __repr__(self):
+        return '<Coordinates point, id: %i, lat: %i, long: %i>' % (self.id, self.lat, self.long)
 
 
 
@@ -85,9 +80,9 @@ class Shape(db.Model):
                                      uselist=False,
                                      foreign_keys=end_date_id)
     coordinates    = db.relationship('Coordinates',
-                                     secondary=shapes_coordinates,
-                                     order_by=shapes_coordinates.c.point_position,
-                                     backref=db.backref('shapes', lazy='dynamic'))
+                                     backref=db.backref('shape', uselist=False),
+                                     order_by='Coordinates.position',
+                                     collection_class=ordering_list('position'))
     type           = db.Column(db.Enum('Polygon', 'Dot', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
     stroke_color   = db.Column(db.String(255))
     fill_color     = db.Column(db.String(255))
