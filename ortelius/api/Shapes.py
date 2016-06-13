@@ -2,7 +2,7 @@ import hug
 
 from ortelius.database import db
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
-from ortelius.models.Coordinates import Shape, shapes_coordinates
+from ortelius.models.Coordinates import Shape
 from ortelius.middleware import filter_by_ids, make_geojson_response
 
 
