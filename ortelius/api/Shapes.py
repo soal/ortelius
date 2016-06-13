@@ -2,9 +2,9 @@ import hug
 
 from ortelius.database import db
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
-from ortelius.models.Coordinates import Shape, Coordinates
-from ortelius.models.Date import Date
-from ortelius.middleware import filter_by_ids, filter_by_time, filter_by_weight, filter_quadrants, serialize, make_api_response, make_geojson_response
+from ortelius.models.Coordinates import Shape
+# from ortelius.models.Date import Date
+from ortelius.middleware import filter_by_ids, make_geojson_response
 
 
 @hug.get('/shapes',
@@ -12,6 +12,9 @@ from ortelius.middleware import filter_by_ids, filter_by_time, filter_by_weight,
         examples=['ids=[1,2,3,45,678]'])
 
 def get_shapes(ids: list=None):
+    if not ids:
+        raise BadRequest()
+
     query = db.query(Shape)
 
     query = filter_by_ids(query, Shape, ids)
