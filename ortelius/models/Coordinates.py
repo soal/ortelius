@@ -7,7 +7,8 @@ from ortelius.models.Date import Date
 
 shapes_coordinates = db.Table('shapes_coordinates',
     db.Column('shape_id', db.Integer, db.ForeignKey('shape.id')),
-    db.Column('coordinates_id', db.Integer, db.ForeignKey('coordinates.id'))
+    db.Column('coordinates_id', db.Integer, db.ForeignKey('coordinates.id')),
+    db.Column('point_position', db.Float)
 )
 
 
@@ -42,9 +43,9 @@ class Coordinates(db.Model):
             if not quadrant:
                 raise sqlalchemy.exc.ArgumentError('Can\'t find quadrant and none quadrant given')
 
-        point = db.query(cls).filter(Coordinates.lat == lat, Coordinates.long == long).first()
-        if point:
-            return point
+        # point = db.query(cls).filter(Coordinates.lat == lat, Coordinates.long == long).first()
+        # if point:
+        #     return point
 
         return cls(lat=lat, long=long, quadrant=quadrant)
 
@@ -85,6 +86,7 @@ class Shape(db.Model):
                                      foreign_keys=end_date_id)
     coordinates    = db.relationship('Coordinates',
                                      secondary=shapes_coordinates,
+                                     order_by=shapes_coordinates.c.point_position,
                                      backref=db.backref('shapes', lazy='dynamic'))
     type           = db.Column(db.Enum('Polygon', 'Dot', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
     stroke_color   = db.Column(db.String(255))

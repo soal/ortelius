@@ -2,8 +2,7 @@ import hug
 
 from ortelius.database import db
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
-from ortelius.models.Coordinates import Shape
-# from ortelius.models.Date import Date
+from ortelius.models.Coordinates import Shape, shapes_coordinates
 from ortelius.middleware import filter_by_ids, make_geojson_response
 
 
@@ -35,3 +34,27 @@ def get_shape(shape_id):
         raise NotFound(resource_type='Shape')
 
     return make_geojson_response(shape)
+
+
+
+@hug.post('/shapes')
+def create_shape(data):
+    '''API function for creating new shape'''
+    raise MethodNotImplemented(resource_type='Shape')
+
+
+@hug.put('/shapes/{shape_id}')
+def update_shape(shape_id, data):
+    '''API function for updating existing shape'''
+
+
+@hug.delete('/shapes/{shape_id}')
+def delete_shape(shape):
+    '''API function for deleting historical region'''
+    # Example for updating coordinates points positions in shape
+    # shapes_coordinates.c.coordinates_id == coordinates.id
+    #                                 ).where(
+    #                                     shape.c.shape_id == shape.id
+    #                                 ).value(point_position=position)
+    #                                 db.session.execute(query)
+    raise MethodNotImplemented(resource_type='Shape')

@@ -89,18 +89,18 @@ def get_hist_region(hist_region_id):
 
 
 @hug.post('/hist_regions')
-def create_fact(data):
+def create_hist_region(data):
     '''API function for creating new historical region'''
     raise MethodNotImplemented(resource_type='Hist_region')
 
 
 @hug.put('/hist_regions/{hist_region_id}')
-def update_fact(hist_region_id, data):
+def update_hist_region(hist_region_id, data):
     '''API function for updating existing historical region'''
     raise MethodNotImplemented(resource_type='Hist_region')
 
 
 @hug.delete('/hist_regions/{hist_region_id}')
-def delete_fact(hist_region_id):
+def delete_hist_region(hist_region_id):
     '''API function for deleting historical region'''
     raise MethodNotImplemented(resource_type='Hist_region')
