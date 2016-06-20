@@ -10,17 +10,18 @@ class Coordinates(db.Model):
     """Coordinates model"""
     __tablename__ = 'coordinates'
 
-    def __init__(self, lat=None, long=None, quadrant=None):
+    def __init__(self, lat=None, long=None, quadrant=None, position=None):
         self.lat = lat
         self.long = long
         self.quadrant = quadrant
+        self.position = position
 
     id            = db.Column(db.Integer, primary_key=True)
     lat           = db.Column(db.Float, nullable=False)
     long          = db.Column(db.Float, nullable=False)
     quadrant_hash = db.Column(db.String, db.ForeignKey('quadrant.hash'), nullable=True)
     quadrant      = db.relationship('Quadrant', backref=db.backref('coordinates', uselist=True), uselist=False)
-    shape_id      = db.Column(db.Integer, db.ForeignKey('shape.id'))
+    shape_id      = db.Column(db.Integer, db.ForeignKey('shape.id'), nullable=True)
     position      = db.Column(db.Integer)
 
     @classmethod
@@ -53,7 +54,7 @@ class Shape(db.Model):
     def __init__(self,
                  start_date=None,
                  end_date=None,
-                 coordinates=[],
+                #  coordinates=[],
                  stroke_color=None,
                  stroke_opacity=None,
                  fill_color=None,
@@ -61,7 +62,7 @@ class Shape(db.Model):
                  type='Polygon'):
         self.start_date = start_date
         self.end_date = end_date
-        self.coordinates = coordinates
+        # self.coordinates = coordinates
         self.stroke_color = stroke_color
         self.fill_color = fill_color
         self.stroke_opacity = stroke_opacity
@@ -89,8 +90,8 @@ class Shape(db.Model):
     stroke_opacity = db.Column(db.Float, default=1)
     fill_opacity   = db.Column(db.Float, default=1)
 
-    def __repr__(self):
-        return '<Shape, id: %i>' % (self.id)
+    # def __repr__(self):
+    #     return '<Shape, id: {id}>'.format(self.id)
 
 
 

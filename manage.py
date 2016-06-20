@@ -3,10 +3,19 @@
 import os, sys, inspect, traceback
 import unittest
 import coverage
+from sqlalchemy.engine import reflection
+from sqlalchemy.schema import (
+        MetaData,
+        Table,
+        DropTable,
+        ForeignKeyConstraint,
+        DropConstraint,
+        )
 
-from scripts import create_initial_data
+from scripts import create_initial_data, shapes_processor
 from ortelius import database, app
 
+from ortelius.types.historical_date import *
 from ortelius.models.Collection import *
 from ortelius.models.Coordinates import *
 from ortelius.models.Date import *
@@ -82,7 +91,41 @@ def drop_db():
     """Drops the db tables."""
     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
     # app.config.from_object(os.environ['APP_SETTINGS'])
-    database.db.drop_all()
+    conn=database.db.engine.connect()
+
+    # the transaction only applies if the DB supports
+    # transactional DDL, i.e. Postgresql, MS SQL Server
+    trans = conn.begin()
+
+    inspector = reflection.Inspector.from_engine(database.db.engine)
+
+    # gather all data first before dropping anything.
+    # some DBs lock after things have been dropped in
+    # a transaction.
+    metadata = MetaData()
+
+    tbs = []
+    all_fks = []
+
+    for table_name in inspector.get_table_names():
+        fks = []
+        for fk in inspector.get_foreign_keys(table_name):
+            if not fk['name']:
+                continue
+            fks.append(
+                ForeignKeyConstraint((),(),name=fk['name'])
+                )
+        t = Table(table_name,metadata,*fks)
+        tbs.append(t)
+        all_fks.extend(fks)
+
+    for fkc in all_fks:
+        conn.execute(DropConstraint(fkc))
+
+    for table in tbs:
+        conn.execute(DropTable(table))
+
+    trans.commit()
 
 
 # def create_admin():
@@ -120,6 +163,17 @@ def run():
     """Start development server"""
     os.system('hug -f ortelius/app.py')
 
+def create_shapes():
+    print('Creating shapes...')
+    if sys.argv[2]:
+        input_file = sys.argv[2]
+    else:
+        input_file = '/mnt/data/Map_Data/KLMs/selected/roman_republic.geojson'
+    shapes = shapes_processor.parse(HistoricalDate, Shape, Coordinates, Quadrant, Date, input_file)
+    for shape in shapes:
+        database.db.session.add(shape)
+    database.db.session.commit()
+    print('Done!')
 
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]

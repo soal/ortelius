@@ -1,12 +1,12 @@
-import geojson
 from sys import argv
 import os
-from ortelius.types.historical_date import HistoricalDate as hd, DateError
-from ortelius.models.Coordinates import Shape, Coordinates, Quadrant
+import datetime
+import geojson
+from ortelius.types.historical_date import DateError
+
 
 def split(path):
     periods = [p for p in range(-3000, 2000, 300)]
-    # print(periods)
     with open(path, mode='r') as source_file:
         data = geojson.load(source_file)
         for feature in data['features']:
@@ -24,30 +24,42 @@ def split(path):
             feature_file.write(str(feature))
 
 
-def parse(path):
+def parse(hd, Shape, Coordinates, Quadrant, Date, path):
     with open(path, mode='r') as source_file:
         data = geojson.load(source_file)
 
         shapes = []
         for feature in data['features']:
             coordinates = []
-            for dot in feature['geometry']['coordinates']:
-                if isinstance(dot, list):
-
+            print(feature['geometry']['coordinates'][0][0])
+            return
+            for dot in feature['geometry']['coordinates'][0]:
+                print(dot)
                 point = Coordinates(dot[0], dot[1], Quadrant.get(dot[0], dot[1]))
                 coordinates.append(point)
 
-            shape = Shape(start_date=hd(feature['properties']['timespan']['begin']),
-                          end_date=hd(feature['properties']['timespan']['end']),
+            try:
+                start = Date.create(date=hd(feature['properties']['timespan']['begin']))
+            except:
+                start = Date.create(date=hd(-50000101))
+            try:
+                end = Date.create(date=hd(feature['properties']['timespan']['end']))
+            except:
+                end = Date.create(date=hd(datetime.datetime.now()))
+
+            shape = Shape(start_date=start,
+                          end_date=end,
                           stroke_color=feature['properties']['stroke'],
                           stroke_opacity=feature['properties']['stroke-opacity'],
                           fill_color=feature['properties']['fill'],
                           fill_opacity=feature['properties']['fill-opacity'],
-                          type='Polygon',
-                          coordinates=coordinates
+                          type='Polygon'
                          )
+            for cp in coordinates:
+                shape.coordinates.append(cp)
             shapes.append(shape)
-
+    print(shapes[0].coordinates)
+    return shapes
 
 
 def main():
@@ -55,6 +67,11 @@ def main():
         if not argv[2]:
             print('Please, set path to geojson file')
         split(argv[2])
+
+    if argv[1] == 'parse':
+        if not argv[2]:
+            print('Please, set path to geojson file')
+        parse(argv[2])
 
 if __name__ == '__main__':
     main()

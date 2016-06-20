@@ -10,6 +10,8 @@ from ortelius.models.Persona import Persona, PersType
 from ortelius.models.Hist_region import HistRegion, HistPlace
 from ortelius.models.User import User, UsersRoles, Role
 
+from scripts.shapes_processor import parse
+
 from test_data.test_facts import test_facts
 from test_data.test_hist_regions import test_hist_regions
 from test_data.test_processes import test_processes
@@ -132,7 +134,7 @@ def create_hist_regions(db):
     db.session.commit()
     print('Done')
 
-def create_shape(db):
+def create_shapes(db):
     print('Creating shapes...')
     point = Coordinates.create(66.82, 10.5)
     sh = Shape(start_date=Date.create(date=hd(datetime.date.today())), end_date=Date.create(date=hd(datetime.date.today())), coordinates=[point])
