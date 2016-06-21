@@ -6,9 +6,9 @@ from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.types.historical_date import DateError
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
 from ortelius.models.Hist_region import HistRegion, HistPlace
-from ortelius.models.Coordinates import Shape, Coordinates
+from ortelius.models.Coordinates import Shape
 from ortelius.models.Date import Date
-from ortelius.middleware import filter_by_ids, filter_by_time, filter_by_weight, filter_quadrants, serialize, make_api_response
+from ortelius.middleware import filter_by_ids, filter_by_time, filter_by_weight, serialize, make_api_response
 
 
 @hug.get('/hist_regions',
@@ -33,24 +33,24 @@ def get_hist_regions(start_date: hug.types.text=None,
     except DateError:
         raise BadRequest()
 
-    if topleft and bottomright:
-        top_left = [float(x) for x in topleft]
-        bottom_right = [float(x) for x in bottomright]
-        quadrants_coordinates = filter_quadrants(top_left, bottom_right)
-
-        if start_date:
-            start = hd(start_date)
-        else:
-            start = hd(-50000101)
-        if end_date:
-            end = hd(end_date)
-        else:
-            end = hd(datetime.datetime.now())
-
-        # TODO: Test!
-        query = query.filter(HistRegion.shapes.any(Shape.start_date.has(Date.date >= start.to_int()),
-                                                   Shape.end_date.has(Date.date <= end.to_int())))
-        query = query.filter(HistRegion.shapes.any(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+    # if topleft and bottomright:
+    #     top_left = [float(x) for x in topleft]
+    #     bottom_right = [float(x) for x in bottomright]
+    #     quadrants_coordinates = filter_quadrants(top_left, bottom_right)
+    #
+    #     if start_date:
+    #         start = hd(start_date)
+    #     else:
+    #         start = hd(-50000101)
+    #     if end_date:
+    #         end = hd(end_date)
+    #     else:
+    #         end = hd(datetime.datetime.now())
+    #
+    #     # TODO: Test!
+    #     query = query.filter(HistRegion.shapes.any(Shape.start_date.has(Date.date >= start.to_int()),
+    #                                                Shape.end_date.has(Date.date <= end.to_int())))
+    #     query = query.filter(HistRegion.shapes.any(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
 
     query = filter_by_weight(query, HistRegion, weight)
     result = query.all()

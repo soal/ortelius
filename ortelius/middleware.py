@@ -1,10 +1,11 @@
 import datetime
 import geojson
+import geoalchemy2
 # from json import dumps
 
 from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Date import Date
-from ortelius.models.Coordinates import Quadrant, Shape, Coordinates
+from ortelius.models.Coordinates import Shape
 
 def serialize(sqlalchemy_obj):
     serialized = {}
@@ -41,13 +42,13 @@ def filter_by_time(query, model, start_date, end_date):
     return query
 
 
-def filter_quadrants(top_left, bottom_right):
-    quadrants_coordinates = []
-    for c in Quadrant.quadrants:
-        if c[0] >= top_left[0] - 4 and c[0] <= bottom_right[0] and c[1] >= top_left[1]-4 and c[1] <= bottom_right[1]:
-            quadrants_coordinates.append(','.join([str(c[0]), str(c[1])]))
-
-    return quadrants_coordinates
+# def filter_quadrants(top_left, bottom_right):
+#     quadrants_coordinates = []
+#     for c in Quadrant.quadrants:
+#         if c[0] >= top_left[0] - 4 and c[0] <= bottom_right[0] and c[1] >= top_left[1]-4 and c[1] <= bottom_right[1]:
+#             quadrants_coordinates.append(','.join([str(c[0]), str(c[1])]))
+#
+#     return quadrants_coordinates
 
 def filter_by_geo(query, model, topleft, bottomright):
     '''Filter facts by given quadrants in geocoordinates'''
@@ -57,10 +58,21 @@ def filter_by_geo(query, model, topleft, bottomright):
     else:
         return query
 
-    quadrants_coordinates = filter_quadrants(top_left, bottom_right)
+    # quadrants_coordinates = filter_quadrants(top_left, bottom_right)
 
     if hasattr(model, 'shape'):
-        query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+        # query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
+        query = query.filter(model.shape.coordinates).contained('POLYGON(({1} {2},{3} {4},{5} {6},{7} {8}))'.format(top_left[0],
+                      top_left[1],
+
+                      top_left[0],
+                      bottom_right[1],
+
+                      bottom_right[0],
+                      bottom_right[1],
+
+                      bottom_right[0],
+                      top_left[1]))
 
     return query
 
