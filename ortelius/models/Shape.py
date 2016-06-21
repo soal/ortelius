@@ -1,6 +1,6 @@
-import bisect
-import sqlalchemy
-from sqlalchemy.ext.orderinglist import ordering_list
+# import bisect
+# import sqlalchemy
+# from sqlalchemy.ext.orderinglist import ordering_list
 from geoalchemy2.types import Geometry
 
 from ortelius.database import db

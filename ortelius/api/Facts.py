@@ -21,7 +21,7 @@ from ortelius.models.Date import Date
 from ortelius.models.Fact import Fact
 from ortelius.models.Process import Process
 from ortelius.models.Persona import Persona
-from ortelius.models.Coordinates import Shape
+from ortelius.models.Shape import Shape
 from ortelius.types.historical_date import DateError, HistoricalDate as hd
 from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_time, filter_by_ids, filter_by_weight
 

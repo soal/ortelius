@@ -6,7 +6,7 @@ from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.types.historical_date import DateError
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
 from ortelius.models.Hist_region import HistRegion, HistPlace
-from ortelius.models.Coordinates import Shape
+from ortelius.models.Shape import Shape
 from ortelius.models.Date import Date
 from ortelius.middleware import filter_by_ids, filter_by_time, filter_by_weight, filter_by_geo, serialize, make_api_response
 

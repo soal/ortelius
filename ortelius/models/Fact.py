@@ -1,6 +1,6 @@
 from ortelius import database
 from ortelius.models.Date import Date
-from ortelius.models.Coordinates import Shape
+from ortelius.models.Shape import Shape
 
 db = database.db
 
