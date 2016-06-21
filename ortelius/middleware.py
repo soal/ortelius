@@ -1,7 +1,6 @@
 import datetime
 import geojson
-import geoalchemy2
-# from json import dumps
+
 
 from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Date import Date
@@ -74,6 +73,18 @@ def filter_by_geo(query, model, topleft, bottomright):
                       bottom_right[0],
                       top_left[1]))
 
+    if hasattr(model, 'shapes'):
+        query.filter(model.shapes.any(Shape.shape.coordinates).contained('POLYGON(({1} {2},{3} {4},{5} {6},{7} {8}))'.format(top_left[0],
+                      top_left[1],
+
+                      top_left[0],
+                      bottom_right[1],
+
+                      bottom_right[0],
+                      bottom_right[1],
+
+                      bottom_right[0],
+                      top_left[1])))
     return query
 
 
