@@ -17,7 +17,7 @@ from ortelius import database, app
 
 from ortelius.types.historical_date import *
 from ortelius.models.Collection import *
-from ortelius.models.Coordinates import *
+from ortelius.models.Shape import *
 from ortelius.models.Date import *
 from ortelius.models.Fact import *
 from ortelius.models.Geo_region import *

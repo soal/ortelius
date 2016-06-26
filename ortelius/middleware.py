@@ -4,7 +4,7 @@ import geojson
 
 from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.models.Date import Date
-from ortelius.models.Coordinates import Shape
+from ortelius.models.Shape import Shape
 
 def serialize(sqlalchemy_obj):
     serialized = {}
