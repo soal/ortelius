@@ -51,10 +51,4 @@ def update_shape(shape_id, data):
 @hug.delete('/shapes/{shape_id}')
 def delete_shape(shape):
     '''API function for deleting historical region'''
-    # Example for updating coordinates points positions in shape
-    # shapes_coordinates.c.coordinates_id == coordinates.id
-    #                                 ).where(
-    #                                     shape.c.shape_id == shape.id
-    #                                 ).value(point_position=position)
-    #                                 db.session.execute(query)
     raise MethodNotImplemented(resource_type='Shape')

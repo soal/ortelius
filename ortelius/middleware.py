@@ -60,7 +60,6 @@ def filter_by_geo(query, model, topleft, bottomright):
     # quadrants_coordinates = filter_quadrants(top_left, bottom_right)
 
     if hasattr(model, 'shape'):
-        # query = query.filter(model.shape.has(Shape.coordinates.any(Coordinates.quadrant_hash.in_(quadrants_coordinates))))
         query = query.filter(model.shape.coordinates).contained('POLYGON(({1} {2},{3} {4},{5} {6},{7} {8}))'.format(top_left[0],
                       top_left[1],
 
@@ -116,4 +115,5 @@ def make_api_response(data, pages=None, total=None):
     }
 
 def make_geojson_response(data):
+    # TODO: Update with geoalchemy
     return geojson.dumps(geojson.GeoJSON(serialize(data)))

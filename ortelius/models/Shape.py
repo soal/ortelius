@@ -1,6 +1,3 @@
-# import bisect
-# import sqlalchemy
-# from sqlalchemy.ext.orderinglist import ordering_list
 from geoalchemy2.types import Geometry
 
 from ortelius.database import db
@@ -14,7 +11,7 @@ class Shape(db.Model):
     def __init__(self,
                  start_date=None,
                  end_date=None,
-                 coordinates=[],
+                 coordinates=None,
                  stroke_color=None,
                  stroke_opacity=None,
                  fill_color=None,
@@ -51,7 +48,7 @@ class Shape(db.Model):
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
     multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
     polygon        = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
-    shape_type           = db.Column(db.Enum('Polygon', 'Point', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
+    shape_type     = db.Column(db.Enum('Area', 'Point', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
     stroke_color   = db.Column(db.String(255))
     fill_color     = db.Column(db.String(255))
     stroke_opacity = db.Column(db.Float, default=1)
