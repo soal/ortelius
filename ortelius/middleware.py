@@ -1,5 +1,6 @@
 import datetime
 import geojson
+from shapely.geometry import shape
 
 
 from ortelius.types.historical_date import HistoricalDate as hd
@@ -60,7 +61,12 @@ def filter_by_geo(query, model, topleft, bottomright):
     # quadrants_coordinates = filter_quadrants(top_left, bottom_right)
 
     if hasattr(model, 'shape'):
-        query = query.filter(model.shape.coordinates).contained('POLYGON(({1} {2},{3} {4},{5} {6},{7} {8}))'.format(top_left[0],
+        coordinates = 'point'
+        if model.shape.shape_type == 'Area':
+            coordinates = 'polygon'
+        if model.shape.shape_type == 'Route' or model.shape.shape_type == 'Movement':
+            coordinates = 'multipoint'
+        query = query.filter(model.shape.__getattribute__(coordinates)).contained('POLYGON(({1} {2},{3} {4},{5} {6},{7} {8}))'.format(top_left[0],
                       top_left[1],
 
                       top_left[0],
@@ -113,6 +119,9 @@ def make_api_response(data, pages=None, total=None):
         },
         'data': data
     }
+
+def convert_to_ewkt(coordinates):
+    return 'SRID=4326;' + shape(coordinates)
 
 def make_geojson_response(data):
     # TODO: Update with geoalchemy
