@@ -9,7 +9,7 @@ Get elements with optional search params.
 
 Ex.:
 http://handymap.com/api/elements/36 - one fact by id
-http://handymap.com/api/elements?ids=1,5,23,67 - list of processes by given ids
+http://handymap.com/api/elements?ids=1,5,23,67 - list of elements by given ids
 http://handymap.com/api/elements?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
 '''
 
@@ -34,20 +34,21 @@ Get processes with optional search params.
 ?ids — list of processes ids
 
 Ex.:
-http://handymap.com/api/processes/36 - one fact by id
-http://handymap.com/api/processes?ids=1,5,23,67 - list of processes by given ids
-http://handymap.com/api/processes?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - facts by dates in given quadrant
+http://handymap.com/api/elements/36 - one fact by id
+http://handymap.com/api/elements?ids=1,5,23,67 - list of elements by given ids
+http://handymap.com/api/elements?start_date=12-22-1560&end_date=03-30-1570&topleft=65.45,56.89&bottomright=69.45,50.89 - elements by dates in given quadrant
 '''
 
 
-# @hug.get('/elements',
-#          examples=['start_date=12-22-1560&end_date=03-30-1570&weight=1',
-#                    'ids=[1,2,3,4]']
-#         )
-# def get_elements(start_date: hug.types.text=None,
-#                   end_date: hug.types.text=None,
-#                   weight: int=None,
-#                   ids: list=None):
+@hug.get('/elements',
+         examples=['start_date=12-22-1560&end_date=03-30-1570&weight=1',
+                   'ids=1,2,3,4']
+        )
+def get_elements(start_date: hug.types.text=None,
+                  end_date: hug.types.text=None,
+                  weight: int=None,
+                  ids: list=None):
+    raise MethodNotImplemented(resource_type='Element')
 #     '''API function for getting list of processes'''
 #     query = db.query(Process)
 #     query = filter_by_ids(query, Process, ids)
