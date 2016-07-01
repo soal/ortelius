@@ -31,6 +31,7 @@ python-dateutil==2.5.2
 python-editor==0.5
 python-mimeparse==1.5.1
 requests==2.10.0
+Shapely==1.5.16
 simplegeneric==0.8.1
 six==1.10.0
 SQLAlchemy==1.0.12
