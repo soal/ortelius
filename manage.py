@@ -129,7 +129,7 @@ def create_data():
 
 def run():
     """Start development server"""
-    os.system('hug -f ortelius/app.py')
+    os.system('hug -f ortelius/app.py -p {0}'.format(app.config.PORT))
 
 # def create_shapes():
 #     print('Creating shapes...')

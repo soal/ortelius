@@ -46,6 +46,7 @@ class DevelopmentConfig(BaseConfig):
     # SQLALCHEMY_ECHO = True
     SQLALCHEMY_ECHO = False
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
+    PORT = 8000
 
 
 class TestingConfig(BaseConfig):
@@ -58,6 +59,7 @@ class TestingConfig(BaseConfig):
 
 class StagingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgres://hwrahxbzvqrvat:mWQlZSvMTsXeYKCMpEs6tFs6Nf@ec2-54-243-208-3.compute-1.amazonaws.com:5432/dfks95hsim9k2b"
+    PORT = 80
 
 
 class ProductionConfig(BaseConfig):
