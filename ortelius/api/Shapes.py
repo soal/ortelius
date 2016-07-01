@@ -5,12 +5,11 @@ from ortelius.database import db
 from ortelius.types.errors import NotFound, ServerError, BadRequest, MethodNotImplemented
 from ortelius.models.Shape import Shape
 from ortelius.middleware import filter_by_ids, make_geojson_response
-#
-#
+
+
 @hug.get('/',
         versions=1,
         examples=['ids=[1,2,3,45,678]'])
-#
 def get_shapes(ids: list=None):
     if not ids:
         raise BadRequest()
@@ -51,6 +50,6 @@ def update_shape(shape_id, data):
 
 
 @hug.delete('/{shape_id}')
-def delete_shape(shape):
+def delete_shape(shape_id):
     '''API function for deleting historical region'''
     raise MethodNotImplemented(resource_type='Shape')

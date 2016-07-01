@@ -130,6 +130,5 @@ def make_geojson_feature(data):
 def make_geojson_response(data):
     if isinstance(data, list):
         return geojson.FeatureCollection([make_geojson_feature(shape) for shape in data])
-
     else:
         return make_geojson_feature(data)
