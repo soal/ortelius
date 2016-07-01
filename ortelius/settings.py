@@ -59,7 +59,7 @@ class TestingConfig(BaseConfig):
 
 class StagingConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgres://hwrahxbzvqrvat:mWQlZSvMTsXeYKCMpEs6tFs6Nf@ec2-54-243-208-3.compute-1.amazonaws.com:5432/dfks95hsim9k2b"
-    PORT = 80
+    PORT = 8000
 
 
 class ProductionConfig(BaseConfig):
