@@ -49,12 +49,12 @@ class Element(db.Model):
     shapes            = db.relationship('Shape', backref=db.backref('element', uselist=False))
     text              = db.Column(db.UnicodeText, server_default='No text')
     type_name         = db.Column(db.String, db.ForeignKey('element_type.name'), nullable=True, index=True)
-    # subelements       = db.relationship('Element',
-    #                                     secondary=elements_subelements,
-    #                                     primaryjoin=id == elements_subelements.c.parent_id,
-    #                                     secondaryjoin=id == elements_subelements.c.child_id,
-    #                                     backref="parent_processes")
-    subelements       = db.relationship('Element', secondary=elements_subelements)
+    subelements       = db.relationship('Element',
+                                        secondary=elements_subelements,
+                                        primaryjoin=id == elements_subelements.c.parent_id,
+                                        secondaryjoin=id == elements_subelements.c.child_id,
+                                        backref="parent_processes")
+    # subelements       = db.relationship('Element', secondary=elements_subelements)
     trusted           = db.Column(db.Boolean)
     weight            = db.Column(db.Integer, nullable=False, server_default='1')
 
