@@ -34,8 +34,6 @@ class Shape(db.Model):
 
 
     id             = db.Column(db.Integer, primary_key=True)
-    start_date_id  = db.Column(db.Integer, db.ForeignKey('date.id'))
-    end_date_id    = db.Column(db.Integer, db.ForeignKey('date.id'))
     start_date     = db.Column(HDate, nullable=True)
     end_date       = db.Column(HDate, nullable=True)
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)

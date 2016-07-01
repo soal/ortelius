@@ -1,3 +1,5 @@
+from sqlalchemy.dialects.postgresql import JSONB
+
 from ortelius.database import db
 from ortelius.models.Shape import Shape
 from ortelius.types.historical_date import HDate
@@ -9,6 +11,7 @@ elements_subelements = db.Table('elements_subelements',
 )
 
 Shape.element_id = db.Column(db.Integer, db.ForeignKey('element.id'))
+
 
 class Element(db.Model):
     """Element model"""
@@ -53,8 +56,7 @@ class Element(db.Model):
     #                                     backref="parent_processes")
     subelements       = db.relationship('Element', secondary=elements_subelements)
     trusted           = db.Column(db.Boolean)
-    weight            = db.Column(db.Integer, nullable=False, server_default='5')
-
+    weight            = db.Column(db.Integer, nullable=False, server_default='1')
 
     def __repr__(self):
         return '<Element %r, shows as %r>' % (self.name, self.label)
@@ -62,17 +64,18 @@ class Element(db.Model):
 
 class ElementType(db.Model):
     """ElementType model"""
-    __tablename__ = 'process_type'
+    __tablename__ = 'element_type'
 
     def __init__(self, name=None, label=None, elements=None):
         self.name = name
         self.label = label
         self.elements = elements
 
-    id       = db.Column(db.Integer, primary_key=True)
-    name     = db.Column(db.String(120), index=True)
-    label    = db.Column(db.Unicode(120), nullable=False, unique=True)
-    elements = db.relationship('Process', backref=db.backref('element_type', uselist=False), lazy='dynamic')
+    id          = db.Column(db.Integer, primary_key=True)
+    name        = db.Column(db.String(120), index=True, unique=True)
+    label       = db.Column(db.Unicode(120), nullable=False, unique=True)
+    elements    = db.relationship('Element', backref=db.backref('element_type', uselist=False), lazy='dynamic')
+    work_schema = db.Column(JSONB, nullable=True)
 
     def __repr__(self):
         return '<Element type %r, shows as %r>' % (self.name, self.label)

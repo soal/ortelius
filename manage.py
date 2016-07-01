@@ -16,14 +16,8 @@ from scripts import create_initial_data, shapes_processor
 from ortelius import database, app
 
 from ortelius.types.historical_date import *
-from ortelius.models.Collection import *
 from ortelius.models.Shape import *
-from ortelius.models.Date import *
-from ortelius.models.Fact import *
-from ortelius.models.Geo_region import *
-from ortelius.models.Hist_region import *
-from ortelius.models.Persona import *
-from ortelius.models.Process import *
+from ortelius.models.Element import *
 from ortelius.models.User import *
 
 COV = coverage.coverage(
@@ -49,8 +43,6 @@ def test():
     """Runs the unit tests without coverage."""
     os.environ['APP_SETTINGS'] = 'testing'
     create_db()
-    if not database.db.query(Quadrant).get('176,-176'):
-        create_initial_data.create_quadrants()
     tests = unittest.TestLoader().discover('tests', pattern='*test*.py')
     result = unittest.TextTestRunner(verbosity=3).run(tests)
     if result.wasSuccessful():
@@ -151,12 +143,6 @@ def create_data():
     print('Creating test data...')
     os.environ['APP_SETTINGS'] = 'development'
     create_initial_data.create_admin(database.db)
-    create_initial_data.create_years(database.db)
-    create_initial_data.create_quadrants(database.db)
-    create_initial_data.create_facts(database.db)
-    create_initial_data.create_hist_regions(database.db)
-    create_initial_data.create_processes(database.db)
-    create_initial_data.create_personas(database.db)
 
 
 def run():
@@ -169,10 +155,10 @@ def create_shapes():
         input_file = sys.argv[2]
     else:
         input_file = '/mnt/data/Map_Data/KLMs/selected/roman_republic.geojson'
-    shapes = shapes_processor.parse(HistoricalDate, Shape, Coordinates, Quadrant, Date, input_file)
-    for shape in shapes:
-        database.db.session.add(shape)
-    database.db.session.commit()
+    # shapes = shapes_processor.parse(HistoricalDate, Shape, Coordinates, Quadrant, Date, input_file)
+    # for shape in shapes:
+    #     database.db.session.add(shape)
+    # database.db.session.commit()
     print('Done!')
 
 def main():
