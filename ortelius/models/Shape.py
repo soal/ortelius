@@ -17,30 +17,23 @@ class Shape(db.Model):
                  fill_color=None,
                  fill_opacity=None,
                  shape_type='Point'):
+        self.shape_type = shape_type
         self.start_date = start_date
         self.end_date = end_date
         self.stroke_color = stroke_color
         self.fill_color = fill_color
         self.stroke_opacity = stroke_opacity
         self.fill_opacity = fill_opacity
-        self.shape_type = shape_type
-        if shape_type == 'Point':
-            self.point = coordinates
-        if shape_type == 'Route':
-            self.multipoint = coordinates
-        if shape_type == 'Movement':
-            self.multipoint = coordinates
-        if shape_type == 'Area':
-            self.polygon = coordinates  # Area ALWAIS stores as multipolygon
-
+        self.coordinates = coordinates
 
     id             = db.Column(db.Integer, primary_key=True)
     start_date     = db.Column(HDate, nullable=True)
     end_date       = db.Column(HDate, nullable=True)
-    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipoint', name='shape_types'))  # NOTE: may be separate table?
+    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipolygon', 'Multipoint', name='shape_types'))  # NOTE: may be separate table?
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
     multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
-    polygon        = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
+    polygon        = db.Column(Geometry(geometry_type='POLYGON', srid=4326), default=None)
+    multipolygon   = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
 
     @hybrid_property
     def coordinates(self):
@@ -48,8 +41,11 @@ class Shape(db.Model):
             return self.point
         if self.shape_type == 'Polygon':
             return self.polygon
+        if self.shape_type == 'Multipolygon':
+            return self.multipolygon
         if self.shape_type == 'Multipoint':
             return self.multipoint
+        return self.point
 
     @coordinates.setter
     def coordinates(self, coordinates):
@@ -57,6 +53,8 @@ class Shape(db.Model):
             self.point = coordinates
         if self.shape_type == 'Polygon':
             self.polygon = coordinates
+        if self.shape_type == 'Multipolygon':
+            self.multipolygon = coordinates
         if self.shape_type == 'Multipoint':
             self.multipoint = coordinates
 
@@ -66,4 +64,8 @@ class Shape(db.Model):
     fill_opacity   = db.Column(db.Float, default=1)
 
     def __repr__(self):
-        return '<Shape, id: {1}>'.format(self.id if self.id else 'not assigned')
+        try:
+            string = '<Shape, id: {0}>'.format(self.id)
+        except:
+            string = '<Shape, id not assigned>'
+        return string

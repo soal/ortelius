@@ -112,7 +112,7 @@ def make_api_response(data, pages=None, total=None):
     }
 
 def convert_to_ewkt(coordinates):
-    return 'SRID=4326;' + shape(coordinates)
+    return 'SRID=4326;' + shape(coordinates).wkt
 
 def make_geojson_response(data):
     # TODO: Update with geoalchemy
