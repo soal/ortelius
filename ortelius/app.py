@@ -1,7 +1,7 @@
 import os
 import hug
 
-from ortelius.api import Facts, Processes, Dicts, HistRegions, Shapes
+from ortelius.api import Dicts, Elements, Shapes
 from ortelius import settings
 
 try:
@@ -21,13 +21,18 @@ else:
 def welcome():
     return 'Welcome to ortelius version {0}'.format(config.API_VERSION)
 
-@hug.extend_api('/objects')
-def get_data():
-    return [Facts, Processes, HistRegions, Shapes]
+@hug.extend_api('/elements')
+def get_elements():
+    return [Elements]
 
 @hug.extend_api('/dicts')
 def get_dicts():
     return [Dicts]
+
+@hug.extend_api('/shapes')
+def get_shapes():
+    return [Shapes]
+
 
 
 if __name__ == '__main__':

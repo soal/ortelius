@@ -17,11 +17,8 @@ import datetime
 
 from ortelius.database import db
 from ortelius.types.errors import BadRequest, NotFound, MethodNotImplemented
-from ortelius.models.Date import Date
-from ortelius.models.Fact import Fact
-from ortelius.models.Process import Process
-from ortelius.models.Persona import Persona
 from ortelius.models.Shape import Shape
+from ortelius.models.Element import Element
 from ortelius.types.historical_date import DateError, HistoricalDate as hd
 from ortelius.middleware import serialize, make_api_response, filter_by_geo, filter_by_time, filter_by_ids, filter_by_weight
 
@@ -39,8 +36,8 @@ def get_facts(start_date: hug.types.text=None,
               ids: list=None
              ):
     '''API function for getting list of facts'''
-    query = db.query(Fact)
-    query = filter_by_ids(query, Fact, ids)
+    query = db.query(Element)
+    query = filter_by_ids(query, Element, ids)
     try:
         query = filter_by_time(query, Fact, start_date, end_date)
     except DateError:
