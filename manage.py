@@ -120,24 +120,6 @@ def drop_db():
     trans.commit()
 
 
-# def create_admin():
-#     create_initial_data.create_admin()
-#
-# def create_shape():
-#     create_initial_data.create_shape()
-
-
-
-# def create_processes():
-#     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-#     # app.config.from_object(os.environ['APP_SETTINGS'])
-#     create_initial_data.create_processes()
-#
-# def create_personas():
-#     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-#     # app.config.from_object(os.environ['APP_SETTINGS'])
-#     create_initial_data.create_personas()
-#
 def create_data():
     """Creates initial data."""
     print('Creating test data...')
@@ -149,17 +131,17 @@ def run():
     """Start development server"""
     os.system('hug -f ortelius/app.py')
 
-def create_shapes():
-    print('Creating shapes...')
-    if sys.argv[2]:
-        input_file = sys.argv[2]
-    else:
-        input_file = '/mnt/data/Map_Data/KLMs/selected/roman_republic.geojson'
+# def create_shapes():
+#     print('Creating shapes...')
+#     if sys.argv[2]:
+#         input_file = sys.argv[2]
+#     else:
+#         input_file = '/mnt/data/Map_Data/KLMs/selected/roman_republic.geojson'
     # shapes = shapes_processor.parse(HistoricalDate, Shape, Coordinates, Quadrant, Date, input_file)
     # for shape in shapes:
     #     database.db.session.add(shape)
     # database.db.session.commit()
-    print('Done!')
+    # print('Done!')
 
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
