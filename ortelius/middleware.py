@@ -92,13 +92,11 @@ def filter_by_time(query, model, start_date, end_date):
 #
 #
 def filter_by_ids(query, model, ids):
-    '''Filter facts and return objects only with given ids'''
-    if ids:
-        object_ids = ids
-    else:
+    '''Filter objects and return objects only with given ids'''
+    if not ids:
         return query
 
-    query = query.filter(model.id.in_(object_ids))
+    query = query.filter(model.id.in_(ids))
     return query
 
 
@@ -115,15 +113,15 @@ def convert_to_ewkt(coordinates):
     return 'SRID=4326;' + shape(coordinates).wkt
 
 def make_geojson_feature(data):
-    return geojson.Feature(id=data.id,
-                           geometry=geojson.loads(data.coordinates[0]),
+    return geojson.Feature(id=data['id'],
+                           geometry=geojson.loads(data['coordinates']),
                            properties={
-                                'start_date': data.start_date.to_string(),
-                                'end_date': data.end_date.to_string(),
-                                'stroke': data.stroke_color,
-                                'stroke-opacity': data.stroke_opacity,
-                                'fill': data.fill_color,
-                                'fill-opacity': data.fill_opacity
+                                'start_date': data['start_date'].to_string(),
+                                'end_date': data['end_date'].to_string(),
+                                'stroke': data['stroke_color'],
+                                'stroke-opacity': data['stroke_opacity'],
+                                'fill': data['fill_color'],
+                                'fill-opacity': data['fill_opacity']
                            }
                           )
 
