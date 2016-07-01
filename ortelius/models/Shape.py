@@ -1,3 +1,4 @@
+from sqlalchemy.ext.hybrid import hybrid_property
 from geoalchemy2.types import Geometry
 
 from ortelius.database import db
@@ -36,10 +37,29 @@ class Shape(db.Model):
     id             = db.Column(db.Integer, primary_key=True)
     start_date     = db.Column(HDate, nullable=True)
     end_date       = db.Column(HDate, nullable=True)
+    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipoint', name='shape_types'))  # NOTE: may be separate table?
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
     multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
     polygon        = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
-    shape_type     = db.Column(db.Enum('Area', 'Point', 'Route', 'Movement', name='shape_types'))  # NOTE: may be separate table?
+
+    @hybrid_property
+    def coordinates(self):
+        if self.shape_type == 'Point':
+            return self.point
+        if self.shape_type == 'Polygon':
+            return self.polygon
+        if self.shape_type == 'Multipoint':
+            return self.multipoint
+
+    @coordinates.setter
+    def coordinates(self, coordinates):
+        if self.shape_type == 'Point':
+            self.point = coordinates
+        if self.shape_type == 'Polygon':
+            self.polygon = coordinates
+        if self.shape_type == 'Multipoint':
+            self.multipoint = coordinates
+
     stroke_color   = db.Column(db.String(255))
     fill_color     = db.Column(db.String(255))
     stroke_opacity = db.Column(db.Float, default=1)
