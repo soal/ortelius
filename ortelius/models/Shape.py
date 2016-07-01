@@ -1,8 +1,7 @@
 from geoalchemy2.types import Geometry
 
 from ortelius.database import db
-from ortelius.models.Date import Date
-
+from ortelius.types.historical_date import HDate
 
 class Shape(db.Model):
     """Shape model"""
@@ -37,14 +36,8 @@ class Shape(db.Model):
     id             = db.Column(db.Integer, primary_key=True)
     start_date_id  = db.Column(db.Integer, db.ForeignKey('date.id'))
     end_date_id    = db.Column(db.Integer, db.ForeignKey('date.id'))
-    start_date     = db.relationship('Date',
-                                     backref=db.backref('shapes_started', uselist=True, lazy='dynamic'),
-                                     uselist=False,
-                                     foreign_keys=start_date_id)
-    end_date       = db.relationship('Date',
-                                     backref=db.backref('shapes_ended', uselist=True, lazy='dynamic'),
-                                     uselist=False,
-                                     foreign_keys=end_date_id)
+    start_date     = db.Column(HDate, nullable=True)
+    end_date       = db.Column(HDate, nullable=True)
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
     multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
     polygon        = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
@@ -55,4 +48,4 @@ class Shape(db.Model):
     fill_opacity   = db.Column(db.Float, default=1)
 
     def __repr__(self):
-        return '<Shape, id: {id}>'.format(self.id)
+        return '<Shape, id: {1}>'.format(self.id if self.id else 'not assigned')
