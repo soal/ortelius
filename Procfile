@@ -1,1 +1,1 @@
-web: python3 ./manage.py run
+web: ./manage.py run
