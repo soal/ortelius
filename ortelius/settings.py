@@ -38,8 +38,7 @@ class BaseConfig(object):
     DEFAULT_MAIL_SENDER = "example@ortelius.com"
 
     DEBUG_TB_INTERCEPT_REDIRECTS = False
-    # DEBUG_TOOLBAR = False
-    # WERKZEUG_OPTS = {'host': LISTEN_HOST, 'port' : 5000}
+
 
 
 class DevelopmentConfig(BaseConfig):
@@ -57,6 +56,10 @@ class TestingConfig(BaseConfig):
     SQLALCHEMY_ECHO = False
 
 
+class StagingConfig(BaseConfig):
+    SQLALCHEMY_DATABASE_URI = "postgres://hwrahxbzvqrvat:mWQlZSvMTsXeYKCMpEs6tFs6Nf@ec2-54-243-208-3.compute-1.amazonaws.com:5432/dfks95hsim9k2b"
+
+
 class ProductionConfig(BaseConfig):
     SQLALCHEMY_DATABASE_URI = "postgresql+psycopg2://hm:hm@localhost:5432/hm"
     CANONICAL_NAME = '127.0.0.1'
@@ -64,9 +67,6 @@ class ProductionConfig(BaseConfig):
     SSL_PRIVATE_KEY_FILENAME = ''
     TESTING = False
     USE_SSL = False
-    # Flask-Cache settings
-    # CACHE_TYPE = 'memcached'
-    # CACHE_MEMCACHED_SERVERS = ['127.0.0.1:11211']
 
 
 

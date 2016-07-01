@@ -13,6 +13,8 @@ if env == 'testing':
     config = settings.TestingConfig
 elif env == 'production':
     config = settings.ProductionConfig
+elif env == 'staging':
+    config = settings.StagingConfig
 else:
     config = settings.DevelopmentConfig
 
