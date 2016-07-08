@@ -1,22 +1,26 @@
 # Ortelius
 Data server and API for handymap
 
-##Setting up project for development
+## Setting up project for development
 
-###Requirements
+### Requirements
 * Python ≥ 3.4
 * Falcon
 * Hug
 * SQLAlhemy
+* GeoAlchemy2
+* Shapely
+* Alembic
 * Coverage python module
 * PostgreSQL 9.4
+* PostGIS
 
-###Setting up
-####Installing dependencies on Fedora Linux
+### Setting up
+#### Installing dependencies on Fedora Linux
 ```
 sudo dnf install gcc gcc-c++ make glibc-headers python3 python3-virtualenv python3-devel python3-psycopg2 postgresql postgresql-devel postgresql-server postgresql-contrib libffi-devel redhat-rpm-config
 ```
-####Setting up python environment:
+#### Setting up python environment:
 Create virtual python environment:
 ```
 cd path/to/your/project/folder
@@ -34,7 +38,7 @@ Install project Python dependencies:
 pip install -r requirements.txt
 ```
 
-#####Start PostgreSQL database server:
+##### Start PostgreSQL database server:
 ```
 sudo postgresql-setup --initdb
 sudo systemctl start postgresql
@@ -84,8 +88,10 @@ sudo systemctl enable postgresql
 ```
 Done! =)
 
-##Development server
+## Development server
+
 Use ./manage.py script to manage development server
+
 Create database schema:
 ```
 ./manage.py create_db
@@ -111,7 +117,9 @@ Start development server:
 ./manage.py run
 ```
 Deploy to heroku:
+
 First, install heroku toolbelt.
+
 For deploy from master branch, type:
 ```
 ./manage.py deploy
