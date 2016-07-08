@@ -75,8 +75,10 @@ def cov():
 
 def create_db():
     """Creates the db tables."""
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    # app.config.from_object(os.environ['APP_SETTINGS'])
+    try:
+        env = os.environ['APP_SETTINGS']
+    except:
+        env = os.environ['APP_SETTINGS'] = 'development'
     database.db.create_all()
 
 def drop_db():
@@ -142,6 +144,40 @@ def run():
     #     database.db.session.add(shape)
     # database.db.session.commit()
     # print('Done!')
+
+def migrate():
+    try:
+        env = os.environ['APP_SETTINGS']
+    except:
+        env = os.environ['APP_SETTINGS'] = 'development'
+
+    os.system('alembic -c alembic_{0}.ini revision'.format(env))
+
+def upgrade(revision=None):
+    try:
+        env = os.environ['APP_SETTINGS']
+    except:
+        env = os.environ['APP_SETTINGS'] = 'development'
+
+    if revision:
+        os.system("alembic -c alembic_{0}.ini upgrade {1}".format(env, revision))
+    else:
+        os.system("alembic -c alembic_{0}.ini upgrade head".format(env))
+
+
+def deploy():
+    """Deploy to heroku and execute database migration"""
+    try:
+        env = os.environ['APP_SETTINGS']
+    except:
+        env = os.environ['APP_SETTINGS'] = 'staging'
+
+    os.system('heroku maintenance:on --app ortelius')
+    os.system('git push heroku master')
+    os.system('heroku run ./manage.py migrate --app orteliu')
+    os.system('heroku run ./manage.py upgrade --app ortelius')
+    os.system('heroku maintenance:off --app ortelius')
+
 
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
