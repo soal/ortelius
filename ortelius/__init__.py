@@ -1,25 +1,9 @@
-import os
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask.ext.cors import CORS
-from flask.ext.via import Via
+import os, sys, inspect
 
+cmd_folder = os.path.realpath(os.path.abspath(os.path.split(inspect.getfile( inspect.currentframe() ))[0]))
+if cmd_folder not in sys.path:
+    sys.path.insert(0, cmd_folder)
 
-app = Flask(__name__)
-try:
-    os.environ['APP_SETTINGS']
-except:
-     os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-
-
-app.config.from_object(os.environ['APP_SETTINGS'])
-app.config.update({'VIA_ROUTES_MODULE': 'ortelius.routes'})
-
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
-
-db = SQLAlchemy(app)
-
-# Setup Flask-Via routes pulgin
-via = Via()
-
-via.init_app(app, route_module='ortelius.routes')
+cmd_subfolder = os.path.realpath(os.path.abspath(os.path.join(os.path.split(inspect.getfile( inspect.currentframe() ))[0],"subfolder")))
+if cmd_subfolder not in sys.path:
+    sys.path.insert(0, cmd_subfolder)

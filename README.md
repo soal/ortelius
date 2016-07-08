@@ -4,15 +4,10 @@ Data server and API for handymap
 ##Setting up project for development
 
 ###Requirements
-* Python 3.4
-* Flask
+* Python ≥ 3.4
+* Falcon
+* Hug
 * SQLAlhemy
-* Flask-Failsafe
-* Flask-Migrate
-* Flask-Script
-* Flask-SQLAlchemy
-* Flask-User
-* Flask-Via
 * Coverage python module
 * PostgreSQL 9.4
 
@@ -95,17 +90,13 @@ Create database schema:
 ```
 ./manage.py create_db
 ```
-Create initial admin user:
-```
-./manage.py create_admin
-```
 Delete all information in database:
 ```
 ./manage.py drop_db
 ```
 Create database initial data:
 ```
-./manage.py create_initial_data
+./manage.py create_data
 ```
 Create migration:
 ```
@@ -117,9 +108,5 @@ Update database schema to migration:
 ```
 Start development server:
 ```
-./manage.py runserver
-```
-To use Python shell in Ortelius context:
-```
-./manage.py shell
+./manage.py run
 ```

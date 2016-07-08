@@ -3,14 +3,14 @@ import unittest
 import datetime
 import sqlalchemy
 
-from ortelius.types.historical_date import HistoricalDate as hd
+from ortelius.ortelius.types.historical_date import HistoricalDate as hd
 
-from ortelius.models.Date import Date
-from ortelius.models.Coordinates import Coordinates, Quadrant, Shape
-from ortelius.models.Fact import Fact, FactType
-from ortelius.models.Process import ProcessType
-from ortelius.models.Persona import PersType
-from ortelius.models.Hist_region import HistRegion, HistPlace
+from ortelius.ortelius.models.Date import Date
+from ortelius.ortelius.models.Coordinates import Coordinates, Quadrant, Shape
+from ortelius.ortelius.models.Fact import Fact, FactType
+from ortelius.ortelius.models.Process import ProcessType
+from ortelius.ortelius.models.Persona import PersType
+from ortelius.ortelius.models.Hist_region import HistRegion, HistPlace
 
 
 class TestDate(unittest.TestCase):
