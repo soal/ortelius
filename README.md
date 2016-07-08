@@ -100,13 +100,19 @@ Create database initial data:
 ```
 Create migration:
 ```
-./manage.py db migrate
+./manage.py migrate
 ```
 Update database schema to migration:
 ```
-./manage.py db upgrade
+./manage.py upgrade
 ```
 Start development server:
 ```
 ./manage.py run
+```
+Deploy to heroku:
+First, install heroku toolbelt.
+For deploy from master branch, type:
+```
+./manage.py deploy
 ```
