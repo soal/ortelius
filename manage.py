@@ -172,6 +172,12 @@ def deploy():
     except:
         env = os.environ['APP_SETTINGS'] = 'staging'
 
+    os.system('heroku maintenance:on --app ortelius')
+    os.system('git push heroku master')
+    os.system('heroku run ./manage.py migrate --app orteliu')
+    os.system('heroku run ./manage.py upgrade --app ortelius')
+    os.system('heroku maintenance:off --app ortelius')
+
 
 def main():
     funcs = [x[0] for x in inspect.getmembers(sys.modules[__name__], inspect.isfunction)]
