@@ -75,8 +75,10 @@ def cov():
 
 def create_db():
     """Creates the db tables."""
-    os.environ['APP_SETTINGS'] = 'ortelius.settings.DevelopmentConfig'
-    # app.config.from_object(os.environ['APP_SETTINGS'])
+    try:
+        env = os.environ['APP_SETTINGS']
+    except:
+        env = os.environ['APP_SETTINGS'] = 'development'
     database.db.create_all()
 
 def drop_db():
