@@ -167,11 +167,7 @@ def upgrade(revision=None):
 
 def deploy():
     """Deploy to heroku and execute database migration"""
-    try:
-        env = os.environ['APP_SETTINGS']
-    except:
-        env = os.environ['APP_SETTINGS'] = 'staging'
-
+    
     os.system('heroku maintenance:on --app ortelius')
     os.system('git push heroku master')
     os.system('heroku run ./manage.py migrate --app ortelius')
