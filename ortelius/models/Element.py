@@ -61,13 +61,16 @@ class Element(db.Model):
     weight            = db.Column(db.Integer, nullable=False, server_default='1', index=True)
     element_type_id   = db.Column(db.Integer, db.ForeignKey('hm_element_types.id'), nullable=True, index=True)
     user_id           = db.Column(db.Integer, db.ForeignKey('hm_users.id'), nullable=True)
-    subelements       = db.relationship('Element',
+
+    subelements         = db.relationship('Element',
                                         secondary=element_links,
                                         primaryjoin=id == element_links.c.parent_element_id,
                                         secondaryjoin=id == element_links.c.child_element_id,
                                         backref="parent_elements")
     # subelements       = db.relationship('Element', secondary=elements_subelements)
-    shapes            = db.relationship('Shape', backref=db.backref('element', uselist=False))
+    shapes              = db.relationship('Shape', backref=db.backref('element', uselist=False))
+    collections         = db.relationship()
+    ordered_collections = db.relationship()
 
     def __repr__(self):
         return '<Element %r, shows as %r>' % (self.name, self.label)
