@@ -4,12 +4,16 @@ from sqlalchemy.dialects.postgresql import JSON
 from ortelius.database import db
 from ortelius.models.Shape import Shape
 from ortelius.models.User import User
-from ortelius.types.historical_date import HDate
+# from ortelius.types.historical_date import HDate
 
 
-elements_subelements = db.Table('elements_subelements',
-    db.Column('parent_id', db.Integer, db.ForeignKey('element.id')),
-    db.Column('child_id', db.Integer, db.ForeignKey('element.id'))
+element_links = db.Table('hm_element_links',
+    db.Column('parent_element_id', db.Integer, db.ForeignKey('element.id')),
+    db.Column('child_element_id', db.Integer, db.ForeignKey('element.id')),
+    db.Column('weight', db.Integer),
+    db.Column('link_start_date', db.TIMESTAMP),
+    db.Column('link_start_date_id', db.Integer),
+    db.Column('link_end_date_id', db.Integer)
 )
 
 Shape.element_id = db.Column(db.Integer, db.ForeignKey('element.id'))
@@ -58,9 +62,9 @@ class Element(db.Model):
     element_type_id   = db.Column(db.Integer, db.ForeignKey('hm_element_types.id'), nullable=True, index=True)
     user_id           = db.Column(db.Integer, db.ForeignKey('hm_users.id'), nullable=True)
     subelements       = db.relationship('Element',
-                                        secondary=elements_subelements,
-                                        primaryjoin=id == elements_subelements.c.parent_id,
-                                        secondaryjoin=id == elements_subelements.c.child_id,
+                                        secondary=element_links,
+                                        primaryjoin=id == element_links.c.parent_element_id,
+                                        secondaryjoin=id == element_links.c.child_element_id,
                                         backref="parent_elements")
     # subelements       = db.relationship('Element', secondary=elements_subelements)
     shapes            = db.relationship('Shape', backref=db.backref('element', uselist=False))
@@ -71,7 +75,7 @@ class Element(db.Model):
 
 class ElementType(db.Model):
     """ElementType model"""
-    __tablename__ = 'element_type'
+    __tablename__ = 'hm_elements_type'
 
     def __init__(self, name=None, label=None, elements=None):
         self.name = name
@@ -82,7 +86,7 @@ class ElementType(db.Model):
     name        = db.Column(db.String(120), index=True, unique=True)
     label       = db.Column(db.Unicode(120), nullable=False, unique=True)
     elements    = db.relationship('Element', backref=db.backref('element_type', uselist=False), lazy='dynamic')
-    work_schema = db.Column(JSON, nullable=True)
+    schema      = db.Column(JSON, nullable=True)
 
     def __repr__(self):
         return '<Element type %r, shows as %r>' % (self.name, self.label)
