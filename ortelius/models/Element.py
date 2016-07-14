@@ -1,7 +1,9 @@
-from sqlalchemy.dialects.postgresql import JSONB
+import datetime
+from sqlalchemy.dialects.postgresql import JSON
 
 from ortelius.database import db
 from ortelius.models.Shape import Shape
+from ortelius.models.User import User
 from ortelius.types.historical_date import HDate
 
 
@@ -15,7 +17,7 @@ Shape.element_id = db.Column(db.Integer, db.ForeignKey('element.id'))
 
 class Element(db.Model):
     """Element model"""
-    __tablename__ = 'element'
+    __tablename__ = 'hm_elements'
 
     def __init__(self,
                  name=None,
@@ -42,21 +44,26 @@ class Element(db.Model):
 
     id                = db.Column(db.Integer, primary_key=True)
     name              = db.Column(db.String(255), nullable=False, unique=True, index=True)
-    label             = db.Column(db.Unicode(255))
+    label             = db.Column(db.Unicode(255), index=True)
     description       = db.Column(db.UnicodeText, server_default='No description')
-    start_date        = db.Column(HDate, nullable=True)
-    end_date          = db.Column(HDate, nullable=True)
-    shapes            = db.relationship('Shape', backref=db.backref('element', uselist=False))
+    info              = db.Column(JSON, nullable=True)
+    start_date        = db.Column(db.TIMESTAMP, nullable=True)
+    start_date_id     = db.Column(db.Integer, nullable=True)
+    end_date          = db.Column(db.TIMESTAMP, nullable=True)
+    end_date_id       = db.Column(db.Integer, nullable=True)
     text              = db.Column(db.UnicodeText, server_default='No text')
-    type_name         = db.Column(db.String, db.ForeignKey('element_type.name'), nullable=True, index=True)
+    trusted           = db.Column(db.Numeric, server_default='0')
+    edit_date         = db.Column(db.TIMESTAMP, server_default=datetime.datetime.now())
+    weight            = db.Column(db.Integer, nullable=False, server_default='1', index=True)
+    element_type_id   = db.Column(db.Integer, db.ForeignKey('hm_element_types.id'), nullable=True, index=True)
+    user_id           = db.Column(db.Integer, db.ForeignKey('hm_users.id'), nullable=True)
     subelements       = db.relationship('Element',
                                         secondary=elements_subelements,
                                         primaryjoin=id == elements_subelements.c.parent_id,
                                         secondaryjoin=id == elements_subelements.c.child_id,
-                                        backref="parent_processes")
+                                        backref="parent_elements")
     # subelements       = db.relationship('Element', secondary=elements_subelements)
-    trusted           = db.Column(db.Boolean)
-    weight            = db.Column(db.Integer, nullable=False, server_default='1')
+    shapes            = db.relationship('Shape', backref=db.backref('element', uselist=False))
 
     def __repr__(self):
         return '<Element %r, shows as %r>' % (self.name, self.label)
@@ -75,7 +82,7 @@ class ElementType(db.Model):
     name        = db.Column(db.String(120), index=True, unique=True)
     label       = db.Column(db.Unicode(120), nullable=False, unique=True)
     elements    = db.relationship('Element', backref=db.backref('element_type', uselist=False), lazy='dynamic')
-    work_schema = db.Column(JSONB, nullable=True)
+    work_schema = db.Column(JSON, nullable=True)
 
     def __repr__(self):
         return '<Element type %r, shows as %r>' % (self.name, self.label)

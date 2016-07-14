@@ -2,7 +2,7 @@ from sys import argv
 import os
 import datetime
 import geojson
-from ortelius.types.historical_date import DateError
+# from ortelius.types.historical_date import DateError
 
 
 def split(path):
