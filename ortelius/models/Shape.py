@@ -2,7 +2,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from geoalchemy2.types import Geometry
 
 from ortelius.database import db
-from ortelius.types.historical_date import HDate
+
 
 class Shape(db.Model):
     """Shape model"""
@@ -27,9 +27,10 @@ class Shape(db.Model):
         self.coordinates = coordinates
 
     id             = db.Column(db.Integer, primary_key=True)
-    start_date     = db.Column(HDate, nullable=True)
-    end_date       = db.Column(HDate, nullable=True)
-    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipolygon', 'Multipoint', name='shape_types'))  # NOTE: may be separate table?
+    start_date     = db.Column(db.TIMESTAMP, nullable=True)
+    end_date       = db.Column(db.TIMESTAMP, nullable=True)
+    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipolygon', 'Multipoint', name='shape_types'))
+    order_num      = db.Column(db.Integer)
     point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
     multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
     polygon        = db.Column(Geometry(geometry_type='POLYGON', srid=4326), default=None)
