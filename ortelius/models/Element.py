@@ -8,15 +8,15 @@ from ortelius.models.User import User
 
 
 element_links = db.Table('hm_element_links',
-    db.Column('parent_element_id', db.Integer, db.ForeignKey('element.id')),
-    db.Column('child_element_id', db.Integer, db.ForeignKey('element.id')),
+    db.Column('parent_element_id', db.Integer, db.ForeignKey('hm_elements.id')),
+    db.Column('child_element_id', db.Integer, db.ForeignKey('hm_elements.id')),
     db.Column('weight', db.Integer),
     db.Column('link_start_date', db.TIMESTAMP),
     db.Column('link_start_date_id', db.Integer),
     db.Column('link_end_date_id', db.Integer)
 )
 
-Shape.element_id = db.Column(db.Integer, db.ForeignKey('element.id'))
+Shape.element_id = db.Column(db.Integer, db.ForeignKey('hm_elements.id'))
 
 
 class Element(db.Model):
@@ -57,20 +57,19 @@ class Element(db.Model):
     end_date_id       = db.Column(db.Integer, nullable=True)
     text              = db.Column(db.UnicodeText, server_default='No text')
     trusted           = db.Column(db.Numeric, server_default='0')
-    edit_date         = db.Column(db.TIMESTAMP, server_default=datetime.datetime.now())
+    edit_date         = db.Column(db.TIMESTAMP)
     weight            = db.Column(db.Integer, nullable=False, server_default='1', index=True)
     element_type_id   = db.Column(db.Integer, db.ForeignKey('hm_element_types.id'), nullable=True, index=True)
     user_id           = db.Column(db.Integer, db.ForeignKey('hm_users.id'), nullable=True)
 
-    subelements         = db.relationship('Element',
+    children          = db.relationship('Element',
                                         secondary=element_links,
                                         primaryjoin=id == element_links.c.parent_element_id,
                                         secondaryjoin=id == element_links.c.child_element_id,
                                         backref="parent_elements")
     # subelements       = db.relationship('Element', secondary=elements_subelements)
     shapes              = db.relationship('Shape', backref=db.backref('element', uselist=False))
-    collections         = db.relationship()
-    ordered_collections = db.relationship()
+    ordered_collections = db.relationship('OrderedCollection')
 
     def __repr__(self):
         return '<Element %r, shows as %r>' % (self.name, self.label)
