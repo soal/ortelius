@@ -21,6 +21,7 @@ from ortelius.types.historical_date import HistoricalDate as hd
 from ortelius.types.historical_date import DateError
 from ortelius.database import db
 from ortelius.models.Element import Element
+from ortelius.middleware import serialize, make_api_response, filter_by_ids
 # from ortelius.middleware import serialize, make_api_response, filter_by_ids, filter_by_time, filter_by_weight
 
 
@@ -40,7 +41,7 @@ http://handymap.com/api/elements?start_date=12-22-1560&end_date=03-30-1570&tople
 '''
 
 
-@hug.get('/elements',
+@hug.get('/',
          examples=['start_date=12-22-1560&end_date=03-30-1570&weight=1',
                    'ids=1,2,3,4']
         )
@@ -48,7 +49,76 @@ def get_elements(start_date: hug.types.text=None,
                   end_date: hug.types.text=None,
                   weight: int=None,
                   ids: list=None):
+    # raise MethodNotImplemented(resource_type='Element')
+    print(ids)
+    if not ids or not all(id.isdigit() for id in ids):
+        raise BadRequest(info="No ids")
+    query = db.query(Element)
+    query = filter_by_ids(query, Element, ids)
+    result = query.all()
+    if not result: # FIXME: what if we could find something, but not all?
+        raise NotFound(resource_type='Element', identifiers=ids)
+
+    serialized = []
+    for element in result:
+        serialized_element = serialize(element)
+        serialized.append(serialized_element)
+
+    return make_api_response(serialized)
+
+@hug.get('/{element_id}')
+def get_element(element_id: int):
+    query = db.query(Element)
+    query = query.filter(Element.id == element_id)
+    result = query.first()
+    if not result:
+        raise NotFound(resource_type='Element', identifiers=element_id)
+    return make_api_response(serialize(result))
+
+@hug.post('/')
+def create_element(**data):
+    '''API function for creating new fact'''
+    import inspect
+    initParms = inspect.signature(Element.__init__).parameters.values()
+    validArgs = {parm.name for parm in initParms if parm.name != 'self'}
+    requiredArgs = {parm.name for parm in initParms if parm.name != 'self' and parm.default == inspect._empty}
+    args = set(data.keys())
+    if not args.issubset(validArgs) or not requiredArgs.issubset(args):
+        invalidArgs = args - validArgs
+        missingArgs = requiredArgs - args
+        raise BadRequest(missingArgs, invalidArgs, info="Parameters validation failed")
+    try:
+        element=Element(**data)
+    except:
+        raise BadRequest(info="Model construction failed")
+    try:
+        db.session.add(element)
+        db.session.commit()
+    except: # IntegrityError
+        db.session.rollback()
+        raise BadRequest(info="Database transaction failed")
+    return make_api_response('OK')
+
+
+@hug.put('/elements/{element_id}')
+def update_element(element_id, data):
+    '''API function for updating existing process'''
     raise MethodNotImplemented(resource_type='Element')
+
+
+@hug.delete('/{element_id}')
+def delete_element(element_id: int):
+    '''API function for deleting process'''
+    query = db.query(Element)
+    query = query.filter(Element.id == element_id)
+    result = query.first() # query.get
+    if not result:
+        raise NotFound(resource_type='Element', identifiers=element_id)
+    db.session.delete(result)
+    # db.session.remove(result)
+    db.session.commit()
+    return make_api_response('OK')
+
 #     '''API function for getting list of processes'''
 #     query = db.query(Process)
 #     query = filter_by_ids(query, Process, ids)
@@ -109,21 +179,3 @@ def get_elements(start_date: hug.types.text=None,
 #         return make_api_response(result)
 #     else:
 #         raise NotFound(resource_type='Element', identifiers={'id': element_id})
-
-
-@hug.post('/elements')
-def create_process(data):
-    '''API function for creating new fact'''
-    raise MethodNotImplemented(resource_type='Element')
-
-
-@hug.put('/elements/{element_id}')
-def update_element(element_id, data):
-    '''API function for updating existing process'''
-    raise MethodNotImplemented(resource_type='Element')
-
-
-@hug.delete('/elements/{element_id}')
-def delete_element(process_id):
-    '''API function for deleting process'''
-    raise MethodNotImplemented(resource_type='Element')

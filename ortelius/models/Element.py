@@ -24,8 +24,8 @@ class Element(db.Model):
     __tablename__ = 'hm_elements'
 
     def __init__(self,
-                 name=None,
-                 label=None,
+                 name,
+                 label,
                  description=None,
                  start_date=None,
                  end_date=None,
@@ -33,7 +33,7 @@ class Element(db.Model):
                  text=None,
                  element_type=None,
                  weight=None,
-                 trusted=False
+                 trusted=0
                 ):
         self.name = name
         self.label = label
@@ -68,8 +68,8 @@ class Element(db.Model):
                                         secondaryjoin=id == element_links.c.child_element_id,
                                         backref="parent_elements")
     # subelements       = db.relationship('Element', secondary=elements_subelements)
-    shapes              = db.relationship('Shape', backref=db.backref('element', uselist=False))
-    ordered_collections = db.relationship('OrderedCollection')
+    # shapes              = db.relationship('Shape', backref=db.backref('element', uselist=False))
+    # ordered_collections = db.relationship('OrderedCollection')
 
     def __repr__(self):
         return '<Element %r, shows as %r>' % (self.name, self.label)
@@ -77,7 +77,7 @@ class Element(db.Model):
 
 class ElementType(db.Model):
     """ElementType model"""
-    __tablename__ = 'hm_elements_type'
+    __tablename__ = 'hm_element_types'
 
     def __init__(self, name=None, label=None, elements=None):
         self.name = name

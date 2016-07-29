@@ -5,7 +5,7 @@ db = database.db
 
 # Define the User data model. Make sure to add the flask_user.UserMixin !!
 class User(db.Model):
-    __tablename__ = 'users'
+    __tablename__ = 'hm_users'
 
     # def __init__(self):
     #     pass
@@ -46,5 +46,5 @@ class Role(db.Model):
 class UsersRoles(db.Model):
     __tablename__ = 'users_roles'
     id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
+    user_id = db.Column(db.Integer(), db.ForeignKey('hm_users.id', ondelete='CASCADE'))
     role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))

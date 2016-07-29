@@ -20,8 +20,16 @@ class APIError(Exception):
 class BadRequest(falcon.HTTPError):
     '''Bad request exception'''
 
-    def __init__(self):
+    def __init__(self, missingArgs: list=[], invalidArgs: list=[], info=None):
         super(BadRequest, self).__init__(status='400 BadRequest')
+        self.title = 'Bad request'
+        self.description = {}
+        if info is not None:
+            self.description['Additional information'] = info
+        if missingArgs:
+            self.description['Missing parameters'] = missingArgs
+        if invalidArgs:
+            self.description['Invalid parameters'] = invalidArgs
 
 
 class NotFound(falcon.HTTPError):
@@ -33,6 +41,10 @@ class NotFound(falcon.HTTPError):
         self.title = 'Not Found'
         if resource_type and identifiers:
             self.description = '{0} identified by {1} not found.'.format(resource_type, identifiers)
+        elif resource_type:
+            self.description = '{0} not found.'.format(resource_type)
+        elif identifiers:
+            self.description = '<Something> identified by {0} not found.'.format(identifiers)
 
 
 class Forbidden(falcon.HTTPError):

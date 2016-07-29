@@ -8,8 +8,8 @@ from ortelius.middleware import filter_by_ids, make_geojson_response, serialize
 
 
 @hug.get('/',
-        versions=1,
-        examples=['ids=1,2,3,45,678'])
+         versions=1,
+         examples=['ids=1,2,3,45,678'])
 def get_shapes(ids: list=None):
     if not ids:
         raise BadRequest()
@@ -30,7 +30,8 @@ def get_shapes(ids: list=None):
     return make_geojson_response(serialized)
 
 
-@hug.get('/{shape_id}')
+@hug.get('/{shape_id}',
+         versions=1)
 def get_shape(shape_id):
     shape = db.query(Shape).get(shape_id)
 
