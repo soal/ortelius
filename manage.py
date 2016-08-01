@@ -131,7 +131,15 @@ def create_data():
 
 def run():
     """Start development server"""
+    import subprocess
+    null = open(os.devnull)
+    p = subprocess.Popen(executable='killall', args=('', 'hug'), stderr=null, stdout=null)
+    p.wait()
+    # subprocess.Popen(executable='hug', args=('', '-f', 'ortelius/app.py', '-p {0}'.format(app.config.PORT)), stdout=subprocess.PIPE, stderr=subprocess.PIPE, shell=True).wait()
+    # print('start')
+    # raise Exception
     os.system('hug -f ortelius/app.py -p {0}'.format(app.config.PORT))
+    # print('end')
 
 # def create_shapes():
 #     print('Creating shapes...')
@@ -167,7 +175,7 @@ def upgrade(revision=None):
 
 def deploy():
     """Deploy to heroku and execute database migration"""
-    
+
     os.system('heroku maintenance:on --app ortelius')
     os.system('git push heroku master')
     os.system('heroku run ./manage.py migrate --app ortelius')
