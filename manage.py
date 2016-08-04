@@ -79,6 +79,7 @@ def create_db():
         env = os.environ['APP_SETTINGS']
     except:
         env = os.environ['APP_SETTINGS'] = 'development'
+    database.db.engine.execute("CREATE EXTENSION postgis;")
     database.db.create_all()
 
 def drop_db():
@@ -97,6 +98,8 @@ def drop_db():
     # some DBs lock after things have been dropped in
     # a transaction.
     metadata = MetaData()
+
+    database.db.engine.execute("DROP EXTENSION postgis CASCADE;")
 
     tbs = []
     all_fks = []
