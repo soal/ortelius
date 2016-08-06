@@ -95,7 +95,7 @@ element_type_info_fields = db.Table('hm_element_type_info_fields',
     db.Column('element_type_id', db.Integer, db.ForeignKey('hm_element_types.id')),
     db.Column('field_order', db.Integer),
     db.Column('field_name', db.String(255), nullable=False),
-    db.Column('field_type', ENUM(ValueTypes, name='wtf'), nullable=False),
+    #db.Column('field_type', ENUM(ValueTypes, name='wtf'), nullable=False),
     # db.Column('field_type', ENUM(ValueTypes, name='value_types'), nullable=False),
     db.Column('description', db.String(255), server_default=""),
     db.Column('weight', db.Integer, default=5, nullable=False)

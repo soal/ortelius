@@ -13,12 +13,13 @@ Data server and API for handymap
 * Alembic
 * Coverage python module
 * PostgreSQL 9.4
+* Geos
 * PostGIS
 
 ### Setting up
 #### Installing dependencies on Fedora Linux
 ```
-sudo dnf install gcc gcc-c++ make glibc-headers python3 python3-virtualenv python3-devel python3-psycopg2 postgresql postgresql-devel postgresql-server postgresql-contrib libffi-devel redhat-rpm-config
+sudo dnf install gcc gcc-c++ make glibc-headers python3 python3-virtualenv python3-devel python3-psycopg2 postgresql postgresql-devel postgresql-server postgresql-contrib libffi-devel redhat-rpm-config geos postgis
 ```
 #### Setting up python environment:
 Create virtual python environment:
@@ -55,6 +56,7 @@ In postgres console:
 CREATE USER hm WITH password 'hm';
 CREATE DATABASE hm;
 GRANT ALL privileges ON DATABASE hm TO hm;
+ALTER USER hm WITH SUPERUSER;
 ```
 *Note, if you want to use other user instead of "hm", you need to change "hm" on your username and password in Handymap configuration file `settings.py`*
 
