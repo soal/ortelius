@@ -4,7 +4,7 @@ Data server and API for handymap
 ## Setting up project for development
 
 ### Requirements
-* Python ≥ 3.4
+* Python ≥ 3.6
 * Falcon
 * Hug
 * SQLAlhemy
