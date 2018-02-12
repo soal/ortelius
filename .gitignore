@@ -21,6 +21,7 @@ var/
 .installed.cfg
 *.egg
 *env/
+*.heroku
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
