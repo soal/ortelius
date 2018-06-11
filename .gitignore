@@ -48,6 +48,7 @@ coverage.xml
 *.idea
 *.tern-*
 *.vscode
+*.code-workspace
 *.imdone
 
 # Node.js stuff
