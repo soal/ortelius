@@ -9,7 +9,7 @@ Data server and API for handymap
 * Python ≥ 3.6
 * Falcon
 * Hug
-* SQLAlhemy
+* SQLAlchemy
 * GeoAlchemy2
 * Shapely
 * Alembic

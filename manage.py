@@ -12,7 +12,7 @@ from sqlalchemy.schema import (
         DropConstraint,
         )
 
-from scripts import create_initial_data, shapes_processor
+# from scripts import create_initial_data, shapes_processor
 from ortelius import database, app
 
 from ortelius.types.historical_date import *
@@ -79,7 +79,11 @@ def create_db():
         env = os.environ['APP_SETTINGS']
     except:
         env = os.environ['APP_SETTINGS'] = 'development'
-    database.db.engine.execute("CREATE EXTENSION postgis;")
+    try:
+        database.db.engine.execute("CREATE EXTENSION postgis;")
+    except Exception as e:
+        print(e)
+    print("Creating db...")
     database.db.create_all()
 
 def drop_db():
@@ -129,7 +133,7 @@ def create_data():
     """Creates initial data."""
     print('Creating test data...')
     os.environ['APP_SETTINGS'] = 'development'
-    create_initial_data.create_admin(database.db)
+    # create_initial_data.create_admin(database.db)
 
 
 def run():
