@@ -1,6 +1,8 @@
 import falcon
 
 # FIXME: refactor.
+
+
 class APIError(Exception):
     """Describe methods for api error"""
 
@@ -20,7 +22,7 @@ class APIError(Exception):
 class BadRequest(falcon.HTTPError):
     '''Bad request exception'''
 
-    def __init__(self, missingArgs: list=[], invalidArgs: list=[], info=None):
+    def __init__(self, missingArgs=[], invalidArgs=[], info=None):
         super(BadRequest, self).__init__(status='400 BadRequest')
         self.title = 'Bad request'
         self.description = {}
@@ -60,12 +62,14 @@ class Forbidden(falcon.HTTPError):
 
 class ServerError(falcon.HTTPError):
     """ServerError exception"""
+
     def __init__(self, resource_type=None, identifiers=None):
         super(ServerError, self).__init__('500 Internal Server Error')
         self.status = '500 Internal Server Error'
         self.title = 'Internal Server Error'
         if resource_type and identifiers:
-            self.description = 'Requesting {0} identified by {1} casued server error.'.format(resource_type, identifiers)
+            self.description = 'Requesting {0} identified by {1} casued server error.'.format(
+                resource_type, identifiers)
 
 
 class NotAuthorized(falcon.HTTPError):
@@ -76,11 +80,13 @@ class NotAuthorized(falcon.HTTPError):
         self.status = '401 Not Authorized'
         self.title = 'Not Authorized'
         if resource_type and identifiers:
-            self.description = 'You are not authorized requesting {0} identified by {1}.'.format(resource_type, identifiers)
+            self.description = 'You are not authorized requesting {0} identified by {1}.'.format(
+                resource_type, identifiers)
 
 
 class MethodNotImplemented(falcon.HTTPError):
     """NotImplemented exception"""
+
     def __init__(self, resource_type=None):
         super(MethodNotImplemented, self).__init__('405 Method Not Allowed')
         self.status = '405 Method Not Allowed'

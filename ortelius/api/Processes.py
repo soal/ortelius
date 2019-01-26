@@ -30,7 +30,7 @@ from ortelius.middleware import serialize, make_api_response, filter_by_ids, fil
 @hug.get('/processes',
          examples=['start_date=12-22-1560&end_date=03-30-1570&weight=1',
                    'ids=[1,2,3,4]']
-        )
+         )
 def get_processes(start_date: hug.types.text=None,
                   end_date: hug.types.text=None,
                   weight: int=None,
@@ -53,15 +53,16 @@ def get_processes(start_date: hug.types.text=None,
 
     for process in result:
         serialized = serialize(process)
-        serialized['facts']        = [fact.id for fact in process.facts] if process.facts else []
+        serialized['facts'] = [fact.id for fact in process.facts] if process.facts else []
         serialized['subprocesses'] = [subprocess.id for subprocess in process.subprocesses] if process.subprocesses else []
-        serialized['personas']     = [persona.id for persona in process.personas] if process.personas else []
-        serialized['shapes']       = [shape.id for shape in process.shapes] if process.shapes else []
-        serialized['hist_regions'] = [hist_region.id for hist_region in process.hist_regions] if process.hist_regions else []
-        serialized['hist_places']  = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
-        serialized['start_date']   = process.start_date.date.to_string()
-        serialized['end_date']     = process.end_date.date.to_string()
-        serialized['type']         = {'name': process.type.name, 'label': process.type.label}
+        serialized['personas'] = [persona.id for persona in process.personas] if process.personas else []
+        serialized['shapes'] = [shape.id for shape in process.shapes] if process.shapes else []
+        serialized['hist_regions'] = [
+            hist_region.id for hist_region in process.hist_regions] if process.hist_regions else []
+        serialized['hist_places'] = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
+        serialized['start_date'] = process.start_date.date.to_string()
+        serialized['end_date'] = process.end_date.date.to_string()
+        serialized['type'] = {'name': process.type.name, 'label': process.type.label}
         serialized.pop('start_date_id')
         serialized.pop('end_date_id')
         serialized.pop('type_name')
@@ -77,15 +78,15 @@ def get_process(process_id):
     process = db.query(Process).get(process_id)
     if process:
         result = serialize(process)
-        result['facts']        = [fact.id for fact in process.facts] if process.facts else []
+        result['facts'] = [fact.id for fact in process.facts] if process.facts else []
         result['subprocesses'] = [subprocess.id for subprocess in process.subprocesses] if process.subprocesses else []
-        result['personas']     = [persona.id for persona in process.personas] if process.personas else []
-        result['shapes']       = [shape.id for shape in process.shapes] if process.shapes else []
+        result['personas'] = [persona.id for persona in process.personas] if process.personas else []
+        result['shapes'] = [shape.id for shape in process.shapes] if process.shapes else []
         result['hist_regions'] = [hist_region.id for hist_region in process.hist_regions] if process.hist_regions else []
-        result['hist_places']  = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
-        result['start_date']   = process.start_date.date.to_string()
-        result['end_date']     = process.end_date.date.to_string()
-        result['type']         = {'name': process.type.name, 'label': process.type.label}
+        result['hist_places'] = [hist_place.id for hist_place in process.hist_places] if process.hist_places else []
+        result['start_date'] = process.start_date.date.to_string()
+        result['end_date'] = process.end_date.date.to_string()
+        result['type'] = {'name': process.type.name, 'label': process.type.label}
         # result['description'] = convert_wikitext(result['description'])
         # result['text'] = convert_wikitext(result['text'])
         # result.pop('text')

@@ -4,7 +4,7 @@ from sqlalchemy_wrapper import SQLAlchemy
 
 try:
     env = os.environ['APP_SETTINGS']
-except:
+except Exception:
     env = os.environ['APP_SETTINGS'] = 'development'
 if env == 'testing':
     config = settings.TestingConfig

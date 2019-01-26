@@ -26,15 +26,15 @@ class Shape(db.Model):
         self.fill_opacity = fill_opacity
         self.coordinates = coordinates
 
-    id             = db.Column(db.Integer, primary_key=True)
-    start_date     = db.Column(db.TIMESTAMP, nullable=True)
-    end_date       = db.Column(db.TIMESTAMP, nullable=True)
-    shape_type     = db.Column(db.Enum('Point', 'Polygon', 'Multipolygon', 'Multipoint', name='shape_types'))
-    order_num      = db.Column(db.Integer)
-    point          = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
-    multipoint     = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
-    polygon        = db.Column(Geometry(geometry_type='POLYGON', srid=4326), default=None)
-    multipolygon   = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
+    id = db.Column(db.Integer, primary_key=True)
+    start_date = db.Column(db.TIMESTAMP, nullable=True)
+    end_date = db.Column(db.TIMESTAMP, nullable=True)
+    shape_type = db.Column(db.Enum('Point', 'Polygon', 'Multipolygon', 'Multipoint', name='shape_types'))
+    order_num = db.Column(db.Integer)
+    point = db.Column(Geometry(geometry_type='POINT', srid=4326), default=None)
+    multipoint = db.Column(Geometry(geometry_type='MULTIPOINT', srid=4326), default=None)
+    polygon = db.Column(Geometry(geometry_type='POLYGON', srid=4326), default=None)
+    multipolygon = db.Column(Geometry(geometry_type='MULTIPOLYGON', srid=4326), default=None)
 
     @hybrid_property
     def coordinates(self):
@@ -59,14 +59,14 @@ class Shape(db.Model):
         if self.shape_type == 'Multipoint':
             self.multipoint = coordinates
 
-    stroke_color   = db.Column(db.String(255))
-    fill_color     = db.Column(db.String(255))
+    stroke_color = db.Column(db.String(255))
+    fill_color = db.Column(db.String(255))
     stroke_opacity = db.Column(db.Float, default=1)
-    fill_opacity   = db.Column(db.Float, default=1)
+    fill_opacity = db.Column(db.Float, default=1)
 
     def __repr__(self):
         try:
             string = '<Shape, id: {0}>'.format(self.id)
-        except:
+        except Exception:
             string = '<Shape, id not assigned>'
         return string

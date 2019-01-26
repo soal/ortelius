@@ -4,8 +4,10 @@ import jdcal
 
 from ortelius.types.errors import APIError
 
+
 class DateError(APIError):
     """DateError exception"""
+
     def __init__(self, message):
         APIError.__init__(self)
         self.message = message
@@ -108,7 +110,6 @@ class HistoricalDate(object):
         self.month = month
         self.day = day
 
-
     def __eq__(self, value):
         return self.year == value.year and self.month == value.month and self.day == value.day
 
@@ -130,7 +131,6 @@ class HistoricalDate(object):
                     return False
                 elif self.day > value.day:
                     return True
-
 
     def __ge__(self, value):
         if not isinstance(value, HistoricalDate):
@@ -210,9 +210,12 @@ class HistoricalDate(object):
         return self.to_string()
 
 
-
 class HDate(sqlalchemy.types.TypeDecorator):
-    """Custom sqlalchemy type for date implementation. Stores data in database as Integer in 'YYYYMMDD' format, e.g. '19001004' or '-100000301' Note that leading zero in days and months lesser than 10 is requred (e.g. 09 or 04 in 12800904)"""
+    """
+    Custom sqlalchemy type for date implementation.
+    Stores data in database as Integer in 'YYYYMMDD' format, e.g. '19001004' or '-100000301'.
+    Note that leading zero in days and months lesser than 10 is requred (e.g. 09 or 04 in 12800904)
+    """
 
     impl = sqlalchemy.types.Integer
 

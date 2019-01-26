@@ -27,14 +27,14 @@ from ortelius.middleware import serialize, make_api_response, filter_by_geo, fil
          versions=1,
          examples=['start_date=12-22-1560&end_date=03-30-1570&topleft=56,78&bottomright=-22,10&weight=1',
                    'ids=[1,2,3,4]']
-        )
+         )
 def get_facts(start_date: hug.types.text=None,
               end_date: hug.types.text=None,
               topleft: list=None,
               bottomright: list=None,
               weight: int=None,
               ids: list=None
-             ):
+              ):
     '''API function for getting list of facts'''
     query = db.query(Element)
     query = filter_by_ids(query, Element, ids)
